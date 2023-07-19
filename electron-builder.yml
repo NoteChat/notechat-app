@@ -1,5 +1,5 @@
-appId: com.notechat.app
-productName: NoteChat
+appId: com.textops.app
+productName: TextOps
 directories:
   buildResources: build
 files:
@@ -40,4 +40,4 @@ appImage:
 npmRebuild: false
 publish:
   provider: generic
-  url: https://example.com/auto-updates
+  url: https://161.ai/auto-updates

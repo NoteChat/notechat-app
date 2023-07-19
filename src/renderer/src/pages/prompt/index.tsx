@@ -1,7 +1,7 @@
 import * as ScrollArea from '@radix-ui/react-scroll-area'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import API, { PromptDto, getDefaultHeader } from '@renderer/api'
-import { Link, Route, Routes, useNavigate } from 'react-router-dom'
+import { Link, Route, Routes } from 'react-router-dom'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { PlusIcon, CrossCircledIcon } from '@radix-ui/react-icons'
 import PromptForm from './form'
@@ -9,44 +9,20 @@ import style from './style.module.scss'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
+import { IAppProps } from '@renderer/app'
 
-const Prompt: React.FC = () => {
-  const navigate = useNavigate()
+
+const Prompt: React.FC<{} & IAppProps> = (props) => {
   const { t } = useTranslation()
+  const { prompts, loadPrompts } = props;
 
-  const [prompts, setPrompts] = useState<PromptDto[]>([])
-  const [prompt, setPrompt] = useState<PromptDto>()
+  const [prompt, setPrompt] = useState<PromptDto | undefined>(prompts.length > 0 ? prompts[0] : undefined)
   const uid = localStorage.getItem('uid')
-
-  const loadPrompts = () => {
-    const uid = localStorage.getItem('uid')
-    if (uid) {
-      API.v1
-        .getPrompt(
-          {
-            userId: Number(uid),
-            limit: 100
-          },
-          {
-            headers: getDefaultHeader(),
-            format: 'json'
-          }
-        )
-        .then((res) => {
-          if (res.ok) {
-            setPrompt(res.data[0])
-            setPrompts(res.data as any)
-          }
-        })
-    } else {
-      navigate('/login')
-    }
-  }
 
   const createPrompt = (data: PromptDto) => {
     if (uid) {
       API.v1
-        .createPrompt({ ...data, userId: Number(uid) }, { headers: getDefaultHeader() })
+        .createPrompt({ ...data, userId: Number(uid) })
         .then((res) => {
           if (res) {
             toast.success('Create Success')
@@ -79,7 +55,7 @@ const Prompt: React.FC = () => {
   const deletePrompt = () => {
     if (uid && prompt) {
       API.v1
-        .deletePrompt({ userId: Number(uid), id: prompt.id }, { headers: getDefaultHeader() })
+        .deletePrompt({ userId: Number(uid), id: prompt.id })
         .then((res) => {
           if (res) {
             toast.success('Delete Success')
@@ -88,10 +64,6 @@ const Prompt: React.FC = () => {
         })
     }
   }
-
-  useEffect(() => {
-    loadPrompts()
-  }, [])
 
   return (
     <>

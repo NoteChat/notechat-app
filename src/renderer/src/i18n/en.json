@@ -24,6 +24,7 @@
         "language.label": "Language",
         "login.label": "Login",
         "logout.label": "Logout",
+        "message.login.expired": "Login expired, please login again",
         "name.check.required": "Name cannot be empty",
         "name.check.valid": "Name must be a combination of alphanumeric characters",
         "name.label": "Name",

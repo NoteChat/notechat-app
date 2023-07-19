@@ -20,10 +20,7 @@ export const Setting: React.FC = () => {
     if (uid) {
       userData.id = Number(uid)
       Api.v1
-        .updateProfile(userData, {
-          headers: getDefaultHeader(),
-          format: 'json'
-        })
+        .updateProfile(userData)
         .then((res) => {
           if (res.ok) {
             toast.success('Update Success')
@@ -49,11 +46,7 @@ export const Setting: React.FC = () => {
     }
     Api.v1
       .getProfile(
-        { id: uid },
-        {
-          headers: getDefaultHeader(),
-          format: 'json'
-        }
+        { id: uid }
       )
       .then((res: any) => {
         if (res.data) {

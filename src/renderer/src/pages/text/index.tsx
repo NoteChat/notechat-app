@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import API, { PromptDto, getDefaultHeader } from '@renderer/api'
+import API, { PromptDto } from '@renderer/api'
 import style from './style.module.scss'
 import { Button, Select, Textarea } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
 import { InputCursor } from '@renderer/components/cursor'
+import { IAppProps } from '@renderer/app'
 
-export const Text: React.FC<{}> = () => {
+export const Text: React.FC<{} & IAppProps> = (props) => {
   const { t } = useTranslation()
+  const { prompts } = props;
 
   const [loading, setLoading] = React.useState<boolean>(false)
   const [result, setResult] = React.useState<string>('')
-  const [prompts, setPrompts] = useState<PromptDto[]>([])
-  const [prompt, setPrompt] = useState<PromptDto & { id: number }>()
+  const [prompt, setPrompt] = useState<PromptDto | undefined>(prompts.length > 0 ? prompts[0] : undefined)
 
   const onSubmit = () => {
 
@@ -33,12 +34,7 @@ export const Text: React.FC<{}> = () => {
           prompt: prompt.prompt,
           content: promptContent,
           userId: Number(uid)
-        },
-        {
-          headers: getDefaultHeader(),
-          format: 'json'
-        }
-      )
+        })
       .then((res: any) => {
         if (res.data) {
           setResult(res.data.data)
@@ -51,32 +47,11 @@ export const Text: React.FC<{}> = () => {
       })
   }
 
-  const loadPrompts = () => {
-    const uid = localStorage.getItem('uid')
-    if (uid) {
-      API.v1
-        .getPrompt(
-          {
-            userId: Number(uid),
-            limit: 100
-          },
-          {
-            headers: getDefaultHeader(),
-            format: 'json'
-          }
-        )
-        .then((res) => {
-          if (res.ok) {
-            setPrompt(res.data[0])
-            setPrompts(res.data as any)
-          }
-        })
-    }
-  }
-
   useEffect(() => {
     document.getElementById('PromptContent')?.focus();
-    loadPrompts()
+    if (prompts.length > 0) {
+      setPrompt(prompts[0])
+    }
   }, [])
 
   return (

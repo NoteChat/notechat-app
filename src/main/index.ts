@@ -16,7 +16,7 @@ import { handleEvents } from './event'
 function createWindow(): BrowserWindow {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1200,
     height: 800,
     show: false,
     frame: true,
@@ -27,7 +27,8 @@ function createWindow(): BrowserWindow {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      devTools: is.dev,
     }
   })
 
@@ -42,43 +43,6 @@ function createWindow(): BrowserWindow {
     mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`)
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-
-  return mainWindow
-}
-
-function createCommandPaletteWindow(): BrowserWindow {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    alwaysOnTop: true,
-    width: 800,
-    height: 400,
-    show: false,
-    frame: false,
-    y: 200,
-    resizable: true,
-    movable: true,
-    icon: icon,
-    titleBarStyle: 'hidden',
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/commandPalette.html`)
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/commandPalette.html'))
   }
 
   return mainWindow
@@ -99,23 +63,10 @@ app.whenReady().then(() => {
   })
 
   let win = createWindow()
-  let commandPaletteWin = createCommandPaletteWindow()
 
-  createTrayMenu(win, commandPaletteWin)
-  registerGlobalShortCuts(win, commandPaletteWin)
-  handleEvents(win, commandPaletteWin)
-
-  win.on('show', () => {
-    if (commandPaletteWin) {
-      commandPaletteWin.hide();
-    }
-  });
-
-  commandPaletteWin.on('show', () => {
-    if (win) {
-      win.hide();
-    }
-  })
+  createTrayMenu(win)
+  registerGlobalShortCuts(win)
+  handleEvents(win)
 
   // Set a variable when the app is quitting.
   let isAppQuitting = false;
@@ -134,14 +85,12 @@ app.whenReady().then(() => {
   }
   
   win.on('close', handleCloseWin(win));
-  commandPaletteWin.on('close', handleCloseWin(commandPaletteWin));
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
       win = createWindow()
-      commandPaletteWin = createCommandPaletteWindow()
     }
   })
 })

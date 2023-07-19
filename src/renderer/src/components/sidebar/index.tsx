@@ -5,7 +5,7 @@ import { ChatIcon, CloneIcon, ComponentIcon, TextIcon, GearIcon } from '../icon'
 import { useTranslation } from 'react-i18next'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import style from './style.module.scss'
-import { ExitIcon, PersonIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
+import { ExitIcon, PersonIcon } from '@radix-ui/react-icons'
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   icon?: React.ReactElement
@@ -86,7 +86,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
               <DropdownMenu.Separator className="DropdownMenuSeparator" />
 
               <DropdownMenu.Item className="DropdownMenuItem">
-                <Link to="/login">
+                <Link onClick={() => localStorage.clear() } to="/login">
                   <ExitIcon /> {t('logout.label')}
                 </Link>
               </DropdownMenu.Item>

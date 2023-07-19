@@ -9,19 +9,30 @@ export function getDefaultHeader() {
   }
 }
 
-console.log('renderEnv', import.meta.env)
-
 const remoteUrl = import.meta.env.RENDERER_VITE_REMOTE_API as string
+const httpProtocol = window.location.protocol.replace(':', '');
+let defaultOptions: any = undefined;
 
-const defaultOptions =
-  import.meta.env.MODE === 'web'
-    ? undefined
-    : {
-        baseUrl: remoteUrl,
-        customFetch: (...fetchParams) => {
-          return window.api.fetch(fetchParams)
-        }
-      }
+if (httpProtocol === 'http' || httpProtocol === 'https') {
+  defaultOptions = {
+    baseApiParams: {
+      format: 'json'
+    },
+    customFetch: (...fetchParams: Parameters<typeof fetch>) => {
+      const params = fetchParams[1] as any;
+      params.headers = getDefaultHeader();
+      return fetch(...fetchParams);
+    }
+  }
+} else {
+  defaultOptions = {
+    baseUrl: remoteUrl,
+    customFetch: (...fetchParams) => {
+      fetchParams[1].headers = getDefaultHeader();
+      return window.api.fetch(fetchParams)
+    }
+  }
+}
 
 const MyApi = new Api(defaultOptions)
 
@@ -31,5 +42,6 @@ export const Socket = io(remoteUrl, {
   },
   transports: ['websocket']
 })
+
 
 export default MyApi

@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { Socket } from '@renderer/api'
 import { InputCursor } from '@renderer/components/cursor'
 import toast, { Toaster } from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 type ChatMessageType = {
   role: 'user' | 'assistant' | 'system'
@@ -17,6 +18,7 @@ type ChatMessageType = {
 
 export const Chat: React.FC<{}> = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate();
 
   const [messages] = React.useState<ChatMessageType[]>([])
   const [loading, setLoading] = React.useState<boolean>(false)
@@ -97,8 +99,11 @@ export const Chat: React.FC<{}> = () => {
       }, 1)
     })
 
-    Socket.on('error', () => {
+    Socket.on('exception', (res) => {
       setLoading(false)
+      if (res.message === 'Unauthorized access') {
+        navigate('/login')
+      }
     })
 
     return () => {

@@ -24,6 +24,7 @@
         "language.label": "语言",
         "login.label": "登录",
         "logout.label": "退出",
+        "message.login.expired": "登录信息已过期，请重新登录！",
         "name.check.required": "名称不能为空",
         "name.check.valid": "名称必须是字母数字组合",
         "name.label": "名称",

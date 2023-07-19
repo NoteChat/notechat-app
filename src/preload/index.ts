@@ -14,7 +14,10 @@ const api = {
           if (res.statusCode === 401) {
             window.location.hash = '#/login';
           }
-          resolve(res)
+          resolve({
+            ok: true,
+            data: res,
+          })
         }
       })
     })

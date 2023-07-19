@@ -24,7 +24,7 @@ const Register: React.FC<{}> = () => {
     }
     user.password = md5(user.password)
     API.v1
-      .register(user as unknown as UserRegisterDto, {format: 'json'})
+      .register(user as unknown as UserRegisterDto)
       .then((res: any) => {
         const { data } = res;
         if (data.code !== 1000) {
@@ -44,7 +44,7 @@ const Register: React.FC<{}> = () => {
   const sendValidateCode = () => {
     const email = document.querySelector('input[name="email"]') as HTMLInputElement
     if (email) {
-      API.v1.getValidCode({ email: email.value }, {format: 'json'}).then((res: any) => {
+      API.v1.getValidCode({ email: email.value }).then((res: any) => {
         const { data } = res;
         if (data.code === 1000) {
           toast.success(t('email.send.success'))

@@ -22,7 +22,7 @@ const Login: React.FC<{}> = () => {
       .login({
         username: data.username as string,
         password: data.password as string
-      }, {format: 'json'})
+      })
       .then((res: any) => {
         const { data } = res;
         if (data.code === 1000) {

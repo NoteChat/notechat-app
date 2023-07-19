@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import API, { PromptDto, Socket, getDefaultHeader } from '@renderer/api'
+import React, { useEffect, useLayoutEffect, useRef } from 'react'
+import API, { Socket } from '@renderer/api'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import style from './style.module.scss'
@@ -12,7 +12,6 @@ import toast, { Toaster } from 'react-hot-toast'
 export const Clone: React.FC<{}> = () => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [prompt, setPrompt] = useState<PromptDto & { id: number }>()
   const editorRef = useRef<Quill>()
   const resultRef = useRef<Quill>()
 
@@ -36,12 +35,7 @@ export const Clone: React.FC<{}> = () => {
           prompt: `## 指令 ## \n 根据指令要求，按用户给出的文本进行优化：\n 指令：${inputPrompt} \n 文本：\${content}`,
           content: promptContent,
           userId: Number(uid)
-        },
-        {
-          headers: getDefaultHeader(),
-          format: 'json'
-        }
-      )
+        })
       .then((res: any) => {
         if (res.data) {
           // setResult(res.data.data)
@@ -53,28 +47,6 @@ export const Clone: React.FC<{}> = () => {
         console.error(err)
         setLoading(false)
       })
-  }
-
-  const loadPrompts = () => {
-    const uid = localStorage.getItem('uid')
-    if (uid) {
-      API.v1
-        .getPrompt(
-          {
-            userId: Number(uid),
-            limit: 100
-          },
-          {
-            headers: getDefaultHeader(),
-            format: 'json'
-          }
-        )
-        .then((res) => {
-          if (res.ok) {
-            setPrompt(res.data[0])
-          }
-        })
-    }
   }
 
   const onExtractContent = () => {
@@ -101,10 +73,6 @@ export const Clone: React.FC<{}> = () => {
     if (inputRef.current) {
       inputRef.current.focus()
     }
-  }, [])
-
-  useEffect(() => {
-    loadPrompts()
   }, [])
 
   useEffect(() => {

@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HashRouter>
       <Routes>
-        <Route path="*" index element={<App />} />
+        <Route path="/*" Component={App} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
