@@ -1,0 +1,82 @@
+.input,
+.select,
+.textarea {
+    outline-color: var(--bd-color);
+    border-radius: 5px;
+    border: 1px solid var(--bd-color);
+}
+
+.input:hover,
+.textarea:hover {
+    box-shadow: 0 0 0 1px var(--color2);
+}
+
+.input:focus,
+.textarea:focus {
+    box-shadow: 0 0 0 1px var(--color2);
+}
+
+.input::selection,
+.textarea::selection {
+    background-color: var(--primary-color);
+    color: var(--color3)
+}
+
+.select {
+    height: 35px;
+    color: var(--color2);
+    width: 200px;
+    padding: 0 10px;
+}
+
+
+.select:active,
+.select:hover,
+.select:focus {
+    outline: 1px solid var(--color2);
+    opacity: 1;
+}
+
+.button {
+    width: 150px;
+    height: 35px;
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    background: var(--primary-color);
+    color: var(--color3);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.35px;
+    opacity: 0.8;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.input:read-only, .textarea:read-only {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.button:active,
+.button:hover,
+.button:focus {
+    outline: 1px solid var(--color2);
+    opacity: 1;
+}
+
+.input {
+    height: 35px;
+    padding: 0 10px;
+    flex-shrink: 0;
+}
+
+.textarea {
+    padding: 12px;
+}

@@ -22,6 +22,7 @@ function createWindow(): BrowserWindow {
     frame: true,
     center: true,
     icon: icon,
+    titleBarStyle: 'hidden',
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -38,9 +39,9 @@ function createWindow(): BrowserWindow {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/main.html`)
+    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`)
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/main.html'))
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
   return mainWindow
@@ -53,11 +54,12 @@ function createCommandPaletteWindow(): BrowserWindow {
     width: 800,
     height: 400,
     show: false,
-    frame: true,
+    frame: false,
     y: 200,
     resizable: true,
     movable: true,
     icon: icon,
+    titleBarStyle: 'hidden',
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {

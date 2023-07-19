@@ -1,0 +1,25 @@
+.promptItems {
+  border-right: 1px solid var(--bd-color);
+  overflow: hidden;
+  padding-bottom: 60px;
+  position: relative;
+}
+
+.promptItem {
+  border-bottom: 1px solid var(--bd-color);
+  color: var(--color2);
+  position: relative;
+}
+
+.promptItem:hover .btnDeletePrompt {
+  display: inline-block;
+}
+
+.btnDeletePrompt {
+  display: none;
+}
+
+.promptItem:hover {
+  background-color: #f4f4f4;
+  color: var(--color2);
+}

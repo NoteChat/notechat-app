@@ -1,0 +1,13 @@
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  .inputCursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.25em;
+    background: var(--color1);
+    animation: blink 1s infinite;
+  }

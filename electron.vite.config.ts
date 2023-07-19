@@ -12,11 +12,22 @@ export default defineConfig({
   },
   renderer: {
     base: './',
+    server: {
+      proxy: {
+        '/v1': {
+          target: 'http://127.0.0.1:3000',
+          changeOrigin: true,
+        },
+        '/ws': {
+          target: 'http://127.0.0.1:3000',
+          changeOrigin: true,
+        }
+      }
+    },
     build: {
       rollupOptions: {
         input: {
-          main: resolve(__dirname, 'src/renderer/main.html'),
-          commandPalette: resolve(__dirname, 'src/renderer/commandPalette.html')
+          index: resolve(__dirname, 'src/renderer/index.html'),
         }
       }
     },

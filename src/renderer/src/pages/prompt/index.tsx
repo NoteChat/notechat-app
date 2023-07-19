@@ -5,9 +5,14 @@ import { Link, Route, Routes, useNavigate } from 'react-router-dom'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { PlusIcon, CrossCircledIcon } from '@radix-ui/react-icons'
 import PromptForm from './form'
+import style from './style.module.scss'
+import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
+import toast, { Toaster } from 'react-hot-toast'
 
-const Settings: React.FC = () => {
+const Prompt: React.FC = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const [prompts, setPrompts] = useState<PromptDto[]>([])
   const [prompt, setPrompt] = useState<PromptDto>()
@@ -23,13 +28,14 @@ const Settings: React.FC = () => {
             limit: 100
           },
           {
-            headers: getDefaultHeader()
+            headers: getDefaultHeader(),
+            format: 'json'
           }
         )
         .then((res) => {
-          if (res) {
-            setPrompt(res[0])
-            setPrompts(res as any)
+          if (res.ok) {
+            setPrompt(res.data[0])
+            setPrompts(res.data as any)
           }
         })
     } else {
@@ -43,7 +49,7 @@ const Settings: React.FC = () => {
         .createPrompt({ ...data, userId: Number(uid) }, { headers: getDefaultHeader() })
         .then((res) => {
           if (res) {
-            alert('Create Success')
+            toast.success('Create Success')
             loadPrompts()
           }
         })
@@ -59,7 +65,7 @@ const Settings: React.FC = () => {
         )
         .then((res) => {
           if (res) {
-            alert('Update Success')
+            toast.success('Update Success')
             loadPrompts()
           }
         })
@@ -76,7 +82,7 @@ const Settings: React.FC = () => {
         .deletePrompt({ userId: Number(uid), id: prompt.id }, { headers: getDefaultHeader() })
         .then((res) => {
           if (res) {
-            alert('Delete Success')
+            toast.success('Delete Success')
             loadPrompts()
           }
         })
@@ -84,34 +90,48 @@ const Settings: React.FC = () => {
   }
 
   useEffect(() => {
-    loadPrompts();
+    loadPrompts()
   }, [])
 
   return (
+    <>
     <div className="flex h-full">
-      <div className="promptItems flex flex-col w-80">
-        <div className="list h-full">
+      <div className={classNames('flex flex-col w-80', style.promptItems)}>
+        <div className="list h-full relative">
           <ScrollArea.Root className="ScrollAreaRoot">
             <ScrollArea.Viewport className="ScrollAreaViewport">
               <div>
                 {prompts.map((item, index) => {
                   return (
                     <Link to="edit" key={index} onClick={() => selectPrompt(item)}>
-                      <div className="promptItem cursor-pointer p-5 flex items-center">
-                        <span className="ml-4 color-blue" title={item.description}>{item.name}</span>
-                        {
-                          item.isBuiltIn ? (<small className="ml-2 color-gray-4">Builtin</small> ) : null
-                        }
+                      <div
+                        className={classNames(
+                          'promptItem cursor-pointer p-5 flex items-center',
+                          style.promptItem
+                        )}
+                      >
+                        <span className="ml-4" title={item.description}>
+                          {item.name}
+                        </span>
+                        {item.isBuiltIn ? (
+                          <small className="ml-2 color-gray-4">Builtin</small>
+                        ) : null}
                         {!item.isBuiltIn ? (
-                          <div title="Delete the Prompt" className="btnDeletePrompt absolute right-5 p-2">
+                          <div
+                            title="Delete the Prompt"
+                            className={classNames('absolute right-5 p-2', style.btnDeletePrompt)}
+                          >
                             <Tooltip.Provider>
                               <Tooltip.Root>
                                 <Tooltip.Trigger asChild>
-                                  <CrossCircledIcon className="color-gray-4" onClick={deletePrompt}/>
+                                  <CrossCircledIcon
+                                    className="color-gray-4"
+                                    onClick={deletePrompt}
+                                  />
                                 </Tooltip.Trigger>
                                 <Tooltip.Portal>
                                   <Tooltip.Content className="TooltipContent" sideOffset={5}>
-                                    Create a new Prompt
+                                    Delete the Prompt
                                     <Tooltip.Arrow className="TooltipArrow" />
                                   </Tooltip.Content>
                                 </Tooltip.Portal>
@@ -134,7 +154,7 @@ const Settings: React.FC = () => {
             <ScrollArea.Corner className="ScrollAreaCorner" />
           </ScrollArea.Root>
         </div>
-        <div className="text-center p-10 cursor-pointer">
+        <div className="text-center absolute left-0 right-0 bottom-30px cursor-pointer">
           <Tooltip.Provider>
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
@@ -146,7 +166,7 @@ const Settings: React.FC = () => {
               </Tooltip.Trigger>
               <Tooltip.Portal>
                 <Tooltip.Content className="TooltipContent" sideOffset={5}>
-                  Create a new Prompt
+                  {t('createPrompt.tooltip')}
                   <Tooltip.Arrow className="TooltipArrow" />
                 </Tooltip.Content>
               </Tooltip.Portal>
@@ -158,14 +178,16 @@ const Settings: React.FC = () => {
         <Routes>
           <Route
             path="edit"
-            index
+            index={true}
             element={<PromptForm prompt={prompt} key={prompt?.id} onSubmit={updatePrompt} />}
           />
           <Route path="create" index element={<PromptForm onSubmit={createPrompt} isCreate />} />
         </Routes>
       </div>
     </div>
+    <Toaster />
+    </>
   )
 }
 
-export default Settings
+export default Prompt

@@ -1,0 +1,64 @@
+.sidebar {
+    width: 70px;
+    background: var(--primary-color);
+}
+
+.sidebar-menu {
+    width: 70px;
+    height: 100%;
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.sidebar-menu-item {
+    color: var(--color3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 48px;
+    height: 60px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.sidebar-menu-item-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.sidebar-menu-item-text {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.sidebar-menu-item--active,
+.sidebar-menu-item:hover {
+    color: var(--color3);
+}
+
+.active {
+    border-radius: 10px;
+    background: var(--second-color);
+    font-weight: bold;
+    color: var(--color3);
+}
+
+.settings {
+    position: absolute;
+    bottom: 25px;
+    color: var(--color3);
+    font-size: 24px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    gap: var(--gap);
+    justify-content: center;
+}

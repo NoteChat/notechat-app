@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import * as Form from '@radix-ui/react-form'
 import { PromptDto } from '@renderer/api'
+import { Button, Input, Textarea } from '@renderer/components/form'
+import { useTranslation } from 'react-i18next'
 
 export type PromptFormProps = {
   prompt?: PromptDto
@@ -10,6 +12,7 @@ export type PromptFormProps = {
 
 const PromptForm: React.FC<PromptFormProps> = (props) => {
   const { prompt, onSubmit, isCreate = false } = props
+  const  { t } = useTranslation()
 
   const onHandleEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -31,60 +34,55 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
       <Form.Root id="promptForm" onSubmit={onHandleEvent} method="POST">
         <Form.Field className="FormField" name="name">
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Form.Label className="FormLabel">Name</Form.Label>
+            <Form.Label className="FormLabel">{t('name.label')}</Form.Label>
             <Form.Message className="FormMessage" match="valueMissing">
-              Please enter your prompt name
+              {t('name.check.required')}
             </Form.Message>
             <Form.Message className="FormMessage" match="typeMismatch">
-              Please provide a valid prompt name
+              {t('name.check.valid')}
             </Form.Message>
           </div>
           <Form.Control asChild>
-            <input className="Input" type="text" defaultValue={prompt?.name} required />
+            <Input type="text" defaultValue={prompt?.name} required />
           </Form.Control>
         </Form.Field>
         <Form.Field className="FormField" name="keybindings">
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Form.Label className="FormLabel">Keybindings</Form.Label>
+            <Form.Label className="FormLabel">{t('keybinding.label')}</Form.Label>
           </div>
           <Form.Control asChild>
-            <input className="Input" defaultValue={prompt?.keybindings} type="text" />
+            <Input defaultValue={prompt?.keybindings} type="text" />
           </Form.Control>
         </Form.Field>
         <Form.Field className="FormField" name="prompt">
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Form.Label className="FormLabel">Prompt Template</Form.Label>
+            <Form.Label className="FormLabel">{t('promptTemplate.label')}</Form.Label>
             <Form.Message className="FormMessage" match="valueMissing">
-              Please enter your prompt template
+              {t('promptTemplate.check.required')}
             </Form.Message>
             <Form.Message className="FormMessage" match="typeMismatch">
-              Please provide a valid prompt template
+              {t('promptTemplate.check.valid')}
             </Form.Message>
           </div>
           <Form.Control asChild>
-            <textarea className="Textarea" placeholder={
-              `Please enter your Prompt template`
-            } defaultValue={prompt?.prompt} rows={10} required />
+            <Textarea placeholder={t('promptTemplate.placeholder')} defaultValue={prompt?.prompt} rows={10} required />
           </Form.Control>
         </Form.Field>
         <Form.Field className="FormField" name="description">
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Form.Label className="FormLabel">Description</Form.Label>
+            <Form.Label className="FormLabel">{t('description.label')}</Form.Label>
             <Form.Message className="FormMessage" match="valueMissing">
-              Please enter your prompt name
-            </Form.Message>
-            <Form.Message className="FormMessage" match="typeMismatch">
-              Please provide a valid prompt name
+              {t('description.check.required')}
             </Form.Message>
           </div>
           <Form.Control asChild>
-            <textarea className="Textarea" defaultValue={prompt?.description} rows={5} />
+            <Textarea defaultValue={prompt?.description} rows={5} required/>
           </Form.Control>
         </Form.Field>
         <Form.Submit asChild>
-          <button className="Button" style={{ marginTop: 10 }} disabled={prompt?.isBuiltIn === 1}>
-            {isCreate ? 'Create' : 'Save'}
-          </button>
+          <Button style={{ marginTop: 10 }} disabled={prompt?.isBuiltIn === 1}>
+            {isCreate ? t('create.button') : t('update.button') } 
+          </Button>
         </Form.Submit>
       </Form.Root>
     </div>

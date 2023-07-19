@@ -20,6 +20,17 @@ export interface UserRegisterDto {
   validCode: string
 }
 
+export interface UserDto {
+  phone?: string
+  name?: string
+  password?: string
+  id: number
+  alias?: string
+  email?: string
+  aiEngine?: string
+  language?: string
+}
+
 export interface PromptDto {
   id: number
   /** @example 1 */
@@ -42,10 +53,38 @@ export interface PromptDto {
 export interface PromptRecordDto {
   /** @example 1 */
   userId: number
-  promptId: number
+  promptId?: number
   prompt: string
   content: string
 }
+
+export type GetHelloData = any
+
+export type LoginData = any
+
+export type RegisterData = any
+
+export type GetValidCodeData = any
+
+export type GetProfileData = any
+
+export type UpdateProfileData = any
+
+export type GetPromptData = any
+
+export type CreatePromptData = any
+
+export type UpdatePromptData = any
+
+export type DeletePromptData = any
+
+export type GetPrompt2Data = any
+
+export type GetPromptByUserIdData = any
+
+export type DeletePrompt2Data = any
+
+export type AutocompleteData = any
 
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
@@ -240,8 +279,8 @@ export class HttpClient<SecurityDataType = unknown> {
       }
     ).then(async (response) => {
       const r = response as HttpResponse<T, E>
-      // r.data = null as unknown as T
-      // r.error = null as unknown as E
+      r.data = null as unknown as T
+      r.error = null as unknown as E
 
       const data = !responseFormat
         ? r
@@ -263,7 +302,7 @@ export class HttpClient<SecurityDataType = unknown> {
         this.abortControllers.delete(cancelToken)
       }
 
-      // if (!response.ok) throw data
+      if (!response.ok) throw data
       return data
     })
   }
@@ -285,7 +324,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/v1
      */
     getHello: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<GetHelloData, any>({
         path: `/v1`,
         method: 'GET',
         ...params
@@ -298,7 +337,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/v1/auth/login
      */
     login: (data: AuthDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<LoginData, any>({
         path: `/v1/auth/login`,
         method: 'POST',
         body: data,
@@ -313,7 +352,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/v1/auth/register
      */
     register: (data: UserRegisterDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<RegisterData, any>({
         path: `/v1/auth/register`,
         method: 'POST',
         body: data,
@@ -333,7 +372,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<void, any>({
+      this.request<GetValidCodeData, any>({
         path: `/v1/auth/valid`,
         method: 'GET',
         query: query,
@@ -344,7 +383,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name GetProfile
-     * @request GET:/v1/users/profile
+     * @request GET:/v1/user/profile
      * @secure
      */
     getProfile: (
@@ -353,11 +392,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<void, any>({
-        path: `/v1/users/profile`,
+      this.request<GetProfileData, any>({
+        path: `/v1/user/profile`,
         method: 'GET',
         query: query,
         secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateProfile
+     * @request POST:/v1/user/update
+     * @secure
+     */
+    updateProfile: (data: UserDto, params: RequestParams = {}) =>
+      this.request<UpdateProfileData, any>({
+        path: `/v1/user/update`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params
       }),
 
@@ -375,7 +431,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<void, any>({
+      this.request<GetPromptData, any>({
         path: `/v1/prompt/query`,
         method: 'GET',
         query: query,
@@ -391,7 +447,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     createPrompt: (data: PromptDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<CreatePromptData, any>({
         path: `/v1/prompt/create`,
         method: 'POST',
         body: data,
@@ -408,7 +464,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     updatePrompt: (data: PromptDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<UpdatePromptData, any>({
         path: `/v1/prompt/update`,
         method: 'POST',
         body: data,
@@ -425,7 +481,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     deletePrompt: (data: any, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<DeletePromptData, any>({
         path: `/v1/prompt/delete`,
         method: 'POST',
         body: data,
@@ -451,7 +507,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<void, any>({
+      this.request<GetPrompt2Data, any>({
         path: `/v1/prompt-records/query`,
         method: 'GET',
         query: query,
@@ -473,7 +529,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<void, any>({
+      this.request<GetPromptByUserIdData, any>({
         path: `/v1/prompt-records/queryByUserId`,
         method: 'GET',
         query: query,
@@ -491,7 +547,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     deletePrompt2: (data: any, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<DeletePrompt2Data, any>({
         path: `/v1/prompt-records/delete`,
         method: 'POST',
         body: data,
@@ -508,7 +564,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     autocomplete: (data: PromptRecordDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<AutocompleteData, any>({
         path: `/v1/ai/complete`,
         method: 'POST',
         body: data,

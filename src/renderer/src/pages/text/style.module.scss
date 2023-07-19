@@ -1,0 +1,81 @@
+.textPane {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    gap: var(--gap);
+    flex-direction: column;
+}
+
+.textPane-input {
+    height: 30%;
+    position: relative;
+}
+
+.promptArea {
+    width: calc(100% - var(--gap) * 2);
+    height: calc(100% - var(--gap));
+    margin: var(--gap);
+    border-radius: 5px;
+    padding: 16px;
+}
+
+.textPane-result {
+    height: inherit;
+    display: flex;
+}
+
+.textPane-result--container {
+    margin: 0 var(--gap);
+    padding: var(--gap);
+    width: 100%;
+    border-radius: 5px;
+    background: var(--color3);
+    overflow: auto;
+}
+
+.resultContent {
+    color: var(--color2);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.35px;
+}
+
+.textPane-bottom {
+    height: 32px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin: auto var(--gap) var(--gap) var(--gap);
+}
+
+.promptOptions {
+    border-radius: 5px;
+    height: 32px;
+    border: 1px solid var(--bd-color);
+    color: var(--color2);
+    width: 200px;
+}
+
+.button {
+    width: 150px;
+    height: 32px;
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    background: var(--primary-color);
+    color: var(--color2);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.35px;
+}
+
+.button:active, .button:hover, .button:focus {
+    opacity: 0.8;
+    outline: 1px solid var(--color2);
+}
