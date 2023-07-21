@@ -86,7 +86,7 @@ const Prompt: React.FC<{} & IAppProps> = (props) => {
                           {item.name}
                         </span>
                         {item.isBuiltIn ? (
-                          <small className="ml-2 color-gray-4">Builtin</small>
+                          <small className="ml-2 color-gray-4">{t('builtin.label')}</small>
                         ) : null}
                         {!item.isBuiltIn ? (
                           <div
@@ -146,7 +146,7 @@ const Prompt: React.FC<{} & IAppProps> = (props) => {
           </Tooltip.Provider>
         </div>
       </div>
-      <div className="promptDetail flex-auto p-10">
+      <div className="promptDetail flex-auto p-10 pt-0">
         <Routes>
           <Route
             path="edit"

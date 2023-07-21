@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Sidebar } from './components/sidebar'
 import { Route, Routes, useNavigate } from 'react-router-dom'
-import { Chat } from './pages/chat'
+import { ChatMessageType, Chat } from './pages/chat'
 import { Text } from './pages/text'
 import { Clone } from './pages/clone'
 import Prompt from './pages/prompt'
@@ -14,9 +14,24 @@ export interface IAppProps {
   prompts: PromptDto[]
 }
 
+function initialMessages() {
+    const chatHistory = localStorage.getItem('chatHistory');
+    let chatMessage:  ChatMessageType[] = [];
+    if (chatHistory) {
+        chatMessage = JSON.parse(chatHistory);
+    }
+    return chatMessage;
+}
+
+export function storeMessages(messages: ChatMessageType[]) {
+    localStorage.setItem('chatHistory', JSON.stringify(messages));
+}
+
+
 export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
   const navigate = useNavigate()
   const [prompts, setPrompts] = useState<PromptDto[]>([])
+  const [messages, setMessages] = React.useState<ChatMessageType[]>(initialMessages())
 
   const loadPrompts = useCallback(function() {
     const uid = localStorage.getItem('uid')
@@ -47,8 +62,8 @@ export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
       <Sidebar />
       <div className={style['main']}>
         <Routes>
-          <Route index path="/" element={<Chat />} />
-          <Route path="/chat" Component={Chat} />
+          <Route index path="/" element={<Chat messages={messages} setMessages={setMessages}/>} />
+          <Route path="/chat" element={<Chat messages={messages} setMessages={setMessages}/>} />
           <Route path="/clone" index Component={Clone} />
           <Route path="/text" element={<Text prompts={prompts} loadPrompts={loadPrompts} />} />
           <Route

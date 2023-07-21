@@ -6,6 +6,7 @@ import md5 from 'js-md5'
 import { Button, Input } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
+import logo from '@renderer/assets/128@2x.png'
 
 const Register: React.FC<{}> = () => {
   const { t } = useTranslation()
@@ -75,6 +76,9 @@ const Register: React.FC<{}> = () => {
   return (
     <>
       <div className="centerBlock" style={{ top: '40%' }}>
+      <div className='text-center mb-10'>
+        <img src={logo} width={128} height={128} style={{borderRadius: '10px'}}/>
+      </div>
         <h1 className="font-500 text-center">{t('register.label')}</h1>
         <Form.Root className="FormRoot m-auto mt-5" onSubmit={onSubmit} method="POST">
           <Form.Field className="FormField" name="email">

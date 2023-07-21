@@ -3,7 +3,7 @@ import { join } from "path";
 
 export function createTrayMenu(mainWin: BrowserWindow) {
   //  创建 Tray 对象，并指定托盘图标
-  const tray = new Tray(join(__dirname, '../../resources/icons/icon.png'));
+  const tray = new Tray(join(__dirname, '../../resources/mac/16@2x.png'));
   //  创建用于托盘图标的上下文菜单
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -21,7 +21,7 @@ export function createTrayMenu(mainWin: BrowserWindow) {
       type: 'normal'
     },
     {
-      label: 'Prompt Board',
+      label: 'Extensions',
       type: 'normal',
       accelerator: 'CommandOrControl+Shift+B',
       click: () => {

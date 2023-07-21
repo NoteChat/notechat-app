@@ -1,0 +1,17 @@
+
+.contentButton {
+    position: relative;
+    color: var(--third-color);
+    float: right;
+    display: flex;
+    gap: 12px;
+}
+
+.contentButton button {
+    cursor: pointer;
+    color: var(--forth-color);
+}
+
+.contentButton button:hover {
+    color: #aa94ec;
+}

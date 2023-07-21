@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import * as Form from '@radix-ui/react-form'
 import { Button, Input, Select } from '@renderer/components/form'
 import style from './style.module.scss'
-import Api, { UserDto, getDefaultHeader } from '@renderer/api'
+import Api, { UserDto } from '@renderer/api'
 import { useTranslation } from 'react-i18next'
 import { changeLanguage } from 'i18next'
 import toast, { Toaster } from 'react-hot-toast'
@@ -19,15 +19,13 @@ export const Setting: React.FC = () => {
     const uid = localStorage.getItem('uid')
     if (uid) {
       userData.id = Number(uid)
-      Api.v1
-        .updateProfile(userData)
-        .then((res) => {
-          if (res.ok) {
-            toast.success('Update Success')
-          } else {
-            toast.error('Update Failed')
-          }
-        })
+      Api.v1.updateProfile(userData).then((res) => {
+        if (res.ok) {
+          toast.success('Update Success')
+        } else {
+          toast.error('Update Failed')
+        }
+      })
     }
   }
 
@@ -44,15 +42,11 @@ export const Setting: React.FC = () => {
     if (!uid) {
       return
     }
-    Api.v1
-      .getProfile(
-        { id: uid }
-      )
-      .then((res: any) => {
-        if (res.data) {
-          setUser(res.data)
-        }
-      })
+    Api.v1.getProfile({ id: uid }).then((res: any) => {
+      if (res.data) {
+        setUser(res.data)
+      }
+    })
   }, [])
 
   return (
@@ -110,6 +104,19 @@ export const Setting: React.FC = () => {
                 <option value="zh-cn">简体中文</option>
                 <option value="en">English</option>
               </Select>
+            </Form.Control>
+          </Form.Field>
+          <Form.Field className="FormField" name="package">
+            <div
+              style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}
+            >
+              <Form.Label className="FormLabel">{t('package.label')}</Form.Label>
+            </div>
+            <Form.Control asChild>
+              <div className="h-35px flex items-center">
+                <input type="radio" id="option1" name="package" value="free"  checked  readOnly/>
+                <label htmlFor="option1">免费</label>
+              </div>
             </Form.Control>
           </Form.Field>
           <Form.Submit asChild>

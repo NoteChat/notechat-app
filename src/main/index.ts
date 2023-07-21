@@ -6,7 +6,7 @@ import {
 } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icons/512.png?asset'
+import icon from '../../resources/mac/512.png?asset'
 import { fetchProxy } from './fetch'
 import { createTrayMenu } from './trayMenu'
 import { registerGlobalShortCuts } from './shortcuts'

@@ -1,34 +1,54 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import style from './style.module.scss'
 import SplitPane from 'react-split-pane'
-import { Textarea } from '@renderer/components/form'
-import { MagicWandIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
+import { Button, Textarea } from '@renderer/components/form'
+import { EraserIcon, MagicWandIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { Socket } from '@renderer/api'
-import { InputCursor } from '@renderer/components/cursor'
 import toast, { Toaster } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { storeMessages } from '@renderer/app'
+import { ResponseText } from '@renderer/components/responseText'
+import { ConfirmDialog } from '@renderer/components/dialog'
 
-type ChatMessageType = {
+export type ChatMessageType = {
   role: 'user' | 'assistant' | 'system'
   content: string
   loading?: boolean
 }
 
-export const Chat: React.FC<{}> = () => {
-  const { t } = useTranslation()
-  const navigate = useNavigate();
+export interface ChatProps {
+  messages: ChatMessageType[]
+  setMessages: (messages: ChatMessageType[]) => void
+}
 
-  const [messages] = React.useState<ChatMessageType[]>([])
+export const Chat: React.FC<ChatProps> = (props) => {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { messages, setMessages } = props
+
   const [loading, setLoading] = React.useState<boolean>(false)
   const keyMap = {}
   let timer
 
-  const onEnterKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    const content = document.querySelector<HTMLTextAreaElement>('#chatContent')
+  const scrollToBottom = useCallback((options?: ScrollToOptions) => {
+    const scrollAreaDom = document.getElementById('chatContentRoot')
+    if (scrollAreaDom) {
+      timer = setTimeout(() => {
+        scrollAreaDom.scrollTo({
+          left: 0,
+          top: scrollAreaDom.scrollHeight,
+          behavior: 'smooth',
+          ...options
+        })
+      })
+    }
+  }, [])
 
+  const onEnterKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
+      const content = document.querySelector<HTMLTextAreaElement>('#chatContent')
       if (keyMap['Control'] && content) {
         content.value += '\n'
         keyMap['Control'] = false
@@ -58,7 +78,6 @@ export const Chat: React.FC<{}> = () => {
 
     const uid = localStorage.getItem('uid')
     const chatInputDom = document.querySelector<HTMLTextAreaElement>('#chatContent')
-    const scrollAreaDom = document.getElementById('chatContentRoot')
     const content = chatInputDom?.value
     if (content) {
       messages.push({ role: 'user', content: content })
@@ -67,21 +86,22 @@ export const Chat: React.FC<{}> = () => {
       // Handle UI logic
       chatInputDom.value = ''
       messages.push({ role: 'assistant', content: '', loading: true })
-      timer = setTimeout(() => {
-        scrollAreaDom?.scrollTo({
-          left: 0,
-          top: scrollAreaDom.scrollHeight,
-          behavior: 'smooth'
-        })
-      }, 1)
+      storeMessages(messages)
+      scrollToBottom()
     }
+  }
+
+  const onClearHistory = () => {
+    localStorage.getItem('chatHistory')
+    setMessages([])
   }
 
   useEffect(() => {
     document.getElementById('chatContent')?.focus()
+    scrollToBottom({ behavior: 'auto' })
+
     Socket.on('chat', (res) => {
       setLoading(false)
-      const scrollAreaDom = document.getElementById('chatContentRoot')
       if (res.code === 1000 && res.data) {
         messages.pop()
         messages.push({ role: 'assistant', content: res.data.data })
@@ -90,13 +110,8 @@ export const Chat: React.FC<{}> = () => {
         messages.push({ role: 'system', content: 'Sorry, system error.' })
       }
 
-      timer = setTimeout(() => {
-        scrollAreaDom?.scrollTo({
-          left: 0,
-          top: scrollAreaDom.scrollHeight,
-          behavior: 'smooth'
-        })
-      }, 1)
+      storeMessages(messages)
+      scrollToBottom()
     })
 
     Socket.on('exception', (res) => {
@@ -115,10 +130,14 @@ export const Chat: React.FC<{}> = () => {
     return messages.map((msg, index) => {
       return msg.role === 'user' ? (
         <div key={index} className={classNames(style.chatContentItem, style.chatContentItemAsk)}>
-          <div
-            className={style.chatContentItemContent}
-            dangerouslySetInnerHTML={{ __html: msg.content }}
-          ></div>
+          <div className={style.chatContentItemContent}>
+            <ResponseText
+              content={msg.content}
+              loading={msg.loading}
+              quoteTargetId="#chatContent"
+              hideButton
+            />
+          </div>
           <div className={style.chatContentItemAvatar}>
             <span>Me</span>
           </div>
@@ -129,12 +148,11 @@ export const Chat: React.FC<{}> = () => {
             <span>GPT</span>
           </div>
           <div className={style.chatContentItemContent}>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: msg.content?.replaceAll('\n', '<br/>')
-              }}
+            <ResponseText
+              content={msg.content}
+              loading={msg.loading}
+              quoteTargetId="#chatContent"
             />
-            {msg.loading ? <InputCursor /> : null}
           </div>
         </div>
       )
@@ -157,6 +175,17 @@ export const Chat: React.FC<{}> = () => {
             )}
           </div>
           <div className={style.chatInput}>
+            <div className={style.chatToolbar}>
+              <ConfirmDialog
+                title="确认"
+                onConfirm={onClearHistory}
+                description="确认清理当前的聊天记录吗？"
+                trigger={
+                <button title="清理聊天记录">
+                  <EraserIcon width={18} height={18}/>
+                </button>}
+              />
+            </div>
             <div className={style.chatInputWrapper}>
               <Textarea
                 id="chatContent"

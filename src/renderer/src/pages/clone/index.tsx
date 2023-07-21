@@ -141,7 +141,7 @@ export const Clone: React.FC<{}> = () => {
             tabIndex={4}
           />
           <Button tabIndex={4} onClick={onSubmit} disabled={loading}>
-            {loading ? t('holdOn.button') : t('perfect.button')}
+            {loading ? t('holdOn.button') : t('generate.button')}
           </Button>
           <Button tabIndex={4} onClick={onCopy} disabled={loading}>
             {t('copy.button')}

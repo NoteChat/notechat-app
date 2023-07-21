@@ -18,17 +18,16 @@ export default defineConfig({
           target: 'http://127.0.0.1:3000',
           changeOrigin: true,
         },
-        '/ws': {
-          target: 'http://127.0.0.1:3000',
-          changeOrigin: true,
-        }
       }
     },
+    publicDir: resolve(__dirname, 'src/renderer/assets'),
     build: {
-      rollupOptions: {
+      copyPublicDir: true,
+      rollupOptions:
+      {
         input: {
           index: resolve(__dirname, 'src/renderer/index.html'),
-        }
+        },
       }
     },
     resolve: {

@@ -9,5 +9,8 @@
     width: 2px;
     height: 1.25em;
     background: var(--color1);
+  }
+
+  .inputCursorAnimation {
     animation: blink 1s infinite;
   }

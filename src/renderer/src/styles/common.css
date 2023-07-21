@@ -49,3 +49,8 @@ a {
   left: 50%;
   transform: translate(-50%, -50%); /* 水平和垂直居中 */
 }
+
+.drag-area {
+  -webkit-app-region: drag; /* Enable draggable region on the element */
+  cursor: move; /* Set the cursor style to indicate draggability */
+}

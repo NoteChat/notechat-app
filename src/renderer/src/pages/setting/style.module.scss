@@ -1,6 +1,11 @@
 .setting {
     margin: var(--gap);
     max-width: 420px;
+
+
+    input[type='radio'] {
+        all: revert;
+    }
 }
 
 .title {

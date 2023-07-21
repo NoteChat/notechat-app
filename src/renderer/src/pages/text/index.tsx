@@ -3,16 +3,16 @@ import API, { PromptDto } from '@renderer/api'
 import style from './style.module.scss'
 import { Button, Select, Textarea } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
-import { InputCursor } from '@renderer/components/cursor'
 import { IAppProps } from '@renderer/app'
+import { ResponseText } from '@renderer/components/responseText'
 
 export const Text: React.FC<{} & IAppProps> = (props) => {
   const { t } = useTranslation()
   const { prompts } = props;
 
   const [loading, setLoading] = React.useState<boolean>(false)
-  const [result, setResult] = React.useState<string>('')
-  const [prompt, setPrompt] = useState<PromptDto | undefined>(prompts.length > 0 ? prompts[0] : undefined)
+  const [result, setResult] = React.useState<string>(t('nullResult.placeholder'))
+  const [prompt, setPrompt] = useState<PromptDto | undefined>(undefined)
 
   const onSubmit = () => {
 
@@ -49,10 +49,13 @@ export const Text: React.FC<{} & IAppProps> = (props) => {
 
   useEffect(() => {
     document.getElementById('PromptContent')?.focus();
+  });
+
+  useEffect(() => {
     if (prompts.length > 0) {
       setPrompt(prompts[0])
     }
-  }, [])
+  }, [prompts])
 
   return (
     <div className={style['textPane']}>
@@ -62,9 +65,7 @@ export const Text: React.FC<{} & IAppProps> = (props) => {
       <div className={style['textPane-result']}>
         <div className={style['textPane-result--container']}>
           <div className={style.resultContent}>
-            {
-              loading ? <InputCursor /> : <div dangerouslySetInnerHTML={{ __html: result.replaceAll('\n', '<br/>') }} />
-            }
+            <ResponseText content={loading ? '' : result} loading={loading} quoteTargetId='#PromptContent'/>
           </div>
         </div>
       </div>

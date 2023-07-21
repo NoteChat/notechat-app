@@ -29,8 +29,11 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
     }
   });
 
+  const title = isCreate ? t('create.button') : t('update.button')
+
   return (
     <div className="w-full">
+      <h1>{title + t('prompt.label')}</h1>
       <Form.Root id="promptForm" onSubmit={onHandleEvent} method="POST">
         <Form.Field className="FormField" name="name">
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -80,7 +83,7 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
           </Form.Control>
         </Form.Field>
         <Form.Submit asChild>
-          <Button style={{ marginTop: 10 }} disabled={prompt?.isBuiltIn === 1}>
+          <Button style={{ marginTop: 10 }}>
             {isCreate ? t('create.button') : t('update.button') } 
           </Button>
         </Form.Submit>
