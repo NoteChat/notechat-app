@@ -172,6 +172,7 @@
   padding-left: 25px;
   user-select: none;
   outline: none;
+  -webkit-app-region: no-drag;
 }
 .DropdownMenuSubTrigger[data-state='open'] {
   background-color: var(--violet-4);
