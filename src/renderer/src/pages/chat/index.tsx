@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react'
 import style from './style.module.scss'
 import SplitPane from 'react-split-pane'
-import { Button, Textarea } from '@renderer/components/form'
+import { Textarea } from '@renderer/components/form'
 import { EraserIcon, MagicWandIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'

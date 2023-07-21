@@ -3,7 +3,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { Cross2Icon } from '@radix-ui/react-icons'
 
 import style from './style.module.scss'
-import classNames from 'classnames'
 import { Button } from '../form'
 
 export interface ConfirmProps {

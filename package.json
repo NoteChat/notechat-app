@@ -1,6 +1,6 @@
 {
   "name": "text-ops",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Easy to handle the text operations based on AI",
   "main": "./out/main/index.js",
   "author": "161.ai",
