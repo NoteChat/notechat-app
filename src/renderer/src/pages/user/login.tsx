@@ -1,6 +1,6 @@
 import React from 'react'
 import * as Form from '@radix-ui/react-form'
-import API from '@renderer/api'
+import API, { MySocket } from '@renderer/api'
 import { Link, useNavigate } from 'react-router-dom'
 import md5 from 'js-md5'
 import './style.css'
@@ -27,11 +27,14 @@ const Login: React.FC<{}> = () => {
       .then((res: any) => {
         const { data } = res;
         if (data.code === 1000) {
-          toast.success('Login Success!');
           const { access_token, userId } = data.data;
           localStorage.setItem('token', access_token)
           localStorage.setItem('uid', userId)
-          navigate('/')
+          MySocket.initSocket(access_token);
+          toast.success('Login Success!');
+          setTimeout(() => {
+            navigate('/')
+          }, 500);
         } else {
           toast.error('Incorrect Username or Password!')
         }

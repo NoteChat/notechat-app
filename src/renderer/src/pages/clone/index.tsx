@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react'
-import API, { Socket } from '@renderer/api'
+import API, { MySocket } from '@renderer/api'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import style from './style.module.scss'
@@ -24,8 +24,9 @@ export const Clone: React.FC<{}> = () => {
     const inputPrompt = document.querySelector<HTMLInputElement>('#inputPrompt')?.value
     const uid = localStorage.getItem('uid')
   
-    if (!promptContent || !inputPrompt) {
+    if (!promptContent) {
       toast.error(t('originalContent.check.required'))
+      return
     }
 
     setLoading(true)
@@ -52,6 +53,8 @@ export const Clone: React.FC<{}> = () => {
   const onExtractContent = () => {
     const url = document.querySelector<HTMLInputElement>('#inputUrl')?.value;
     if (url) {
+      const Socket = MySocket.getSocket();
+      if (!Socket) return
       Socket.emit('extract-text', { url: url });
       Socket.on('extract-text', function(res) {
         console.log('event', res);

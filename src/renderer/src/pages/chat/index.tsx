@@ -5,12 +5,12 @@ import { Textarea } from '@renderer/components/form'
 import { EraserIcon, MagicWandIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
-import { Socket } from '@renderer/api'
 import toast, { Toaster } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { storeMessages } from '@renderer/app'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
+import { MySocket } from '@renderer/api'
 
 export type ChatMessageType = {
   role: 'user' | 'assistant' | 'system'
@@ -80,8 +80,11 @@ export const Chat: React.FC<ChatProps> = (props) => {
     const chatInputDom = document.querySelector<HTMLTextAreaElement>('#chatContent')
     const content = chatInputDom?.value
     if (content) {
-      messages.push({ role: 'user', content: content })
-      Socket.emit('chat', { userId: uid, messages: [...messages] })
+      messages.push({ role: 'user', content: content });
+      const socket = MySocket.getSocket();
+      if (socket) {
+        socket.emit('chat', { userId: uid, messages: [...messages] })
+      }
 
       // Handle UI logic
       chatInputDom.value = ''
@@ -92,39 +95,44 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const onClearHistory = () => {
-    localStorage.getItem('chatHistory')
+    localStorage.removeItem('chatHistory')
     setMessages([])
   }
 
   useEffect(() => {
     document.getElementById('chatContent')?.focus()
     scrollToBottom({ behavior: 'auto' })
-
-    Socket.on('chat', (res) => {
-      setLoading(false)
-      if (res.code === 1000 && res.data) {
-        messages.pop()
-        messages.push({ role: 'assistant', content: res.data.data })
-      } else {
-        messages.pop()
-        messages.push({ role: 'system', content: 'Sorry, system error.' })
-      }
-
-      storeMessages(messages)
-      scrollToBottom()
-    })
-
-    Socket.on('exception', (res) => {
-      setLoading(false)
-      if (res.message === 'Unauthorized access') {
-        navigate('/login')
-      }
-    })
-
     return () => {
       clearTimeout(timer)
     }
   }, [])
+
+  useEffect(() => {
+    const socket = MySocket.getSocket();
+
+    if (socket) {
+      socket.on('chat', (res) => {
+        setLoading(false)
+        if (res.code === 1000 && res.data) {
+          messages.pop()
+          messages.push({ role: 'assistant', content: res.data.data })
+        } else {
+          messages.pop()
+          messages.push({ role: 'system', content: 'Sorry, system error.' })
+        }
+  
+        storeMessages(messages)
+        scrollToBottom()
+      })
+  
+      socket.on('exception', (res) => {
+        setLoading(false)
+        if (res.message === 'Unauthorized access') {
+          navigate('/login')
+        }
+      })
+  }
+  }, []);
 
   const renderChatRecord = () => {
     return messages.map((msg, index) => {

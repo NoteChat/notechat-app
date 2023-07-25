@@ -37,7 +37,7 @@
         "password.label": "Password",
         "passwordConfirm.label": "Confirm Password",
         "perfect.button": "Perfect",
-        "prompt.label": "Extensions",
+        "prompt.label": "Plugin",
         "promptTemplate.check.required": "Prompt template cannot be empty",
         "promptTemplate.check.valid": "Prompt template must contain ${content} variable",
         "promptTemplate.label": "Prompt Template",

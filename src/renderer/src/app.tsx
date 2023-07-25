@@ -27,7 +27,6 @@ export function storeMessages(messages: ChatMessageType[]) {
     localStorage.setItem('chatHistory', JSON.stringify(messages));
 }
 
-
 export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
   const navigate = useNavigate()
   const [prompts, setPrompts] = useState<PromptDto[]>([])
@@ -62,7 +61,7 @@ export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
       <Sidebar />
       <div className={style['main']}>
         <Routes>
-          <Route index path="/" element={<Chat messages={messages} setMessages={setMessages}/>} />
+          <Route index path="/" element={<Chat messages={messages} setMessages={setMessages}/> } />
           <Route path="/chat" element={<Chat messages={messages} setMessages={setMessages}/>} />
           <Route path="/clone" index Component={Clone} />
           <Route path="/text" element={<Text prompts={prompts} loadPrompts={loadPrompts} />} />

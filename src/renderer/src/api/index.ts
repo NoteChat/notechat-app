@@ -1,5 +1,5 @@
 export * from './api'
-import { io } from 'socket.io-client'
+import { Socket, io } from 'socket.io-client'
 import { Api } from './api'
 
 export function getDefaultHeader() {
@@ -10,8 +10,8 @@ export function getDefaultHeader() {
 }
 
 const remoteUrl = import.meta.env.RENDERER_VITE_REMOTE_API as string
-const httpProtocol = window.location.protocol.replace(':', '');
-let defaultOptions: any = undefined;
+const httpProtocol = window.location.protocol.replace(':', '')
+let defaultOptions: any = undefined
 
 if (httpProtocol === 'http' || httpProtocol === 'https') {
   defaultOptions = {
@@ -19,16 +19,16 @@ if (httpProtocol === 'http' || httpProtocol === 'https') {
       format: 'json'
     },
     customFetch: (...fetchParams: Parameters<typeof fetch>) => {
-      const params = fetchParams[1] as any;
-      params.headers = getDefaultHeader();
-      return fetch(...fetchParams);
+      const params = fetchParams[1] as any
+      params.headers = getDefaultHeader()
+      return fetch(...fetchParams)
     }
   }
 } else {
   defaultOptions = {
     baseUrl: remoteUrl,
     customFetch: (...fetchParams) => {
-      fetchParams[1].headers = getDefaultHeader();
+      fetchParams[1].headers = getDefaultHeader()
       return window.api.fetch(fetchParams)
     }
   }
@@ -36,12 +36,32 @@ if (httpProtocol === 'http' || httpProtocol === 'https') {
 
 const MyApi = new Api(defaultOptions)
 
-export const Socket = io(remoteUrl, {
-  auth: (cb) => {
-    cb({ token: `${localStorage.getItem('token')}` })
-  },
-  transports: ['websocket']
-})
+export class MySocket {
+  private static socket: Socket | undefined
+  constructor() {}
 
+  public static initSocket(token: string) {
+    if (!this.socket && token) {
+      this.socket = io(remoteUrl, {
+        auth: (cb) => {
+          cb({ token: token })
+        },
+        transports: ['websocket']
+      })
+    }
+    return this.socket;
+  }
+
+  public static getSocket() {
+    if (this.socket) return this.socket;
+
+    const tk = localStorage.getItem('token');
+    if (tk) {
+      return this.initSocket(tk)
+    }
+    return null;
+  }
+
+}
 
 export default MyApi
