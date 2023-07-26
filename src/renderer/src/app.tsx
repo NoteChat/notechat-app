@@ -8,6 +8,7 @@ import Prompt from './pages/prompt'
 import style from './style.module.css'
 import { Setting } from './pages/setting'
 import API, { PromptDto } from '@renderer/api'
+import { Editor } from './pages/editor'
 
 export interface IAppProps {
   loadPrompts: () => void
@@ -61,10 +62,10 @@ export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
       <Sidebar />
       <div className={style['main']}>
         <Routes>
-          <Route index path="/" element={<Chat messages={messages} setMessages={setMessages}/> } />
-          <Route path="/chat" element={<Chat messages={messages} setMessages={setMessages}/>} />
-          <Route path="/clone" index Component={Clone} />
-          <Route path="/text" element={<Text prompts={prompts} loadPrompts={loadPrompts} />} />
+          <Route index path="/" element={<Chat prompts={prompts} messages={messages} setMessages={setMessages}/> } />
+          <Route path="/chat" element={<Chat prompts={prompts} messages={messages} setMessages={setMessages}/>} />
+          <Route path="/editor" index Component={Editor} />
+          <Route path="/favorite" element={<Text prompts={prompts} loadPrompts={loadPrompts} />} />
           <Route
             path="/prompt/*"
             element={<Prompt prompts={prompts} loadPrompts={loadPrompts} />}

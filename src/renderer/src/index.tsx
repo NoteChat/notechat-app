@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import 'virtual:uno.css'
 import './styles/common.css'
 import './styles/radix.css'
+import '@vscode/codicons/dist/codicon.css'
 
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import Login from './pages/user/login'

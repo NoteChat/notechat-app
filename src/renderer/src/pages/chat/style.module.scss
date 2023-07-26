@@ -88,26 +88,38 @@
     position: absolute;
     right: 38px;
     bottom: 38px;
-    color: var(--color1);
+    color: var(--blackA11);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    font-size: 18px;
+
+    &:hover {
+        background: var(--blackA5);
+    }
 }
 
 .chatToolbar {
     display: flex;
     flex-direction: row;
     padding: 18px 22px;
+    gap: 8px;
+
     button {
         color: var(--blackA11);
         cursor: pointer;
-        font-size: 24px;
+        font-size: 18px;
         height: 24px;
+        font-weight: 300;
         width: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
 
         &:hover {
-            color: var(--blackA12);
+            background: var(--blackA5);
         }
     }
 }

@@ -1,0 +1,21 @@
+.iconPalette {
+    overflow: auto;
+    padding: var(--gap);
+    position: relative;
+    height: 600px;
+    gap: 10px;
+    display: flex;
+    flex-flow: wrap;
+    align-items: center;
+    justify-content: start;
+
+    button {
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+
+        &:hover {
+            background: var(--blackA5);
+        }
+    }
+}

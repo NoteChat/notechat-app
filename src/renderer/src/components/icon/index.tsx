@@ -1,3 +1,5 @@
+import classNames from "classnames"
+
 export const CloneIcon = () => {
   return (
     <div>
@@ -120,4 +122,10 @@ export const GearIcon = () => {
       </svg>
     </div>
   )
+}
+
+export const VSCodeIcon = (props: { icon: string; className?: string }) => {
+  return props.icon ? (
+    <span className={classNames('codicon', `codicon-${props.icon}`, props.className)}></span>
+  ) : null
 }

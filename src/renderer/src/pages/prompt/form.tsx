@@ -1,18 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import * as Form from '@radix-ui/react-form'
 import { PromptDto } from '@renderer/api'
 import { Button, Input, Textarea } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
+import classNames from 'classnames'
+import style from './style.module.scss'
+import { DialogWindow } from '@renderer/components/dialog'
+import { IconPalette } from '@renderer/components/iconPalette'
 
-export type PromptFormProps = {
-  prompt?: PromptDto
-  isCreate?: boolean
-  onSubmit?: (data: PromptDto) => void
+export interface PromptFormProps {
+  prompt?: PromptDto;
+  setPrompt?: (prompt: PromptDto) => void;
+  isCreate?: boolean;
+  onSubmit?: (data: PromptDto) => void;
 }
 
 const PromptForm: React.FC<PromptFormProps> = (props) => {
-  const { prompt, onSubmit, isCreate = false } = props
-  const  { t } = useTranslation()
+  const { prompt, setPrompt, onSubmit, isCreate = false } = props
+  const { t } = useTranslation()
+  const iconSelectorRef = useRef<HTMLDivElement>()
 
   const onHandleEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -20,14 +26,21 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
     onSubmit?.(data as PromptDto)
   }
 
+  const onHandleIconChange = (icon: string) => {
+    setPrompt?.({...prompt, icon: icon })
+    if (iconSelectorRef.current) {
+      iconSelectorRef.current.click();
+    }
+  }
+
   useEffect(() => {
     if (isCreate) {
-      const form = document.getElementById('promptForm') as HTMLFormElement;
+      const form = document.getElementById('promptForm') as HTMLFormElement
       if (form) {
         form.reset()
       }
     }
-  });
+  })
 
   const title = isCreate ? t('create.button') : t('update.button')
 
@@ -35,6 +48,29 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
     <div className="w-full">
       <h1>{title + t('prompt.label')}</h1>
       <Form.Root id="promptForm" onSubmit={onHandleEvent} method="POST">
+        <Form.Field className="FormField" name="icon">
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <Form.Label className="FormLabel">{t('icon.label')}</Form.Label>
+            <Form.Message className="FormMessage" match="valueMissing">
+              {t('icon.check.required')}
+            </Form.Message>
+          </div>
+          <Form.Control asChild>
+            <DialogWindow
+              trigger={
+                <div ref={iconSelectorRef} className={style.pluginIcon}>
+                  <div
+                    style={{ fontSize: 24 }}
+                    className={classNames('codicon', `codicon-${prompt?.icon || 'extensions'}`)}
+                  ></div>
+                  <input type="hidden" defaultValue={prompt?.icon} required />
+                </div>
+              }
+              description={<IconPalette onClick={onHandleIconChange}/>}
+              title={<div className="text-center">{t('icon.label')}</div>}
+            />
+          </Form.Control>
+        </Form.Field>
         <Form.Field className="FormField" name="name">
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <Form.Label className="FormLabel">{t('name.label')}</Form.Label>
@@ -49,14 +85,6 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
             <Input type="text" defaultValue={prompt?.name} required />
           </Form.Control>
         </Form.Field>
-        <Form.Field className="FormField" name="keybindings">
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Form.Label className="FormLabel">{t('keybinding.label')}</Form.Label>
-          </div>
-          <Form.Control asChild>
-            <Input defaultValue={prompt?.keybindings} type="text" />
-          </Form.Control>
-        </Form.Field>
         <Form.Field className="FormField" name="prompt">
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <Form.Label className="FormLabel">{t('promptTemplate.label')}</Form.Label>
@@ -68,7 +96,12 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
             </Form.Message>
           </div>
           <Form.Control asChild>
-            <Textarea placeholder={t('promptTemplate.placeholder')} defaultValue={prompt?.prompt} rows={10} required />
+            <Textarea
+              placeholder={t('promptTemplate.placeholder')}
+              defaultValue={prompt?.prompt}
+              rows={10}
+              required
+            />
           </Form.Control>
         </Form.Field>
         <Form.Field className="FormField" name="description">
@@ -79,12 +112,12 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
             </Form.Message>
           </div>
           <Form.Control asChild>
-            <Textarea defaultValue={prompt?.description} rows={5} required/>
+            <Textarea defaultValue={prompt?.description} rows={5} required />
           </Form.Control>
         </Form.Field>
         <Form.Submit asChild>
           <Button style={{ marginTop: 10 }}>
-            {isCreate ? t('create.button') : t('update.button') } 
+            {isCreate ? t('create.button') : t('update.button')}
           </Button>
         </Form.Submit>
       </Form.Root>

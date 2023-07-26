@@ -9,9 +9,13 @@
 
 .contentButton button {
     cursor: pointer;
-    color: var(--forth-color);
+    color: #06c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:0.25rem;
 }
 
 .contentButton button:hover {
-    color: #aa94ec;
+    background-color: var(--blackA5);
 }

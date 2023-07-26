@@ -18,13 +18,16 @@
         "enterContent.placeholder": "请输入内容...",
         "extract.button": "提取",
         "extractFromURL.placeholder": "请输入要提取内容的 URL:  http://example/blog/1",
+        "editor.label": "编辑器",
         "forgetPassword.message": "忘记密码?",
         "generate.button": "生成",
         "holdOn.button": "稍等...",
         "keybinding.label": "快捷键",
+        "keywords.label": "关键字",
         "language.label": "语言",
         "login.label": "登录",
         "logout.label": "退出",
+        "icon.label": "图标",
         "message.login.expired": "登录信息已过期，请重新登录！",
         "name.check.required": "名称不能为空",
         "name.check.valid": "名称必须是字母数字组合",
@@ -37,7 +40,7 @@
         "password.label": "密码",
         "passwordConfirm.label": "确认密码",
         "perfect.button": "完善",
-        "prompt.label": "扩展",
+        "prompt.label": "插件",
         "promptTemplate.check.required": "提示模板不能为空",
         "promptTemplate.check.valid": "提示模板必须包含 ${content} 变量",
         "promptTemplate.label": "提示模板",
@@ -57,6 +60,7 @@
         "userSettings.label": "用户设置",
         "username.check.required": "用户名不能为空",
         "username.check.valid": "用户名必须是字母数字组合",
-        "username.label": "用户名"
+        "username.label": "用户名",
+        "favorite.label": "收藏"
     }
 }

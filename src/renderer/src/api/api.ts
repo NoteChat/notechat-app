@@ -36,6 +36,7 @@ export interface PromptDto {
   /** @example 1 */
   userId: number
   name: string
+  icon: string
   description: string
   /**
    * @example "### 指令 ###
@@ -279,8 +280,8 @@ export class HttpClient<SecurityDataType = unknown> {
       }
     ).then(async (response) => {
       const r = response as HttpResponse<T, E>
-      // r.data = null as unknown as T
-      // r.error = null as unknown as E
+      r.data = null as unknown as T
+      r.error = null as unknown as E
 
       const data = !responseFormat
         ? r

@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router-dom'
 import { storeMessages } from '@renderer/app'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
-import { MySocket } from '@renderer/api'
+import { MySocket, PromptDto } from '@renderer/api'
+import { VSCodeIcon } from '@renderer/components/icon'
 
 export type ChatMessageType = {
   role: 'user' | 'assistant' | 'system'
@@ -20,13 +21,14 @@ export type ChatMessageType = {
 
 export interface ChatProps {
   messages: ChatMessageType[]
+  prompts: PromptDto[]
   setMessages: (messages: ChatMessageType[]) => void
 }
 
 export const Chat: React.FC<ChatProps> = (props) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { messages, setMessages } = props
+  const { messages, setMessages, prompts } = props
 
   const [loading, setLoading] = React.useState<boolean>(false)
   const keyMap = {}
@@ -53,7 +55,11 @@ export const Chat: React.FC<ChatProps> = (props) => {
         content.value += '\n'
         keyMap['Control'] = false
       } else {
-        sendMsg()
+        if (content) {
+          sendMsg(content.value, () => {
+            content.value = ''
+          })
+        }
       }
       event.preventDefault()
     }
@@ -68,7 +74,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
     }
   }
 
-  const sendMsg = () => {
+  const sendMsg = (content, callback?: Function) => {
     if (loading) {
       toast.loading('正在努力加载中，请稍后再试！', { duration: 1000 })
       return
@@ -76,10 +82,8 @@ export const Chat: React.FC<ChatProps> = (props) => {
 
     setLoading(true)
 
-    const uid = localStorage.getItem('uid')
-    const chatInputDom = document.querySelector<HTMLTextAreaElement>('#chatContent')
-    const content = chatInputDom?.value
     if (content) {
+      const uid = localStorage.getItem('uid')
       messages.push({ role: 'user', content: content });
       const socket = MySocket.getSocket();
       if (socket) {
@@ -87,10 +91,18 @@ export const Chat: React.FC<ChatProps> = (props) => {
       }
 
       // Handle UI logic
-      chatInputDom.value = ''
+      callback?.()
       messages.push({ role: 'assistant', content: '', loading: true })
       storeMessages(messages)
       scrollToBottom()
+    }
+  }
+
+  const onClickPrompt = (prompt: PromptDto) => {
+    const content = document.querySelector<HTMLTextAreaElement>('#chatContent')
+    if (content) {
+      const finalContent = prompt.prompt.replace(/\$\{content\}/g, content.value)
+      sendMsg(finalContent)
     }
   }
 
@@ -115,7 +127,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
         setLoading(false)
         if (res.code === 1000 && res.data) {
           messages.pop()
-          messages.push({ role: 'assistant', content: res.data.data })
+          messages.push({ role: 'assistant', content: res.data.data || res.data.message })
         } else {
           messages.pop()
           messages.push({ role: 'system', content: 'Sorry, system error.' })
@@ -167,6 +179,14 @@ export const Chat: React.FC<ChatProps> = (props) => {
     })
   }
 
+  const renderExtensions = () => {
+    return prompts.map(prompt => {
+      return <button key={prompt.id} onClick={() => onClickPrompt(prompt)} title={prompt.description}>
+        {prompt.icon ? <VSCodeIcon icon={prompt.icon} /> : prompt.name.charAt(0)} 
+      </button>
+    })
+  }
+
   return (
     <>
       <div className={style.chatPane}>
@@ -193,6 +213,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
                   <EraserIcon width={18} height={18}/>
                 </button>}
               />
+              {renderExtensions()}
             </div>
             <div className={style.chatInputWrapper}>
               <Textarea
@@ -202,9 +223,9 @@ export const Chat: React.FC<ChatProps> = (props) => {
                 placeholder={t('enterContent.placeholder')}
                 tabIndex={1}
               ></Textarea>
-              <div className={style.submitBtn} onClick={sendMsg}>
+              <button className={style.submitBtn} onClick={sendMsg}>
                 <PaperPlaneIcon tabIndex={2} />
-              </div>
+              </button>
             </div>
           </div>
         </SplitPane>

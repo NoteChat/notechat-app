@@ -10,6 +10,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
 import { IAppProps } from '@renderer/app'
+import { VSCodeIcon } from '@renderer/components/icon'
 
 
 const Prompt: React.FC<{} & IAppProps> = (props) => {
@@ -82,7 +83,9 @@ const Prompt: React.FC<{} & IAppProps> = (props) => {
                           style.promptItem
                         )}
                       >
-                        <span className="ml-4" title={item.description}>
+                       
+                        {item.icon ?  <VSCodeIcon icon={item.icon} /> : <span className={style.iconName}>{item.name.charAt(0)}</span>}
+                        <span className="ml-2" title={item.description}>
                           {item.name}
                         </span>
                         {item.isBuiltIn ? (
@@ -151,9 +154,9 @@ const Prompt: React.FC<{} & IAppProps> = (props) => {
           <Route
             path="edit"
             index={true}
-            element={<PromptForm prompt={prompt} key={prompt?.id} onSubmit={updatePrompt} />}
+            element={<PromptForm prompt={prompt} setPrompt={setPrompt} key={prompt?.id} onSubmit={updatePrompt} />}
           />
-          <Route path="create" index element={<PromptForm onSubmit={createPrompt} isCreate />} />
+          <Route path="create" index element={<PromptForm setPrompt={setPrompt} onSubmit={createPrompt} isCreate />} />
         </Routes>
       </div>
     </div>

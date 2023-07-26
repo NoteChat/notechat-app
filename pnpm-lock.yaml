@@ -19,6 +19,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.61.0
   '@typescript-eslint/parser': ^5.61.0
   '@vitejs/plugin-react': ^4.0.2
+  '@vscode/codicons': ^0.0.33
   axios: ^1.4.0
   classnames: ^2.3.2
   electron: ^24.6.2
@@ -64,6 +65,7 @@ dependencies:
   '@radix-ui/react-radio-group': 1.1.3_hrrtw4it2dqo6rzcqzvl36ff7i
   '@radix-ui/react-scroll-area': 1.0.4_hrrtw4it2dqo6rzcqzvl36ff7i
   '@radix-ui/react-tooltip': 1.0.6_hrrtw4it2dqo6rzcqzvl36ff7i
+  '@vscode/codicons': 0.0.33
   axios: 1.4.0
   classnames: 2.3.2
   electron-updater: 5.3.0
@@ -2344,6 +2346,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@vscode/codicons/0.0.33:
+    resolution: {integrity: sha512-VdgpnD75swH9hpXjd34VBgQ2w2quK63WljodlUcOoJDPKiV+rPjHrcUc2sjLCNKxhl6oKqmsZgwOWcDAY2GKKQ==}
+    dev: false
 
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
