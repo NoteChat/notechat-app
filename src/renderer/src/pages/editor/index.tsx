@@ -3,17 +3,18 @@ import API, { MySocket } from '@renderer/api'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import style from './style.module.scss'
-import { Button, Input } from '@renderer/components/form'
+import { Button, Input, Textarea } from '@renderer/components/form'
 import SplitPane from 'react-split-pane'
 import '@renderer/styles/SplitPane.scss'
 import { useTranslation } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
+import { ResponseText } from '@renderer/components/responseText'
 
 export const Editor: React.FC<{}> = () => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const editorRef = useRef<Quill>()
-  const resultRef = useRef<Quill>()
+  const [result, setResult] = React.useState<string>('')
 
   const { t } = useTranslation()
 
@@ -39,7 +40,7 @@ export const Editor: React.FC<{}> = () => {
         })
       .then((res: any) => {
         if (res.data) {
-          resultRef.current.setText(res.data.data)
+          setResult(res.data.data)
         }
         setLoading(false)
       })
@@ -65,9 +66,9 @@ export const Editor: React.FC<{}> = () => {
   }
 
   const onCopy = () => {
-    const result = resultRef.current.getText();
-    if (result) {
-      navigator.clipboard.writeText(result);
+    const editorText = editorRef.current.getText();
+    if (editorText) {
+      navigator.clipboard.writeText(editorText);
     }
   }
 
@@ -93,18 +94,6 @@ export const Editor: React.FC<{}> = () => {
     editorRef.current = editor
   }, [])
 
-  useEffect(() => {
-    if (resultRef.current) return
-
-    const container = document.getElementById('PromptResult')
-    if (!container) return
-    const editor = new Quill(container, {
-      placeholder: t('transformedContent.placeholder'),
-      theme: 'snow'
-    })
-    resultRef.current = editor
-  })
-
   return (
     <>
     
@@ -117,9 +106,6 @@ export const Editor: React.FC<{}> = () => {
             </div>
           </div>
           <div className={style['textPane-result']}>
-            {/* <div className={style.resultContent}>
-              <div id="PromptResult" className='w-full h-full' tabIndex={2}></div>
-            </div> */}
             <div className={style.paneBottom}>
               <div className={style.bottomRow}>
                 <Input
@@ -145,6 +131,11 @@ export const Editor: React.FC<{}> = () => {
                 <Button tabIndex={4} onClick={onCopy} disabled={loading}>
                   {t('copy.button')}
                 </Button>
+              </div>
+            </div>
+             <div className={style.resultContent}>
+              <div className={style.resultContentItem}>
+                <ResponseText content={result || t('noData')} quoteTargetId='inputPrompt' />
               </div>
             </div>
           </div>

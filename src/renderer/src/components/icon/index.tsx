@@ -124,8 +124,12 @@ export const GearIcon = () => {
   )
 }
 
-export const VSCodeIcon = (props: { icon: string; className?: string }) => {
-  return props.icon ? (
-    <span className={classNames('codicon', `codicon-${props.icon}`, props.className)}></span>
+export interface VSCodeIconProps extends React.ComponentProps<'span'> {
+  icon: string;
+}
+
+export const VSCodeIcon = ({icon, className,...restProps}: VSCodeIconProps) => {
+  return icon ? (
+    <span className={classNames('codicon', `codicon-${icon}`, className)} {...restProps}></span>
   ) : null
 }

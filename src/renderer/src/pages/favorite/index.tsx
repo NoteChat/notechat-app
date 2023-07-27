@@ -35,6 +35,7 @@ export const Favorite: React.FC<{}> = (props) => {
     if (res.data) {
       setData(res.data);
     }
+    setLoading(false)
   }
 
   const onDeleteItem = async (id: number) => {
@@ -65,6 +66,9 @@ export const Favorite: React.FC<{}> = (props) => {
           return (
             <div className={style.favoriteContentItem} key={item.id}>
               <h1>{item.title}</h1>
+              <div className={style.favoriteContentItemTags}>
+                {item.tags?.map((tag) => (<span key={tag} title={tag}>{tag}</span>)) }
+              </div>
               <ResponseText className={style.favoriteContentItemDetail} content={item.content || ''} toolbar={['copy'] as any} quoteTargetId=''/>
               <ConfirmDialog 
                 title={t('remove.title')}

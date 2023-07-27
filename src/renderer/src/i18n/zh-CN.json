@@ -65,6 +65,9 @@
         "confirm.label": "确认",
         "search.label": "搜索",
         "remove.title": "删除该条数据",
-        "remove.alert": "确定要删除该条数据吗？"
+        "remove.alert": "确定要删除该条数据吗？",
+        "noData": "暂无数据",
+        "helpDocs.label": "帮助文档",
+        "feedback.label": "反馈"
     }
 }

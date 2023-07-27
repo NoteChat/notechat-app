@@ -30,6 +30,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
   } = props
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
+  const tagsRef = useRef<HTMLInputElement>(null)
 
   const onQuote = (content) => {
     const chatInputDom = document.querySelector<HTMLTextAreaElement>(quoteTargetId)
@@ -42,6 +43,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
   const onFavorite = async (event, content) => {
     const uid = localStorage.getItem('uid')
     const title = inputRef.current?.value.trim();
+    const tags = tagsRef.current?.value.trim();
     if (!title) {
       toast.error('Title is required')
       event.preventDefault();
@@ -50,6 +52,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
     const res = await API.v1.createFavorite({
       userId: Number(uid),
       title: title,
+      tags: tags?.split(','),
       content: content
     })
     if (res.ok) {
@@ -102,6 +105,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
               description={
                 <div>
                   <Input className='w-full' ref={inputRef} required placeholder='请输入收藏标题' />
+                  <Input className='w-full mt-4' ref={tagsRef} required placeholder='请输入内容标签，多个标签使用 , 分隔' />
                   <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
                     <Dialog.Close asChild>
                       <Button style={{width: 120 }} onClick={(event) => onFavorite(event, content)}>{t('confirm.label')}</Button>

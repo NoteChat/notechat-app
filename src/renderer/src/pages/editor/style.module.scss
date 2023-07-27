@@ -47,6 +47,24 @@
     letter-spacing: -0.35px;
 }
 
+.resultContentItem {
+    margin: 10px 20px;
+    padding: var(--gap);
+    background-color: var(--blackA2);
+    border-radius: 10px;
+    color: var(--blackA12);
+    display: flex;
+    position: relative;
+
+    &:hover {
+        background: var(--blackA5);
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+}
+
 .paneBottom {
     display: flex;
     flex-direction: column;

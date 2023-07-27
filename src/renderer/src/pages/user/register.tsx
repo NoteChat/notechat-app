@@ -136,22 +136,23 @@ const Register: React.FC<{}> = () => {
               </Form.Message>
             </div>
             <Form.Control asChild>
-              <Input type="number" min={0} required />
+              <div className='flex items-center gap-2'>
+                <Input type="number" min={0} required />
+                <Button
+                  className="flex-1"
+                  style={{width: 'auto'}}
+                  onClick={sendValidateCode}
+                  disabled={countDown > 0}
+                >
+                  {countDown > 0 ? `${t('resend.button')}(${countDown} s)` : t('send.button')}
+                </Button>
+              </div>
             </Form.Control>
           </Form.Field>
           <Form.Submit asChild>
             <div>
               <Button
-                style={{ width: 130 }}
-                className="Button"
-                onClick={sendValidateCode}
-                disabled={countDown > 0}
-              >
-                {countDown > 0 ? `${t('resend.button')}(${countDown} s)` : t('send.button')}
-              </Button>
-              <Button
-                className="Button ml-2"
-                style={{ marginTop: 10, width: 160 }}
+                style={{ marginTop: 16, width: '100%' }}
                 disabled={loading}
               >
                 {loading ? t('register.label') + '...' : t('register.label')}

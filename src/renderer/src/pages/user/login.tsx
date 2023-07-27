@@ -8,6 +8,7 @@ import { Button, Input } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
 import logo from '@renderer/assets/128@2x.png'
+import { getCookie, setCookie } from '@renderer/utils'
 
 const Login: React.FC<{}> = () => {
   const { t } = useTranslation()
@@ -17,12 +18,12 @@ const Login: React.FC<{}> = () => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true);
-    const data = Object.fromEntries(new FormData(e.currentTarget))
-    data.password = md5(data.password)
+    const formData = Object.fromEntries(new FormData(e.currentTarget))
+    formData.password = md5(formData.password)
     API.v1
       .login({
-        username: data.username as string,
-        password: data.password as string
+        username: formData.username as string,
+        password: formData.password as string
       })
       .then((res: any) => {
         const { data } = res;
@@ -30,6 +31,8 @@ const Login: React.FC<{}> = () => {
           const { access_token, userId } = data.data;
           localStorage.setItem('token', access_token)
           localStorage.setItem('uid', userId)
+          setCookie('username', formData.username, 7)
+          
           MySocket.initSocket(access_token);
           toast.success('Login Success!');
           setTimeout(() => {
@@ -65,7 +68,7 @@ const Login: React.FC<{}> = () => {
             </Form.Message>
           </div>
           <Form.Control asChild>
-            <Input type="email" required />
+            <Input type="email" defaultValue={getCookie('username') || ''} required autoComplete='username'/>
           </Form.Control>
         </Form.Field>
         <Form.Field className="FormField" name="password">
@@ -79,16 +82,16 @@ const Login: React.FC<{}> = () => {
             </Form.Message>
           </div>
           <Form.Control asChild>
-            <Input type="password" minLength={6} required />
+            <Input type="password" minLength={6} required autoComplete='current-password'/>
           </Form.Control>
         </Form.Field>
         <Form.Submit asChild>
-          <Button className="Button" type="submit" style={{ marginTop: 10 }} disabled={loading}>
+          <Button type="submit" style={{ marginTop: 10, width: '100%' }} disabled={loading}>
             { loading ? t('login.label') + '...' : t('login.label') }
           </Button>
         </Form.Submit>
-        <div className="mt-5 flex gap-2">
-          <Link to={'/register'} className="color-blue">{t('register.label')}</Link> or
+        <div className="mt-5 flex gap-2 items-center">
+          <Link to={'/register'} className="color-blue">{t('register.label')}</Link> |
           <Link to={'/register'} className="color-blue">{t('forgetPassword.message')}</Link>
         </div>
       </Form.Root>
