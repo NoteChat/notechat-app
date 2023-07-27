@@ -16,18 +16,21 @@ export interface PromptFormProps {
 }
 
 const PromptForm: React.FC<PromptFormProps> = (props) => {
-  const { prompt, setPrompt, onSubmit, isCreate = false } = props
+  const { prompt, onSubmit, isCreate = false } = props
   const { t } = useTranslation()
-  const iconSelectorRef = useRef<HTMLDivElement>()
+  const iconSelectorRef = useRef<HTMLDivElement>(null)
+  const [icon, setIcon] = React.useState<string>('extensions')
 
   const onHandleEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const data = Object.fromEntries(new FormData(e.currentTarget)) as unknown
-    onSubmit?.(data as PromptDto)
+    const data = Object.fromEntries(new FormData(e.currentTarget)) as unknown as PromptDto
+    data.icon = icon;
+    onSubmit?.(data)
   }
 
   const onHandleIconChange = (icon: string) => {
-    setPrompt?.({...prompt, icon: icon })
+    setIcon(icon)
+  
     if (iconSelectorRef.current) {
       iconSelectorRef.current.click();
     }
@@ -39,8 +42,10 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
       if (form) {
         form.reset()
       }
+    } else {
+      setIcon(prompt?.icon || 'extensions')
     }
-  })
+  }, [isCreate])
 
   const title = isCreate ? t('create.button') : t('update.button')
 
@@ -61,9 +66,10 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
                 <div ref={iconSelectorRef} className={style.pluginIcon}>
                   <div
                     style={{ fontSize: 24 }}
-                    className={classNames('codicon', `codicon-${prompt?.icon || 'extensions'}`)}
-                  ></div>
-                  <input type="hidden" defaultValue={prompt?.icon} required />
+                    className={classNames('codicon', `codicon-${icon}`)}
+                  >
+                  <input type="hidden" id="inputIcon" defaultValue={icon} required />
+                  </div>
                 </div>
               }
               description={<IconPalette onClick={onHandleIconChange}/>}

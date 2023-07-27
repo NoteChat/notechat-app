@@ -23,7 +23,7 @@
         "generate.button": "生成",
         "holdOn.button": "稍等...",
         "keybinding.label": "快捷键",
-        "keywords.label": "关键字",
+        "keywords.label": "关键词",
         "language.label": "语言",
         "login.label": "登录",
         "logout.label": "退出",
@@ -61,6 +61,10 @@
         "username.check.required": "用户名不能为空",
         "username.check.valid": "用户名必须是字母数字组合",
         "username.label": "用户名",
-        "favorite.label": "收藏"
+        "favorite.label": "收藏",
+        "confirm.label": "确认",
+        "search.label": "搜索",
+        "remove.title": "删除该条数据",
+        "remove.alert": "确定要删除该条数据吗？"
     }
 }

@@ -125,12 +125,12 @@ export const Chat: React.FC<ChatProps> = (props) => {
     if (socket) {
       socket.on('chat', (res) => {
         setLoading(false)
-        if (res.code === 1000 && res.data) {
+        if (res.code === 1000) {
           messages.pop()
           messages.push({ role: 'assistant', content: res.data.data || res.data.message })
         } else {
           messages.pop()
-          messages.push({ role: 'system', content: 'Sorry, system error.' })
+          messages.push({ role: 'system', content: res.data.message || 'Sorry, system error.' })
         }
   
         storeMessages(messages)

@@ -19,7 +19,7 @@
 }
 
 .docsContainer {
-    height: calc(100% - 112px);
+    height: 100%;
     position: relative;
     border-bottom: 1px solid var(--bd-color);
 }
@@ -32,8 +32,7 @@
 
 .textPane-result {
     height: 100%;
-    display: flex;
-    border-top: 5px solid var(--second-color);
+    border-left: 5px solid var(--second-color);
 }
 
 .resultContent {
@@ -51,6 +50,7 @@
 .paneBottom {
     display: flex;
     flex-direction: column;
+    padding-top: 20px;
 }
 
 .bottomRow {

@@ -5,7 +5,7 @@ import { ChatIcon, ComponentIcon, TextIcon, GearIcon } from '../icon'
 import { useTranslation } from 'react-i18next'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import style from './style.module.scss'
-import { ExitIcon, Pencil2Icon, PersonIcon, StarFilledIcon } from '@radix-ui/react-icons'
+import { ExitIcon, Pencil2Icon, PersonIcon, StarFilledIcon, StarIcon } from '@radix-ui/react-icons'
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   icon?: React.ReactElement
@@ -65,7 +65,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
           </MenuItem>
         </Link>
         <Link to="/favorite">
-          <MenuItem className={activeClass('/favorite')} icon={<StarFilledIcon width={24} height={24}/>}>
+          <MenuItem className={activeClass('/favorite')} icon={<StarIcon width={24} height={24}/>}>
             {t('favorite.label')}
           </MenuItem>
         </Link>

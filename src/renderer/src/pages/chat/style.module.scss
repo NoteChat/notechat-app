@@ -50,7 +50,7 @@
 
 .chatContentItemContent {
     border-radius: 5px;
-    padding: 12px;
+    padding: 12px 20px;
     line-height: 20px;
     background: #E9EDC9;
 }
@@ -120,6 +120,10 @@
 
         &:hover {
             background: var(--blackA5);
+        }
+
+        &>span {
+            font-size: 18px !important;
         }
     }
 }

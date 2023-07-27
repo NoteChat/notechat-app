@@ -59,6 +59,19 @@ export interface PromptRecordDto {
   content: string
 }
 
+export interface FavoriteDto {
+  id?: number
+  userId?: number
+  title?: string
+  tags?: string[]
+  content?: string
+  isDelete?: number
+  /** @format date-time */
+  createdAt?: string
+  /** @format date-time */
+  updatedAt?: string
+}
+
 export type GetHelloData = any
 
 export type LoginData = any
@@ -86,6 +99,14 @@ export type GetPromptByUserIdData = any
 export type DeletePrompt2Data = any
 
 export type AutocompleteData = any
+
+export type CreateFavoriteData = any
+
+export type GetUserFavoriteByTitleData = any
+
+export type UpdateFavoriteData = any
+
+export type DeleteFavoriteData = any
 
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
@@ -567,6 +588,79 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     autocomplete: (data: PromptRecordDto, params: RequestParams = {}) =>
       this.request<AutocompleteData, any>({
         path: `/v1/ai/complete`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreateFavorite
+     * @request POST:/v1/favorite/create
+     * @secure
+     */
+    createFavorite: (data: FavoriteDto, params: RequestParams = {}) =>
+      this.request<CreateFavoriteData, any>({
+        path: `/v1/favorite/create`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name GetUserFavoriteByTitle
+     * @request GET:/v1/favorite/query
+     * @secure
+     */
+    getUserFavoriteByTitle: (
+      query: {
+        userId: number
+        title: string
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<GetUserFavoriteByTitleData, any>({
+        path: `/v1/favorite/query`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateFavorite
+     * @request POST:/v1/favorite/update
+     * @secure
+     */
+    updateFavorite: (data: FavoriteDto, params: RequestParams = {}) =>
+      this.request<UpdateFavoriteData, any>({
+        path: `/v1/favorite/update`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteFavorite
+     * @request POST:/v1/favorite/delete
+     * @secure
+     */
+    deleteFavorite: (data: any, params: RequestParams = {}) =>
+      this.request<DeleteFavoriteData, any>({
+        path: `/v1/favorite/delete`,
         method: 'POST',
         body: data,
         secure: true,

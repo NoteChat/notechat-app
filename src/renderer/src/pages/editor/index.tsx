@@ -39,7 +39,6 @@ export const Editor: React.FC<{}> = () => {
         })
       .then((res: any) => {
         if (res.data) {
-          // setResult(res.data.data)
           resultRef.current.setText(res.data.data)
         }
         setLoading(false)
@@ -111,45 +110,45 @@ export const Editor: React.FC<{}> = () => {
     
     <div className={style['textPane']}>
       <div className={style.docsContainer}>
-        <SplitPane split="horizontal" defaultSize={'50%'}>
+        <SplitPane split="vertical" defaultSize={'70%'}>
           <div className={style['textPane-input']}>
             <div className={style['textPane-editor']}>
               <div id="PromptContent" tabIndex={1} className='w-full h-full pb-10'></div>
             </div>
           </div>
           <div className={style['textPane-result']}>
-            <div className={style.resultContent}>
+            {/* <div className={style.resultContent}>
               <div id="PromptResult" className='w-full h-full' tabIndex={2}></div>
+            </div> */}
+            <div className={style.paneBottom}>
+              <div className={style.bottomRow}>
+                <Input
+                  className={style.inputUrl}
+                  placeholder={t('extractFromURL.placeholder')}
+                  id="inputUrl"
+                  tabIndex={4}
+                />
+                <Button tabIndex={4} onClick={onExtractContent} disabled={loading}>
+                  {loading ? t('extract.button') + '...' : t('extract.button')}
+                </Button>
+              </div>
+              <div className={style.bottomRow}>
+                <Input
+                  className={style.inputUrl}
+                  id="inputPrompt"
+                  placeholder={t('promptText.placeholder')}
+                  tabIndex={4}
+                />
+                <Button tabIndex={4} onClick={onSubmit} disabled={loading}>
+                  {loading ? t('holdOn.button') : t('generate.button')}
+                </Button>
+                <Button tabIndex={4} onClick={onCopy} disabled={loading}>
+                  {t('copy.button')}
+                </Button>
+              </div>
             </div>
           </div>
         </SplitPane>
-      </div>
-      <div className={style.paneBottom}>
-        <div className={style.bottomRow}>
-          <Input
-            className={style.inputUrl}
-            placeholder={t('extractFromURL.placeholder')}
-            id="inputUrl"
-            tabIndex={4}
-          />
-          <Button tabIndex={4} onClick={onExtractContent} disabled={loading}>
-            {loading ? t('extract.button') + '...' : t('extract.button')}
-          </Button>
-        </div>
-        <div className={style.bottomRow}>
-          <Input
-            className={style.inputUrl}
-            id="inputPrompt"
-            placeholder={t('promptText.placeholder')}
-            tabIndex={4}
-          />
-          <Button tabIndex={4} onClick={onSubmit} disabled={loading}>
-            {loading ? t('holdOn.button') : t('generate.button')}
-          </Button>
-          <Button tabIndex={4} onClick={onCopy} disabled={loading}>
-            {t('copy.button')}
-          </Button>
-        </div>
       </div>
     </div>
     <Toaster />

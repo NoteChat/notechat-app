@@ -3,12 +3,12 @@ import { Sidebar } from './components/sidebar'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import { ChatMessageType, Chat } from './pages/chat'
 import { Text } from './pages/text'
-import { Clone } from './pages/clone'
 import Prompt from './pages/prompt'
 import style from './style.module.css'
 import { Setting } from './pages/setting'
 import API, { PromptDto } from '@renderer/api'
 import { Editor } from './pages/editor'
+import { Favorite } from './pages/favorite'
 
 export interface IAppProps {
   loadPrompts: () => void
@@ -65,7 +65,7 @@ export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
           <Route index path="/" element={<Chat prompts={prompts} messages={messages} setMessages={setMessages}/> } />
           <Route path="/chat" element={<Chat prompts={prompts} messages={messages} setMessages={setMessages}/>} />
           <Route path="/editor" index Component={Editor} />
-          <Route path="/favorite" element={<Text prompts={prompts} loadPrompts={loadPrompts} />} />
+          <Route path="/favorite" element={<Favorite />} />
           <Route
             path="/prompt/*"
             element={<Prompt prompts={prompts} loadPrompts={loadPrompts} />}
