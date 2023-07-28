@@ -6,7 +6,7 @@ import cursorStyle from '@renderer/components/cursor/style.module.scss'
 import 'highlight.js/styles/nnfx-dark.css'
 import toast from 'react-hot-toast'
 import style from './style.module.scss'
-import { ClipboardCopyIcon, QuoteIcon, StarFilledIcon } from '@radix-ui/react-icons'
+import { ClipboardCopyIcon, QuoteIcon, StarFilledIcon, StopIcon } from '@radix-ui/react-icons'
 import { ErrorBoundary } from '@renderer/errorBundary'
 import API from '@renderer/api'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -18,6 +18,7 @@ export interface ResponseTextProps extends React.ComponentProps<'div'> {
   loading?: boolean
   hideButton?: boolean
   toolbar?: ['quote', 'copy', 'favorite']
+  onStop?: () => void
 }
 
 export const ResponseText: React.FC<ResponseTextProps> = (props) => {
@@ -26,7 +27,8 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
     loading,
     quoteTargetId,
     hideButton,
-    toolbar = ['quote', 'copy', 'favorite']
+    toolbar = ['quote', 'copy', 'favorite'],
+    onStop
   } = props
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -75,8 +77,12 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
         <ReactMarkdown children={content} rehypePlugins={[rehypeHighlight]} />
       </ErrorBoundary>
       {loading ? (
-        <div>
+        <div className='flex items-center'>
           <span className={cursorStyle.inputCursorAnimation}>{t('typing.label')}</span>{' '}
+          <button className={style.stopButton} onClick={onStop}>
+            <StopIcon />
+            {t('stop.label')}
+          </button>
         </div>
       ) : null}
       {content && !hideButton ? (

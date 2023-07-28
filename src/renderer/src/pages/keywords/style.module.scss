@@ -1,0 +1,41 @@
+.keywordsWrapper {
+    padding: 0 var(--gap);
+}
+
+.main {
+
+}
+
+.footer {
+    margin-top: var(--gap);
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+    justify-content: end;
+}
+
+.operation {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    justify-content: center;
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+}
+
+.mainToolbar {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    column-gap: var(--gap);
+    margin-bottom: var(--gap);
+
+    button {
+        column-gap: 5px;
+    }
+}

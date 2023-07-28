@@ -1,0 +1,36 @@
+.promptInputWrapper {
+    flex: 1;
+    position: relative;
+
+    &>textarea {
+        width:100%;
+        outline: none;
+        height: 100%;
+        padding: 22px;
+        box-shadow: none;
+
+        &:active,
+        &:focus,
+        &:hover,
+        &::selection {
+            box-shadow: none;
+        }
+    }
+}
+
+.submitBtn {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    color: var(--blackA11);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    font-size: 18px;
+
+    &:hover {
+        background: var(--blackA5);
+    }
+}

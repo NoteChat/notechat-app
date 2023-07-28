@@ -9,7 +9,7 @@
 
 .contentButton button {
     cursor: pointer;
-    color: #06c;
+    color: orange;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,4 +18,12 @@
 
 .contentButton button:hover {
     background-color: var(--blackA5);
+}
+
+.stopButton {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--blackA11);
+    cursor: pointer;
 }

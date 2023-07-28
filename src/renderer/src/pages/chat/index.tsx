@@ -82,20 +82,18 @@ export const Chat: React.FC<ChatProps> = (props) => {
 
     setLoading(true)
 
-    if (content) {
-      const uid = localStorage.getItem('uid')
-      messages.push({ role: 'user', content: content });
-      const socket = MySocket.getSocket();
-      if (socket) {
-        socket.emit('chat', { userId: uid, messages: [...messages] })
-      }
-
-      // Handle UI logic
-      callback?.()
-      messages.push({ role: 'assistant', content: '', loading: true })
-      storeMessages(messages)
-      scrollToBottom()
+    const uid = localStorage.getItem('uid')
+    messages.push({ role: 'user', content: content });
+    const socket = MySocket.getSocket();
+    if (socket) {
+      socket.emit('chat', { userId: uid, messages: [...messages] })
     }
+
+    // Handle UI logic
+    callback?.()
+    messages.push({ role: 'assistant', content: '', loading: true })
+    storeMessages(messages)
+    scrollToBottom()
   }
 
   const onClickPrompt = (prompt: PromptDto) => {
@@ -109,6 +107,12 @@ export const Chat: React.FC<ChatProps> = (props) => {
   const onClearHistory = () => {
     localStorage.removeItem('chatHistory')
     setMessages([])
+  }
+
+  const onStop = () => {
+    setLoading(false)
+    messages.pop()
+    messages.push({ role: 'system', content: 'Stopped the request' })
   }
 
   useEffect(() => {
@@ -172,6 +176,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
               content={msg.content}
               loading={msg.loading}
               quoteTargetId="#chatContent"
+              onStop={onStop}
             />
           </div>
         </div>
