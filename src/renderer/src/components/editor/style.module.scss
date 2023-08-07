@@ -1,0 +1,96 @@
+.textPane {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    gap: var(--gap);
+    flex-direction: column;
+
+    :global {
+        .ql-snow {
+            border: none;
+        }
+    }
+}
+
+.textPane-input {
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.docsContainer {
+    height: 100%;
+    position: relative;
+    border-bottom: 1px solid var(--bd-color);
+}
+
+.textPane-editor {
+    height: 100%;
+    width: inherit;
+    overflow: hidden;
+}
+
+.textPane-result {
+    height: 100%;
+    border-left: 5px solid var(--second-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.resultContent {
+    overflow: auto;
+    color: var(--color2);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.35px;
+}
+
+.resultContentItem {
+    margin: 10px 20px;
+    padding: var(--gap);
+    background-color: var(--blackA2);
+    border-radius: 10px;
+    color: var(--blackA12);
+    display: flex;
+    position: relative;
+
+    &:hover {
+        background: var(--blackA5);
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+}
+
+.paneBottom {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.extensionsBar {
+    padding: var(--gap);
+    padding-bottom: 0;
+    column-gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+
+    button {
+        cursor: pointer;
+    }
+}
+
+.importButton {
+   
+    span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        column-gap: 5px;
+        color: var(--primary-color);
+    }
+}
