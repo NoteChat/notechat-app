@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { Link, useLocation } from 'react-router-dom'
-import { ChatIcon, ComponentIcon, GearIcon, VSCodeIcon } from '../icon'
+import { ChatIcon, ComponentIcon, GearIcon, TextIcon, VSCodeIcon } from '../icon'
 import { useTranslation } from 'react-i18next'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import style from './style.module.scss'
@@ -64,11 +64,11 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
             {t('editor.label')}
           </MenuItem>
         </Link>
-        {/* <Link to="/keywords">
+        <Link to="/keywords">
           <MenuItem className={activeClass('/keywords')} icon={<TextIcon />}>
             {t('keywords.label')}
           </MenuItem>
-        </Link> */}
+        </Link>
         <Link to="/favorite">
           <MenuItem className={activeClass('/favorite')} icon={<StarFilledIcon width={24} height={24}/>}>
             {t('favorite.label')}
@@ -107,7 +107,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
           <Link to="#" className='cursor-pointer' title={t('helpDocs.label')}  >
             <QuestionMarkCircledIcon width={24} height={24} />
           </Link>
-          <Link to={`mailto:support@161.ai?subject=${t('feedback.label')}`} target='_blank' className='cursor-pointer' title={t('feedback.label')}  >
+          <Link to={`mailto:wewoor@gmail.com?subject=${t('feedback.label')}`} target='_blank' className='cursor-pointer' title={t('feedback.label')}  >
               <VSCodeIcon icon="bug" style={{fontSize: '24px'}}/>
           </Link>
       </div>

@@ -1,56 +1,35 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext } from 'react'
 import 'quill/dist/quill.snow.css'
 import style from './style.module.scss'
 import '@renderer/styles/SplitPane.scss'
 import { Editor } from '@renderer/components/editor'
 import { PromptsProvider } from '@renderer/context/prompts'
-import API, { CreateEditorDto, MySocket, UpdateEditorDto } from '@renderer/api'
-import { useNavigate } from 'react-router-dom'
-import EditorJS from '@editorjs/editorjs'
+import API, { CreateEditorDto } from '@renderer/api'
+import { EditorContext } from '@renderer/context/editor'
+import { debounce } from 'lodash'
 
 export const GlobalEditor: React.FC<{}> = (props) => {
-  const navigate = useNavigate();
-  const editorRef = useRef<EditorJS>()
-  const [editor, setEditor] = useState<UpdateEditorDto | undefined>()
-  const uid = localStorage.getItem('uid')
+  const { editor, setEditor } = useContext(EditorContext);
+  const uid = localStorage.getItem('uid');
 
-  const onLoadEditor = async () => {
-
-    if (uid) {
-      const res = await API.v1.findAllEditor({userId: uid})
-       if (res.data && res.data.length > 0) {
-        setEditor({...res.data[0]});
-       }
-    } else {
-      navigate('/login') 
-    }
-  }
-
-  const onEditorChange = async (value: UpdateEditorDto) => {
+  const onEditorChange = debounce(async (value: string) => {
+    let res;
     if (editor === undefined) {
-      const res = await API.v1.createEditor({...value, userId: Number(uid)} as CreateEditorDto)
-      if (res.data) {
-        setEditor({...res.data})
-      }
+      res = await API.v1.createEditor({ content: value, userId: Number(uid)} as CreateEditorDto)
     } else {
-      const nextEditor = {...editor, ...value, userId: Number(uid) }
-      MySocket.getSocket()?.emit('updateEditor', { editor: nextEditor})
+      const nextEditor = {...editor, content: value, userId: Number(uid) }
+      res = await API.v1.updateEditor(editor.id + '', nextEditor);
     }
-    console.log('updateEditor', {value})
-  }
-
-  useEffect(() => {
-    onLoadEditor()
-    MySocket.getSocket()?.on('updateEditor', (res) => {
-      console.log('updateEditor', res)
-    })
-  }, [])
+    if (res.ok) {
+      setEditor({...res.data})
+    }
+  }, 1200)
 
   return (
     <>
       <div className={style.globalEditor}>
         <PromptsProvider>
-          <Editor value={editor} onChange={onEditorChange}/>
+          <Editor key={editor?.id} value={editor} onChange={onEditorChange}/>
         </PromptsProvider>
       </div>
     </>

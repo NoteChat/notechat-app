@@ -7,6 +7,7 @@ import { Cross2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
 import { toast } from 'react-hot-toast'
+import { Link, useNavigate } from 'react-router-dom'
 
 export const Favorite: React.FC<{}> = (props) => {
   const { t } = useTranslation()

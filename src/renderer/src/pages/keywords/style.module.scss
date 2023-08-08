@@ -12,6 +12,7 @@
     align-items: center;
     gap: var(--gap);
     justify-content: end;
+    flex-direction: column;
 }
 
 .operation {
@@ -31,7 +32,7 @@
 .mainToolbar {
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: start;
     column-gap: var(--gap);
     margin-bottom: var(--gap);
 

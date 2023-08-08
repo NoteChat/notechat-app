@@ -1,5 +1,5 @@
 import * as ScrollArea from '@radix-ui/react-scroll-area'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import API, { PromptDto, getDefaultHeader } from '@renderer/api'
 import { Link, Route, Routes } from 'react-router-dom'
 import { PlusIcon, CrossCircledIcon } from '@radix-ui/react-icons'
@@ -8,14 +8,14 @@ import style from './style.module.scss'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
-import { IAppProps } from '@renderer/app'
 import { VSCodeIcon } from '@renderer/components/icon'
 import { Tooltip } from '@renderer/components/tooltip'
 import { ConfirmDialog } from '@renderer/components/dialog'
+import { PromptsContext } from '@renderer/context/prompts'
 
-const Prompt: React.FC<{} & IAppProps> = (props) => {
+const Prompt: React.FC<{}> = (props) => {
   const { t } = useTranslation()
-  const { prompts, loadPrompts } = props
+  const { prompts, loadPrompts } = useContext(PromptsContext)
 
   const [prompt, setPrompt] = useState<PromptDto | undefined>(
     prompts.length > 0 ? prompts[0] : undefined

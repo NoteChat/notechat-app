@@ -1,6 +1,6 @@
 {
   "name": "text-ops",
-  "version": "1.0.0-beta",
+  "version": "0.9.0",
   "description": "Easy to handle the text operations based on AI",
   "main": "./out/main/index.js",
   "author": "161.ai",
@@ -22,9 +22,15 @@
     "build:api": "curl http://localhost:3000/api-json -o ./src/renderer/src/api/swagger.json && npx swagger-typescript-api --extract-response-body -p ./src/renderer/src/api/swagger.json -o ./src/renderer/src/api -n api.ts"
   },
   "dependencies": {
+    "@editorjs/code": "^2.8.0",
+    "@editorjs/editorjs": "^2.27.2",
+    "@editorjs/header": "^2.7.0",
+    "@editorjs/list": "^1.8.0",
+    "@editorjs/raw": "^2.4.0",
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^1.0.2",
     "@radix-ui/colors": "^0.1.9",
+    "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
     "@radix-ui/react-form": "^0.0.3",
@@ -33,6 +39,7 @@
     "@radix-ui/react-scroll-area": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.6",
     "@vscode/codicons": "^0.0.33",
+    "any-text": "^1.2.0",
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
     "electron-updater": "^5.3.0",
@@ -50,6 +57,8 @@
     "react-router-dom": "^6.14.1",
     "react-split-pane": "^0.1.92",
     "rehype-highlight": "^6.0.0",
+    "rehype-sanitize": "^5.0.1",
+    "rehype-stringify": "^9.0.3",
     "sass": "^1.63.6",
     "socket.io-client": "^4.7.1",
     "swr": "^2.2.0"

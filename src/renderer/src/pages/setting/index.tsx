@@ -89,7 +89,7 @@ export const Setting: React.FC = () => {
             <Form.Control asChild>
               <Select defaultValue={user.aiEngine || 'gpt3.5-turbo'}>
                 <option value="gpt3.5-turbo">ChatGPT-3.5-turbo</option>
-                <option value="gpt4.0">ChatGPT-4.0</option>
+                <option value="gpt4.0" disabled>ChatGPT-4.0</option>
               </Select>
             </Form.Control>
           </Form.Field>

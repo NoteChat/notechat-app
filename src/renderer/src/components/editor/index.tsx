@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import API, { PromptDto, UpdateEditorDto } from '@renderer/api'
-import 'quill/dist/quill.snow.css'
 import style from './style.module.scss'
 import SplitPane from 'react-split-pane'
 import '@renderer/styles/SplitPane.scss'
@@ -11,21 +10,44 @@ import { PromptInput } from '@renderer/components/promptInput'
 import { VSCodeIcon } from '@renderer/components/icon'
 import { Import } from '@renderer/components/import'
 import { PromptsContext } from '@renderer/context/prompts'
-import EditorJS from '@editorjs/editorjs'
-import Header from '@editorjs/header'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/nnfx-dark.css'
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
+import { Counter } from './counter'
 
 export interface EditorProps {
   value: UpdateEditorDto | undefined
-  onChange?: (value: UpdateEditorDto) => void
+  onChange?: (value: string) => void
 }
 
-const MyEditor: React.ForwardRefRenderFunction<EditorJS, EditorProps> = (props, ref) => {
+hljs.configure({   // optionally configure hljs
+  languages: ['javascript', 'ruby', 'python', 'bash', 'java', 'c/c++']
+});
+
+Quill.register('modules/counter', Counter);
+var toolbarOptions = [
+  [{ 'header': [1, 2, 3, 4, false] }],
+
+  ['bold', 'italic', 'underline', 'strike', { 'color': [] }, { 'background': [] }],        // toggled buttons
+
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }, { 'align': [] }],
+
+  ['blockquote', 'code-block', 'image', 'link'],
+
+  [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+
+  ['clean'],                                         // remove formatting button
+
+  ['copy']
+];
+
+const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref) => {
   const { prompts } = useContext(PromptsContext)
   const [loading, setLoading] = React.useState<boolean>(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const editorRef = useRef<EditorJS>()
+  const editorRef = useRef<Quill>()
   const [result, setResult] = React.useState<string>('')
-  // const { onChange, value } = props
+  const { onChange, value } = props
 
   const { t } = useTranslation()
 
@@ -62,56 +84,62 @@ const MyEditor: React.ForwardRefRenderFunction<EditorJS, EditorProps> = (props, 
       })
       .finally(() => {
         setLoading(false)
-       });
+      });
   }
 
-  const onCopy = async () => {
-    const editorText = await editorRef.current?.save();
+  const onCopy = () => {
+    const editorText = editorRef.current?.getText();
     if (editorText) {
-      navigator.clipboard.writeText(editorText.blocks[0].data.text)
+      navigator.clipboard.writeText(editorText)
+      toast.success(t('copySuccess'))
     }
   }
 
   const onExtracted = (value: string) => {
-    if (editorRef.current) {
-      editorRef.current.render({ blocks: [{ type: 'paragraph', data: { text: value } }]  })
+    if (value) {
+      editorRef.current.clipboard.dangerouslyPasteHTML(value);
     }
   }
 
-  const onClickPrompt = async (data: PromptDto) => {
-    const editorText = await editorRef.current?.save();
+  const onClickPrompt = (data: PromptDto) => {
+    const editorText = editorRef.current.getText();
     autocomplete(editorText, data.prompt)
   }
 
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [])
+  const onEditorChange = (delta, oldDelta, source) => {
+    onChange?.(JSON.stringify(editorRef.current.getContents()))
+  };
 
   useEffect(() => {
 
-    
-    if (editorRef.current) {
-      return;
-    }
-    const editor = new EditorJS({
-      holder: 'PromptContent',
-      // autofocus: true,
-      placeholder: t('originalContent.placeholder'),
-      tools: {
-        header: {
-          class: Header,
-          config: {
-            placeholder: 'Enter a header',
-            levels: [1, 2, 3],
-            defaultLevel: 2
-          }
-        },
+    if (editorRef.current) return
 
-      }
+    const container = document.getElementById('PromptContent')
+    if (!container) return
+
+    const editor = new Quill(container, {
+      modules: {
+        syntax: {
+          highlight: (text: string) => hljs.highlightAuto(text).value,
+        },
+        toolbar: toolbarOptions,
+        counter: {
+          container: '#counter',
+          unit: 'word'
+        }
+      },
+
+      placeholder: t('originalContent.placeholder'),
+      theme: 'snow'
     })
-    editorRef.current = editor
+    if (value?.content) {
+      editor.setContents(JSON.parse(value.content))
+    }
+    editor.focus();
+    editor.on('text-change', onEditorChange)
+    document.querySelector('.ql-copy')?.addEventListener('click', onCopy)
+    console.log('copy', document.querySelector('.ql-copy'))
+    editorRef.current = editor;
   }, [])
 
   const renderExtensions = () => {
@@ -131,14 +159,15 @@ const MyEditor: React.ForwardRefRenderFunction<EditorJS, EditorProps> = (props, 
           <SplitPane split="vertical" defaultSize={'70%'}>
             <div className={style['textPane-input']}>
               <div className={style['textPane-editor']}>
-                <div id="PromptContent" tabIndex={1} className="w-full h-full pb-10"></div>
+                <div id="PromptContent" tabIndex={1} className="w-full h-full pb-10 overflow-auto" style={{fontSize: '14px'}}></div>
+                <div id="counter" className="absolute right-10px bottom-10px" style={{color:'var(--blackA11)'}}></div>
               </div>
             </div>
             <div className={style['textPane-result']}>
               <div className={style.extensionsBar}>
                 {renderExtensions()}
                 <div className={style.importButton}>
-                  <Import 
+                  <Import
                     onExtracted={onExtracted}
                   >
                     {t('import.label')}

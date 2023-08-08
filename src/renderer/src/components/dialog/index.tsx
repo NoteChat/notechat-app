@@ -21,7 +21,7 @@ export interface ConfirmProps extends DialogWindowProps {
 const DialogWindowWrapper: React.ForwardRefRenderFunction<HTMLDivElement, DialogWindowProps> = (props, ref) => {
   const { description, title , trigger } = props;
   return (
-    <Dialog.Root >
+    <Dialog.Root>
       <Dialog.Trigger asChild>
         { trigger }
       </Dialog.Trigger>

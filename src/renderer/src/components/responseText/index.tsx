@@ -6,12 +6,13 @@ import cursorStyle from '@renderer/components/cursor/style.module.scss'
 import 'highlight.js/styles/nnfx-dark.css'
 import toast from 'react-hot-toast'
 import style from './style.module.scss'
-import { ClipboardCopyIcon, QuoteIcon, StarFilledIcon, StopIcon } from '@radix-ui/react-icons'
+import { QuoteIcon, StarFilledIcon, StopIcon } from '@radix-ui/react-icons'
 import { ErrorBoundary } from '@renderer/errorBundary'
 import API from '@renderer/api'
 import * as Dialog from '@radix-ui/react-dialog'
 import { DialogWindow } from '../dialog'
 import { Button, Input } from '../form'
+import { VSCodeIcon } from '../icon'
 export interface ResponseTextProps extends React.ComponentProps<'div'> {
   content: string
   quoteTargetId: string
@@ -81,7 +82,6 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
           <span className={cursorStyle.inputCursorAnimation}>{t('typing.label')}</span>{' '}
           <button className={style.stopButton} onClick={onStop}>
             <StopIcon />
-            {t('stop.label')}
           </button>
         </div>
       ) : null}
@@ -95,7 +95,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
           )}
           {renderToolbarItem(
             <button onClick={() => onCopy(content)} title={t('copy.button')}>
-              <ClipboardCopyIcon />
+              <VSCodeIcon icon="copy" />
             </button>,
             'copy'
           )}

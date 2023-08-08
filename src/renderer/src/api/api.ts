@@ -59,6 +59,20 @@ export interface PromptRecordDto {
   content: string
 }
 
+export interface CreateEditorDto {
+  id?: number
+  userId: number
+  title?: string
+  content: string
+}
+
+export interface UpdateEditorDto {
+  id?: number
+  userId?: number
+  title?: string
+  content?: string
+}
+
 export interface FavoriteDto {
   id?: number
   userId?: number
@@ -66,6 +80,34 @@ export interface FavoriteDto {
   tags?: string[]
   content?: string
   isDelete?: number
+  /** @format date-time */
+  createdAt?: string
+  /** @format date-time */
+  updatedAt?: string
+}
+
+export interface CreateGeneratorDto {
+  id?: number
+  result?: string
+  userId: number
+  keywords?: string
+  reference?: string
+  style?: string
+  prompt?: string
+  /** @format date-time */
+  createdAt?: string
+  /** @format date-time */
+  updatedAt?: string
+}
+
+export interface UpdateGeneratorDto {
+  id?: number
+  result?: string
+  userId?: number
+  keywords?: string
+  reference?: string
+  style?: string
+  prompt?: string
   /** @format date-time */
   createdAt?: string
   /** @format date-time */
@@ -84,6 +126,8 @@ export type GetProfileData = any
 
 export type UpdateProfileData = any
 
+export type FeedbackData = any
+
 export type GetPromptData = any
 
 export type CreatePromptData = any
@@ -100,13 +144,43 @@ export type DeletePrompt2Data = any
 
 export type AutocompleteData = any
 
+export type ExtractTextFromImgData = any
+
+export type UploadFileData = any
+
+export type CreateEditorData = any
+
+export type FindAllEditorData = any
+
+export type FindOneEditorData = any
+
+export type UpdateEditorData = any
+
+export type RemoveEditorData = any
+
 export type CreateFavoriteData = any
 
 export type GetUserFavoriteByTitleData = any
 
+export type GetFavoriteData = any
+
 export type UpdateFavoriteData = any
 
 export type DeleteFavoriteData = any
+
+export type CreateGeneratorData = any
+
+export type FindAllGeneratorsData = any
+
+export type FindOneGeneratorData = any
+
+export type UpdateGeneratorData = any
+
+export type RemoveGeneratorData = any
+
+export type RemoveAllGeneratorData = any
+
+export type BatchCreateGeneratorData = any
 
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
@@ -442,6 +516,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name Feedback
+     * @request POST:/v1/user/feedback
+     * @secure
+     */
+    feedback: (email: string, feedback: string, params: RequestParams = {}) =>
+      this.request<FeedbackData, any>({
+        path: `/v1/user/feedback`,
+        method: 'POST',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
      * @name GetPrompt
      * @request GET:/v1/prompt/query
      * @secure
@@ -598,6 +687,111 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name ExtractTextFromImg
+     * @request POST:/v1/text/extract-from-img
+     * @secure
+     */
+    extractTextFromImg: (params: RequestParams = {}) =>
+      this.request<ExtractTextFromImgData, any>({
+        path: `/v1/text/extract-from-img`,
+        method: 'POST',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UploadFile
+     * @request POST:/v1/text/extract-from-file
+     * @secure
+     */
+    uploadFile: (params: RequestParams = {}) =>
+      this.request<UploadFileData, any>({
+        path: `/v1/text/extract-from-file`,
+        method: 'POST',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreateEditor
+     * @request POST:/v1/editor
+     */
+    createEditor: (data: CreateEditorDto, params: RequestParams = {}) =>
+      this.request<CreateEditorData, any>({
+        path: `/v1/editor`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAllEditor
+     * @request GET:/v1/editor
+     */
+    findAllEditor: (
+      query: {
+        userId: string
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<FindAllEditorData, any>({
+        path: `/v1/editor`,
+        method: 'GET',
+        query: query,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOneEditor
+     * @request GET:/v1/editor/{id}
+     */
+    findOneEditor: (id: string, params: RequestParams = {}) =>
+      this.request<FindOneEditorData, any>({
+        path: `/v1/editor/${id}`,
+        method: 'GET',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateEditor
+     * @request PATCH:/v1/editor/{id}
+     */
+    updateEditor: (id: string, data: UpdateEditorDto, params: RequestParams = {}) =>
+      this.request<UpdateEditorData, any>({
+        path: `/v1/editor/${id}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name RemoveEditor
+     * @request DELETE:/v1/editor/{id}
+     */
+    removeEditor: (id: string, params: RequestParams = {}) =>
+      this.request<RemoveEditorData, any>({
+        path: `/v1/editor/${id}`,
+        method: 'DELETE',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
      * @name CreateFavorite
      * @request POST:/v1/favorite/create
      * @secure
@@ -637,6 +831,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name GetFavorite
+     * @request GET:/v1/favorite/{id}
+     * @secure
+     */
+    getFavorite: (id: string, params: RequestParams = {}) =>
+      this.request<GetFavoriteData, any>({
+        path: `/v1/favorite/${id}`,
+        method: 'GET',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
      * @name UpdateFavorite
      * @request POST:/v1/favorite/update
      * @secure
@@ -661,6 +870,127 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     deleteFavorite: (data: any, params: RequestParams = {}) =>
       this.request<DeleteFavoriteData, any>({
         path: `/v1/favorite/delete`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreateGenerator
+     * @request POST:/v1/generator
+     * @secure
+     */
+    createGenerator: (data: CreateGeneratorDto, params: RequestParams = {}) =>
+      this.request<CreateGeneratorData, any>({
+        path: `/v1/generator`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAllGenerators
+     * @request GET:/v1/generator
+     * @secure
+     */
+    findAllGenerators: (
+      query: {
+        userId: string
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<FindAllGeneratorsData, any>({
+        path: `/v1/generator`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOneGenerator
+     * @request GET:/v1/generator/{id}
+     * @secure
+     */
+    findOneGenerator: (id: string, params: RequestParams = {}) =>
+      this.request<FindOneGeneratorData, any>({
+        path: `/v1/generator/${id}`,
+        method: 'GET',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateGenerator
+     * @request PATCH:/v1/generator/{id}
+     * @secure
+     */
+    updateGenerator: (id: string, data: UpdateGeneratorDto, params: RequestParams = {}) =>
+      this.request<UpdateGeneratorData, any>({
+        path: `/v1/generator/${id}`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name RemoveGenerator
+     * @request POST:/v1/generator/delete
+     * @secure
+     */
+    removeGenerator: (data: any, params: RequestParams = {}) =>
+      this.request<RemoveGeneratorData, any>({
+        path: `/v1/generator/delete`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name RemoveAllGenerator
+     * @request POST:/v1/generator/delete-all
+     * @secure
+     */
+    removeAllGenerator: (data: any, params: RequestParams = {}) =>
+      this.request<RemoveAllGeneratorData, any>({
+        path: `/v1/generator/delete-all`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name BatchCreateGenerator
+     * @request POST:/v1/generator/batch-create
+     * @secure
+     */
+    batchCreateGenerator: (data: any, params: RequestParams = {}) =>
+      this.request<BatchCreateGeneratorData, any>({
+        path: `/v1/generator/batch-create`,
         method: 'POST',
         body: data,
         secure: true,

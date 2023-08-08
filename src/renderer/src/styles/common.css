@@ -54,3 +54,21 @@ a {
   -webkit-app-region: drag; /* Enable draggable region on the element */
   cursor: move; /* Set the cursor style to indicate draggability */
 }
+
+pre code.hljs {
+    border-radius: 5px;
+    position: relative;
+}
+
+pre code.hljs::after {
+  content: "\ebcc";
+  display: block;
+  clear: both;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font: normal normal normal 16px/1 codicon;
+  font-size: 18px;
+  cursor: pointer;
+  color: orange;
+}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import style from './style.module.scss'
 import SplitPane from 'react-split-pane'
 import { Textarea } from '@renderer/components/form'
@@ -7,28 +7,29 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { storeMessages } from '@renderer/app'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
 import { MySocket, PromptDto } from '@renderer/api'
 import { VSCodeIcon } from '@renderer/components/icon'
+import { Import } from '@renderer/components/import'
+import { ChatContext } from '@renderer/context/chat'
+import { PromptsContext } from '@renderer/context/prompts'
 
 export type ChatMessageType = {
   role: 'user' | 'assistant' | 'system'
   content: string
+  stopped?: boolean
   loading?: boolean
 }
 
 export interface ChatProps {
-  messages: ChatMessageType[]
-  prompts: PromptDto[]
-  setMessages: (messages: ChatMessageType[]) => void
 }
 
 export const Chat: React.FC<ChatProps> = (props) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { messages, setMessages, prompts } = props
+  const { prompts } = useContext(PromptsContext)
+  const { messages, setMessages } = useContext(ChatContext);
 
   const [loading, setLoading] = React.useState<boolean>(false)
   const keyMap = {}
@@ -83,16 +84,17 @@ export const Chat: React.FC<ChatProps> = (props) => {
     setLoading(true)
 
     const uid = localStorage.getItem('uid')
-    messages.push({ role: 'user', content: content });
-    const socket = MySocket.getSocket();
+    const nextMessages = [...messages]
+    nextMessages.push({ role: 'user', content: content })
+    const socket = MySocket.getSocket()
     if (socket) {
-      socket.emit('chat', { userId: uid, messages: [...messages] })
+      socket.emit('chat', { userId: uid, messages: [...nextMessages] })
     }
 
     // Handle UI logic
     callback?.()
-    messages.push({ role: 'assistant', content: '', loading: true })
-    storeMessages(messages)
+    nextMessages.push({ role: 'assistant', content: '', loading: true })
+    setMessages(nextMessages)
     scrollToBottom()
   }
 
@@ -111,8 +113,10 @@ export const Chat: React.FC<ChatProps> = (props) => {
 
   const onStop = () => {
     setLoading(false)
-    messages.pop()
-    messages.push({ role: 'system', content: 'Stopped the request' })
+    const nextMessages = [...messages];
+    nextMessages.pop();
+    nextMessages.push({ role: 'system', content: 'Stopped the request', stopped: true })
+    setMessages(nextMessages);
   }
 
   useEffect(() => {
@@ -124,31 +128,42 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }, [])
 
   useEffect(() => {
-    const socket = MySocket.getSocket();
+    const socket = MySocket.getSocket()
 
     if (socket) {
-      socket.on('chat', (res) => {
+      socket.once('chat', (res) => {
         setLoading(false)
+        const nextMessages = [...messages]
+
+        const last = nextMessages[nextMessages.length - 1];
+        if (last?.stopped) return;
+
         if (res.code === 1000) {
-          messages.pop()
-          messages.push({ role: 'assistant', content: res.data.data || res.data.message })
+          const chatRes = res.data;
+          if (chatRes.code === 'chat-list-too-long') {
+            toast.error('聊天记录太长了，请清理一下聊天记录吧！')
+            onStop();
+          } else {
+            nextMessages.pop();
+            nextMessages.push({ role: 'assistant', content: res.data.data || res.data.message })
+          }
         } else {
-          messages.pop()
-          messages.push({ role: 'system', content: res.data.message || 'Sorry, system error.' })
+          nextMessages.pop();
+          nextMessages.push({ role: 'system', content: res.data.message || 'Sorry, system error.' })
         }
-  
-        storeMessages(messages)
+
+        setMessages(nextMessages)
         scrollToBottom()
       })
-  
+
       socket.on('exception', (res) => {
         setLoading(false)
         if (res.message === 'Unauthorized access') {
           navigate('/login')
         }
       })
-  }
-  }, []);
+    }
+  }, [])
 
   const renderChatRecord = () => {
     return messages.map((msg, index) => {
@@ -159,7 +174,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
               content={msg.content}
               loading={msg.loading}
               quoteTargetId="#chatContent"
-              hideButton
+              toolbar={['quote'] as any}
             />
           </div>
           <div className={style.chatContentItemAvatar}>
@@ -185,10 +200,12 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const renderExtensions = () => {
-    return prompts.map(prompt => {
-      return <button key={prompt.id} onClick={() => onClickPrompt(prompt)} title={prompt.description}>
-        {prompt.icon ? <VSCodeIcon icon={prompt.icon} /> : prompt.name.charAt(0)} 
-      </button>
+    return prompts.map((prompt) => {
+      return (
+        <button key={prompt.id} onClick={() => onClickPrompt(prompt)} title={prompt.description}>
+          {prompt.icon ? <VSCodeIcon icon={prompt.icon} /> : prompt.name.charAt(0)}
+        </button>
+      )
     })
   }
 
@@ -214,11 +231,21 @@ export const Chat: React.FC<ChatProps> = (props) => {
                 onConfirm={onClearHistory}
                 description="确认清理当前的聊天记录吗？"
                 trigger={
-                <button title="清理聊天记录">
-                  <EraserIcon width={18} height={18}/>
-                </button>}
+                  <button title="清理聊天记录">
+                    <EraserIcon width={18} height={18} />
+                  </button>
+                }
               />
               {renderExtensions()}
+              <Import
+                onExtracted={(content) => {
+                  const inputDom = document.querySelector<HTMLTextAreaElement>('#chatContent')
+                  if (inputDom) {
+                    inputDom.value = content
+                  }
+                }}
+                className={style.chatImportBtn}
+              />
             </div>
             <div className={style.chatInputWrapper}>
               <Textarea
@@ -227,6 +254,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
                 onKeyDown={onEnterKeyDown}
                 placeholder={t('enterContent.placeholder')}
                 tabIndex={1}
+                maxLength={3000}
               ></Textarea>
               <button className={style.submitBtn} onClick={sendMsg}>
                 <PaperPlaneIcon tabIndex={2} />

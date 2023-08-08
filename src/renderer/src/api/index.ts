@@ -19,9 +19,9 @@ if (httpProtocol === 'http' || httpProtocol === 'https') {
       format: 'json'
     },
     customFetch: (...fetchParams: Parameters<typeof fetch>) => {
-      const params = fetchParams[1] as any
-      params.headers = getDefaultHeader()
-      return fetch(...fetchParams)
+        const params = fetchParams[1] as any
+        params.headers = getDefaultHeader()
+        return fetch(...fetchParams)
     }
   }
 } else {

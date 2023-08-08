@@ -9,6 +9,31 @@
         .ql-snow {
             border: none;
         }
+
+        .ql-formats button {
+            font: normal normal normal 16px/1 codicon;
+            display: inline-block;
+            text-decoration: none;
+            text-rendering: auto;
+            text-align: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .ql-copy, .ql-star {
+            color:orange;
+        }
+
+        .ql-copy::after {
+            content: "\ebcc";
+        }
+
+        .ql-star::after {
+            content: "\eb59";
+        }
     }
 }
 
@@ -27,6 +52,7 @@
 .textPane-editor {
     height: 100%;
     width: inherit;
+    font-size: 14px;
     overflow: hidden;
 }
 
