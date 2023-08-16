@@ -157,6 +157,7 @@
 .DropdownMenuRadioItem[data-highlighted],
 .DropdownMenuSubTrigger[data-highlighted] {
   background-color: var(--primary-color);
+  color: #fff;
 }
 
 .DropdownMenuLabel {
@@ -241,7 +242,6 @@
   }
 }
 
-
 .ScrollAreaRoot {
   width: inherit;
   height: inherit;
@@ -298,7 +298,6 @@
 .ScrollAreaCorner {
   background: var(--blackA7);
 }
-
 
 .RadioGroupRoot {
   display: flex;

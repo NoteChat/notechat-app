@@ -14,6 +14,7 @@ import { ChatProvider } from './context/chat'
 import { PromptsProvider } from './context/prompts'
 import { FavoriteEdit } from './pages/favorite/edit'
 import { EditorProvider } from './context/editor'
+import { UserProvider } from './context/user'
 
 export interface IAppProps {
   loadPrompts?: () => void
@@ -21,37 +22,45 @@ export interface IAppProps {
 }
 
 export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
-  
-  const ChatPage = (<ChatProvider>
-    <PromptsProvider>
-      <Chat/>
-    </PromptsProvider>
-  </ChatProvider>);
+  const ChatPage = (
+    <ChatProvider>
+      <PromptsProvider>
+        <Chat />
+      </PromptsProvider>
+    </ChatProvider>
+  )
 
   return (
     <div className="w-full h-full">
       <Sidebar />
       <div className={style['main']}>
-        <Routes>
-          <Route index path="/" element={ChatPage} />
-          <Route path="/chat" element={ChatPage} />
-          <Route path="/editor" index element={
-            <EditorProvider><GlobalEditor /></EditorProvider>
-          } />
-          <Route path="/keywords" Component={Keywords} />
-          <Route path="/favorite" element={<Favorite />} >
-          </Route>
-          <Route path="/favorite/edit/:id" element={<FavoriteEdit />} />
-          <Route
-            path="/prompt/*"
-            element={
-              <PromptsProvider>
-                <Prompt/>
-              </PromptsProvider>
-            }
-          />
-          <Route path="/setting" Component={Setting} />
-        </Routes>
+        <UserProvider>
+          <Routes>
+            <Route index path="/" element={ChatPage} />
+            <Route path="/chat" element={ChatPage} />
+            <Route
+              path="/editor"
+              index
+              element={
+                <EditorProvider>
+                  <GlobalEditor />
+                </EditorProvider>
+              }
+            />
+            <Route path="/keywords" Component={Keywords} />
+            <Route path="/favorite" element={<Favorite />}></Route>
+            <Route path="/favorite/edit/:id" element={<FavoriteEdit />} />
+            <Route
+              path="/prompt/*"
+              element={
+                <PromptsProvider>
+                  <Prompt />
+                </PromptsProvider>
+              }
+            />
+            <Route path="/setting" Component={Setting} />
+          </Routes>
+        </UserProvider>
       </div>
     </div>
   )

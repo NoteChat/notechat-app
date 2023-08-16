@@ -9,10 +9,10 @@ import { DialogWindow } from '@renderer/components/dialog'
 import { IconPalette } from '@renderer/components/iconPalette'
 
 export interface PromptFormProps {
-  prompt?: PromptDto;
-  setPrompt?: (prompt: PromptDto) => void;
-  isCreate?: boolean;
-  onSubmit?: (data: PromptDto) => void;
+  prompt?: PromptDto
+  setPrompt?: (prompt: PromptDto) => void
+  isCreate?: boolean
+  onSubmit?: (data: PromptDto) => void
 }
 
 const PromptForm: React.FC<PromptFormProps> = (props) => {
@@ -24,15 +24,15 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
   const onHandleEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const data = Object.fromEntries(new FormData(e.currentTarget)) as unknown as PromptDto
-    data.icon = icon;
+    data.icon = icon
     onSubmit?.(data)
   }
 
   const onHandleIconChange = (icon: string) => {
     setIcon(icon)
-  
+
     if (iconSelectorRef.current) {
-      iconSelectorRef.current.click();
+      iconSelectorRef.current.click()
     }
   }
 
@@ -68,11 +68,11 @@ const PromptForm: React.FC<PromptFormProps> = (props) => {
                     style={{ fontSize: 24 }}
                     className={classNames('codicon', `codicon-${icon}`)}
                   >
-                  <input type="hidden" id="inputIcon" defaultValue={icon} required />
+                    <input type="hidden" id="inputIcon" defaultValue={icon} required />
                   </div>
                 </div>
               }
-              description={<IconPalette onClick={onHandleIconChange}/>}
+              description={<IconPalette onClick={onHandleIconChange} />}
               title={<div className="text-center">{t('icon.label')}</div>}
             />
           </Form.Control>

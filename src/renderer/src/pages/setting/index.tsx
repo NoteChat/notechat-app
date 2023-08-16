@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import classNames from 'classnames'
 import * as Form from '@radix-ui/react-form'
 import { Button, Input, Select } from '@renderer/components/form'
@@ -6,10 +6,10 @@ import style from './style.module.scss'
 import Api, { UserDto } from '@renderer/api'
 import { useTranslation } from 'react-i18next'
 import { changeLanguage } from 'i18next'
-import toast, { Toaster } from 'react-hot-toast'
+import { UserContext } from '@renderer/context/user'
 
 export const Setting: React.FC = () => {
-  const [user, setUser] = useState<any>({})
+  const { user, setUser } = useContext(UserContext)
   const { t } = useTranslation()
 
   const onHandleEvent = (e: React.FormEvent<HTMLFormElement>) => {
@@ -19,35 +19,28 @@ export const Setting: React.FC = () => {
     const uid = localStorage.getItem('uid')
     if (uid) {
       userData.id = Number(uid)
+      updateProfile(userData)
+    }
+  }
+
+  const updateProfile = (userData: UserDto) => {
       Api.v1.updateProfile(userData).then((res) => {
         if (res.ok) {
-          toast.success('Update Success')
+          setUser({ ... res.data })
         } else {
-          toast.error('Update Failed')
+          console.log('udpate profile failed', res)
         }
       })
-    }
   }
 
   const onChangeLang = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lang = e.target.value
     if (lang) {
       localStorage.setItem('lang', lang)
+      updateProfile({ ...user, language: lang } as UserDto)
       changeLanguage(lang)
     }
   }
-
-  useEffect(() => {
-    const uid = localStorage.getItem('uid')
-    if (!uid) {
-      return
-    }
-    Api.v1.getProfile({ id: uid }).then((res: any) => {
-      if (res.data) {
-        setUser(res.data)
-      }
-    })
-  }, [])
 
   return (
     <>
@@ -87,9 +80,11 @@ export const Setting: React.FC = () => {
               <Form.Label className="FormLabel">{t('aiEngine.label')}</Form.Label>
             </div>
             <Form.Control asChild>
-              <Select defaultValue={user.aiEngine || 'gpt3.5-turbo'}>
+              <Select defaultValue={user?.aiEngine || 'gpt3.5-turbo'}>
                 <option value="gpt3.5-turbo">ChatGPT-3.5-turbo</option>
-                <option value="gpt4.0" disabled>ChatGPT-4.0</option>
+                <option value="gpt4.0" disabled>
+                  ChatGPT-4.0
+                </option>
               </Select>
             </Form.Control>
           </Form.Field>
@@ -100,9 +95,9 @@ export const Setting: React.FC = () => {
               <Form.Label className="FormLabel">{t('language.label')}</Form.Label>
             </div>
             <Form.Control asChild>
-              <Select onChange={onChangeLang} defaultValue={user.language || 'zh-cn'}>
-                <option value="zh-cn">简体中文</option>
-                <option value="en">English</option>
+              <Select onChange={onChangeLang} key={user?.language} defaultValue={user?.language}>
+                <option value="zh-CN" key="zh-CN">简体中文</option>
+                <option value="en" key="en">English</option>
               </Select>
             </Form.Control>
           </Form.Field>
@@ -114,7 +109,7 @@ export const Setting: React.FC = () => {
             </div>
             <Form.Control asChild>
               <div className="h-35px flex items-center">
-                <input type="radio" id="option1" name="package" value="free"  checked  readOnly/>
+                <input type="radio" id="option1" name="package" value="free" checked readOnly />
                 <label htmlFor="option1">免费</label>
               </div>
             </Form.Control>
@@ -126,7 +121,6 @@ export const Setting: React.FC = () => {
           </Form.Submit>
         </Form.Root>
       </div>
-      <Toaster />
     </>
   )
 }

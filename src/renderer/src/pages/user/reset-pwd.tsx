@@ -1,55 +1,59 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import * as Form from '@radix-ui/react-form'
-import API, { MySocket } from '@renderer/api'
+import API from '@renderer/api'
 import { Link, useNavigate } from 'react-router-dom'
 import md5 from 'js-md5'
-import './style.css'
 import { Button, Input } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
 import logo from '@renderer/assets/128@2x.png'
-import { getCookie, setCookie } from '@renderer/utils'
+import { getUrlParam } from '@renderer/utils'
 
-const Login: React.FC<{}> = () => {
+const ResetPwd: React.FC<{}> = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = useState(false)
+  const code = getUrlParam('code');
+  const email = getUrlParam('email');
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!email) return;
+
     setLoading(true)
-    const formData = Object.fromEntries(new FormData(e.currentTarget))
-    formData.password = md5(formData.password)
+
+    const user = Object.fromEntries(new FormData(e.currentTarget))
+    if (user.password !== user.confirmPassword) {
+      toast.error('The passwords entered twice are inconsistent!')
+      setLoading(false)
+      return
+    }
+    user.password = md5(user.password)
     API.v1
-      .login({
-        username: formData.username as string,
-        password: formData.password as string
+      .resetPassword({
+        email: user.email,
+        password: user.password,
+        validCode: code
       })
       .then((res: any) => {
         const { data } = res
-        if (data.code === 1000) {
-          const { access_token, userId } = data.data
-          localStorage.setItem('token', access_token)
-          localStorage.setItem('uid', userId)
-          setCookie('username', formData.username, 7)
-
-          MySocket.initSocket(access_token)
-          toast.success(t('login.success'))
-          setTimeout(() => {
-            navigate('/')
-          }, 500)
+        
+        if (data.code !== 1000) {
+          if (data.code === 1002) {
+            toast.error(t('linkExpired.error'))
+            navigate('/find-pwd')
+          } else {
+            toast.error(data.message)
+          }
         } else {
-          toast.error('Incorrect Username or Password!')
+          toast.success(t('resetPwd.success'))
+          navigate('/login')
         }
-      })
-      .catch((e) => {
-        toast.error('Login Failed!')
-        console.log('login err: ', e)
       })
       .finally(() => {
         setLoading(false)
       })
-  }
+  }, [])
 
   return (
     <>
@@ -57,9 +61,9 @@ const Login: React.FC<{}> = () => {
         <div className="text-center mb-10">
           <img src={logo} width={128} height={128} style={{ borderRadius: '10px' }} />
         </div>
-        <h1 className="font-500 text-center">{t('login.label')}</h1>
+        <h1 className="font-500 text-center">{t('resetPwd.label')}</h1>
         <Form.Root className="FormRoot m-auto mt-5" onSubmit={onSubmit} method="POST">
-          <Form.Field className="FormField" name="username">
+          <Form.Field className="FormField" name="email">
             <div
               style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}
             >
@@ -72,12 +76,7 @@ const Login: React.FC<{}> = () => {
               </Form.Message>
             </div>
             <Form.Control asChild>
-              <Input
-                type="email"
-                defaultValue={getCookie('username') || ''}
-                required
-                autoComplete="username"
-              />
+              <Input type="email" required value={email || ''} readOnly/>
             </Form.Control>
           </Form.Field>
           <Form.Field className="FormField" name="password">
@@ -93,20 +92,33 @@ const Login: React.FC<{}> = () => {
               </Form.Message>
             </div>
             <Form.Control asChild>
-              <Input type="password" minLength={6} required autoComplete="current-password" />
+              <Input type="password" minLength={6} max={128} required />
+            </Form.Control>
+          </Form.Field>
+          <Form.Field className="FormField" name="confirmPassword">
+            <div
+              style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}
+            >
+              <Form.Label className="FormLabel">{t('passwordConfirm.label')}</Form.Label>
+              <Form.Message className="FormMessage" match="valueMissing">
+                {t('password.check.required')}
+              </Form.Message>
+            </div>
+            <Form.Control asChild>
+              <Input type="password" minLength={6} required />
             </Form.Control>
           </Form.Field>
           <Form.Submit asChild>
-            <Button type="submit" style={{ marginTop: 10, width: '100%' }} disabled={loading}>
-              {loading ? t('login.label') + '...' : t('login.label')}
-            </Button>
+            <div>
+              <Button style={{ marginTop: 16, width: '100%' }} disabled={loading}>
+                {loading ? t('confirm.label') + '...' : t('confirm.label')}
+              </Button>
+            </div>
           </Form.Submit>
-          <div className="mt-5 flex gap-2 items-center">
-            <Link to={'/register'} className="color-blue">
-              {t('register.label')}
-            </Link>{' '}
+          <div className="mt-5 color-blue flex gap-2 items-center">
+            <Link to={'/login'}>{t('login.label')}</Link>
             |
-            <Link to={'/find-pwd'} className="color-blue">
+            <Link to={'/find-pwd'}>
               {t('forgetPassword.message')}
             </Link>
           </div>
@@ -116,4 +128,4 @@ const Login: React.FC<{}> = () => {
   )
 }
 
-export default Login
+export default ResetPwd

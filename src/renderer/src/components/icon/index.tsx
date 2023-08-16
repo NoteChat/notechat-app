@@ -1,4 +1,4 @@
-import classNames from "classnames"
+import classNames from 'classnames'
 
 export const CloneIcon = () => {
   return (
@@ -125,10 +125,10 @@ export const GearIcon = () => {
 }
 
 export interface VSCodeIconProps extends React.ComponentProps<'span'> {
-  icon: string;
+  icon: string
 }
 
-export const VSCodeIcon = ({icon, className,...restProps}: VSCodeIconProps) => {
+export const VSCodeIcon = ({ icon, className, ...restProps }: VSCodeIconProps) => {
   return icon ? (
     <span className={classNames('codicon', `codicon-${icon}`, className)} {...restProps}></span>
   ) : null

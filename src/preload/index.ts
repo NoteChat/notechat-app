@@ -12,23 +12,23 @@ const api = {
           reject(res.error)
         } else {
           if (res.statusCode === 401) {
-            window.location.hash = '#/login';
+            window.location.hash = '#/login'
           }
           resolve({
             ok: true,
-            data: res,
+            data: res
           })
         }
       })
     })
   },
-  invoke: function(fnName: string, ...args: any[]) {
+  invoke: function (fnName: string, ...args: any[]) {
     return ipcRenderer.invoke(fnName, ...args)
   },
-  send: function(channel: string, ...args: any[]) {
+  send: function (channel: string, ...args: any[]) {
     ipcRenderer.send(channel, ...args)
   },
-  on: function(channel: string, listener: (...args: any[]) => void) {
+  on: function (channel: string, listener: (...args: any[]) => void) {
     ipcRenderer.on(channel, listener)
   }
 }

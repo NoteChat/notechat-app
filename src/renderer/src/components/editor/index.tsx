@@ -4,17 +4,20 @@ import style from './style.module.scss'
 import SplitPane from 'react-split-pane'
 import '@renderer/styles/SplitPane.scss'
 import { useTranslation } from 'react-i18next'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { ResponseText } from '@renderer/components/responseText'
 import { PromptInput } from '@renderer/components/promptInput'
 import { VSCodeIcon } from '@renderer/components/icon'
 import { Import } from '@renderer/components/import'
 import { PromptsContext } from '@renderer/context/prompts'
 import hljs from 'highlight.js'
-import 'highlight.js/styles/nnfx-dark.css'
+import 'highlight.js/styles/github.css'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import { Counter } from './counter'
+import MarkdownShortcuts from 'quill-markdown-shortcuts';
+import 'quill-paste-smart';
+import MarkdownToolbar from 'quill-markdown-toolbar';
 
 export interface EditorProps {
   value: UpdateEditorDto | undefined
@@ -22,25 +25,35 @@ export interface EditorProps {
 }
 
 hljs.configure({   // optionally configure hljs
-  languages: ['javascript', 'ruby', 'python', 'bash', 'java', 'c/c++']
+  languages: ['javascript', 'ruby', 'python']
 });
 
-Quill.register('modules/counter', Counter);
-var toolbarOptions = [
-  [{ 'header': [1, 2, 3, 4, false] }],
+Quill.register('modules/counter', Counter)
+Quill.register('modules/markdownShortcuts', MarkdownShortcuts);
+Quill.register('modules/markdown-toolbar', MarkdownToolbar);
 
-  ['bold', 'italic', 'underline', 'strike', { 'color': [] }, { 'background': [] }],        // toggled buttons
+const toolbarOptions = {
 
-  [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }, { 'align': [] }],
+  container: [
+    [{ header: [1, 2, 3, 4, false] }],
 
-  ['blockquote', 'code-block', 'image', 'link'],
+    ['bold', 'italic', 'underline', 'strike', { color: [] }, { background: [] }], // toggled buttons
 
-  [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+    [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }, { align: [] }],
 
-  ['clean'],                                         // remove formatting button
+    ['blockquote', 'code-block', 'image', 'link'],
 
-  ['copy']
-];
+    [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+
+    ['clean'], // remove formatting button
+    ['markdown'], // Add this.
+    ['copy'],
+  ],
+
+  handlers: { // Add this.
+    'markdown': function () { }
+  }
+}
 
 const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref) => {
   const { prompts } = useContext(PromptsContext)
@@ -52,10 +65,9 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
   const { t } = useTranslation()
 
   const onSubmit = async (e) => {
-    if (loading || e.key !== 'Enter') return
-    e.preventDefault();
+    if (loading) return
 
-    const promptContent = editorRef.current?.save()
+    const promptContent = editorRef.current?.getText();
     const inputPrompt = document.querySelector<HTMLInputElement>('#inputPrompt')?.value
 
     if (!promptContent) {
@@ -84,11 +96,11 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
       })
       .finally(() => {
         setLoading(false)
-      });
+      })
   }
 
   const onCopy = () => {
-    const editorText = editorRef.current?.getText();
+    const editorText = editorRef.current?.getText()
     if (editorText) {
       navigator.clipboard.writeText(editorText)
       toast.success(t('copySuccess'))
@@ -97,21 +109,20 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
 
   const onExtracted = (value: string) => {
     if (value) {
-      editorRef.current.clipboard.dangerouslyPasteHTML(value);
+      editorRef.current.clipboard.dangerouslyPasteHTML(value)
     }
   }
 
   const onClickPrompt = (data: PromptDto) => {
-    const editorText = editorRef.current.getText();
+    const editorText = editorRef.current.getText()
     autocomplete(editorText, data.prompt)
   }
 
   const onEditorChange = (delta, oldDelta, source) => {
     onChange?.(JSON.stringify(editorRef.current.getContents()))
-  };
+  }
 
   useEffect(() => {
-
     if (editorRef.current) return
 
     const container = document.getElementById('PromptContent')
@@ -119,14 +130,30 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
 
     const editor = new Quill(container, {
       modules: {
-        syntax: {
-          highlight: (text: string) => hljs.highlightAuto(text).value,
-        },
+        // syntax: {
+        //   highlight: (text: string) => hljs.highlightAuto(text).value
+        // },
         toolbar: toolbarOptions,
         counter: {
           container: '#counter',
           unit: 'word'
-        }
+        },
+        clipboard: {
+          allowed: {
+              tags: ['a', 'b', 'strong', 'u', 's', 'i', 'p', 'br', 'ul', 'ol', 'li', 'span'],
+              attributes: ['href', 'rel', 'target', 'class']
+          },
+          keepSelection: true,
+          substituteBlockElements: true,
+          magicPasteLinks: true,
+          hooks: {
+              uponSanitizeElement(node, data, config) {
+                  // console.log(node);
+              },
+          },
+        },
+        markdownShortcuts: {},
+        'markdown-toolbar': true // Add this.
       },
 
       placeholder: t('originalContent.placeholder'),
@@ -135,11 +162,10 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
     if (value?.content) {
       editor.setContents(JSON.parse(value.content))
     }
-    editor.focus();
     editor.on('text-change', onEditorChange)
     document.querySelector('.ql-copy')?.addEventListener('click', onCopy)
-    console.log('copy', document.querySelector('.ql-copy'))
-    editorRef.current = editor;
+    editorRef.current = editor
+
   }, [])
 
   const renderExtensions = () => {
@@ -159,40 +185,48 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
           <SplitPane split="vertical" defaultSize={'70%'}>
             <div className={style['textPane-input']}>
               <div className={style['textPane-editor']}>
-                <div id="PromptContent" tabIndex={1} className="w-full h-full pb-10 overflow-auto" style={{fontSize: '14px'}}></div>
-                <div id="counter" className="absolute right-10px bottom-10px" style={{color:'var(--blackA11)'}}></div>
+                <div
+                  id="PromptContent"
+                  tabIndex={1}
+                  className="w-full h-full pb-10 overflow-auto"
+                  style={{ fontSize: '14px' }}
+                ></div>
+                <div
+                  id="counter"
+                  className="absolute right-10px bottom-10px"
+                  style={{ color: 'var(--blackA11)' }}
+                ></div>
               </div>
             </div>
             <div className={style['textPane-result']}>
               <div className={style.extensionsBar}>
                 {renderExtensions()}
                 <div className={style.importButton}>
-                  <Import
-                    onExtracted={onExtracted}
-                  >
-                    {t('import.label')}
-                  </Import>
+                  <Import onExtracted={onExtracted}>{t('import.label')}</Import>
                 </div>
               </div>
               <div className={style.paneBottom}>
                 <PromptInput
                   textAreaProps={{
                     id: 'inputPrompt',
-                    placeholder: '请输入指令',
-                    onKeyDown: onSubmit
+                    placeholder: t('promptText.placeholder'),
                   }}
+                  onSubmitData={onSubmit}
                 />
               </div>
               <div className={style.resultContent}>
                 <div className={style.resultContentItem}>
-                  <ResponseText content={result || t('noData')} quoteTargetId="inputPrompt" loading={loading} />
+                  <ResponseText
+                    content={result || t('noData')}
+                    quoteTargetId="inputPrompt"
+                    loading={loading}
+                  />
                 </div>
               </div>
             </div>
           </SplitPane>
         </div>
       </div>
-      <Toaster />
     </>
   )
 }

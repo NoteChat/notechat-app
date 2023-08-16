@@ -1,13 +1,12 @@
 .setting {
-    margin: var(--gap);
-    max-width: 420px;
+  margin: var(--gap);
+  max-width: 420px;
 
-
-    input[type='radio'] {
-        all: revert;
-    }
+  input[type='radio'] {
+    all: revert;
+  }
 }
 
 .title {
-    font-size: 18px;
+  font-size: 18px;
 }

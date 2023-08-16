@@ -16,25 +16,27 @@ export const Favorite: React.FC<{}> = (props) => {
   const [data, setData] = useState<FavoriteDto[] | undefined>([])
 
   const onSearch = () => {
-
-    const inputDom = document.querySelector<HTMLTextAreaElement>('#queryInput');
+    const inputDom = document.querySelector<HTMLTextAreaElement>('#queryInput')
     if (!inputDom || loading) return
-    const value = inputDom.value;
+    const value = inputDom.value
 
-    setLoading(true);
-    loadData(value);
+    setLoading(true)
+    loadData(value)
   }
 
   const onKeySearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      onSearch();
+      onSearch()
     }
   }
 
   const loadData = async (title: string) => {
-    const res = await API.v1.getUserFavoriteByTitle({ userId: Number(localStorage.getItem('uid')), title: title });
+    const res = await API.v1.getUserFavoriteByTitle({
+      userId: Number(localStorage.getItem('uid')),
+      title: title
+    })
     if (res.data) {
-      setData(res.data);
+      setData(res.data)
     }
     setLoading(false)
   }
@@ -42,20 +44,25 @@ export const Favorite: React.FC<{}> = (props) => {
   const onDeleteItem = async (id: number) => {
     const res = await API.v1.deleteFavorite({ id })
     if (res.ok) {
-      toast.success('Delete Success');
-      loadData('');
+      toast.success('Delete Success')
+      loadData('')
     }
   }
 
   useEffect(() => {
-    document.getElementById('queryInput')?.focus();
-    loadData('');
-  }, []);
+    document.getElementById('queryInput')?.focus()
+    loadData('')
+  }, [])
 
   return (
     <div className={style.favoriteWrapper}>
       <div className={style.favoriteHeader}>
-        <Input className={style.favoriteInput} id="queryInput" placeholder={t('search.label')} onKeyDown={onKeySearch}/>
+        <Input
+          className={style.favoriteInput}
+          id="queryInput"
+          placeholder={t('search.label')}
+          onKeyDown={onKeySearch}
+        />
         <div className={style.favoriteHeaderRight}>
           <button onClick={onSearch} disabled={loading}>
             <MagnifyingGlassIcon />
@@ -68,10 +75,19 @@ export const Favorite: React.FC<{}> = (props) => {
             <div className={style.favoriteContentItem} key={item.id}>
               <h1>{item.title}</h1>
               <div className={style.favoriteContentItemTags}>
-                {item.tags?.map((tag) => (<span key={tag} title={tag}>{tag}</span>)) }
+                {item.tags?.map((tag) => (
+                  <span key={tag} title={tag}>
+                    {tag}
+                  </span>
+                ))}
               </div>
-              <ResponseText className={style.favoriteContentItemDetail} content={item.content || ''} toolbar={['copy'] as any} quoteTargetId=''/>
-              <ConfirmDialog 
+              <ResponseText
+                className={style.favoriteContentItemDetail}
+                content={item.content || ''}
+                toolbar={['copy'] as any}
+                quoteTargetId=""
+              />
+              <ConfirmDialog
                 title={t('remove.title')}
                 trigger={
                   <button className={style.favoriteContentItemDelete} title={t('remove.title')}>
@@ -85,7 +101,7 @@ export const Favorite: React.FC<{}> = (props) => {
           )
         })}
         {data?.length === 0 && <div className={style.favoriteContentEmpty}>暂无收藏</div>}
-      </div>    
+      </div>
     </div>
   )
 }

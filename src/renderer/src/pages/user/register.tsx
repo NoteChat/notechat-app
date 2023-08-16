@@ -5,8 +5,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import md5 from 'js-md5'
 import { Button, Input } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import logo from '@renderer/assets/128@2x.png'
+import { getLocale } from '@renderer/utils'
 
 const Register: React.FC<{}> = () => {
   const { t } = useTranslation()
@@ -20,17 +21,20 @@ const Register: React.FC<{}> = () => {
 
     const user = Object.fromEntries(new FormData(e.currentTarget))
     if (user.password !== user.confirmPassword) {
-      toast.error('The passwords entered twice are inconsistent!')
+      toast.error(t('password.check.notMatch'))
+      setLoading(false)
       return
     }
     user.password = md5(user.password)
+    user.language = getLocale()
     API.v1
       .register(user as unknown as UserRegisterDto)
       .then((res: any) => {
-        const { data } = res;
+        const { data } = res
         if (data.code !== 1000) {
           toast.error(data.message)
         } else {
+          toast.success(t('register.success'))
           navigate('/login')
         }
       })
@@ -43,17 +47,22 @@ const Register: React.FC<{}> = () => {
   }, [])
 
   const sendValidateCode = () => {
-    const email = document.querySelector('input[name="email"]') as HTMLInputElement
-    if (email) {
-      API.v1.getValidCode({ email: email.value }).then((res: any) => {
-        const { data } = res;
-        if (data.code === 1000) {
-          toast.success(t('email.send.success'))
-          setCountDown(60)
-        } else {
-          toast.error(data.message)
-        }
-      })
+    if (!loading) {
+      const email = document.querySelector('input[name="email"]') as HTMLInputElement
+      if (email) {
+        setLoading(true)
+        API.v1.getValidCode({ email: email.value }).then((res: any) => {
+          const { data } = res
+          if (data.code === 1000) {
+            toast.success(t('email.send.success'))
+            setCountDown(60)
+          } else {
+            toast.error(data.message)
+          }
+        }).finally(() => {
+          setLoading(false)
+        })
+      }
     }
   }
 
@@ -76,9 +85,9 @@ const Register: React.FC<{}> = () => {
   return (
     <>
       <div className="centerBlock" style={{ top: '40%' }}>
-      <div className='text-center mb-10'>
-        <img src={logo} width={128} height={128} style={{borderRadius: '10px'}}/>
-      </div>
+        <div className="text-center mb-10">
+          <img src={logo} width={128} height={128} style={{ borderRadius: '10px' }} />
+        </div>
         <h1 className="font-500 text-center">{t('register.label')}</h1>
         <Form.Root className="FormRoot m-auto mt-5" onSubmit={onSubmit} method="POST">
           <Form.Field className="FormField" name="email">
@@ -121,6 +130,9 @@ const Register: React.FC<{}> = () => {
               <Form.Message className="FormMessage" match="valueMissing">
                 {t('password.check.required')}
               </Form.Message>
+              <Form.Message className="FormMessage" match="tooShort">
+                {t('password.check.validLen')}
+              </Form.Message>
             </div>
             <Form.Control asChild>
               <Input type="password" minLength={6} required />
@@ -135,26 +147,23 @@ const Register: React.FC<{}> = () => {
                 {t('emailValidateCode.check.required')}
               </Form.Message>
             </div>
-            <Form.Control asChild>
-              <div className='flex items-center gap-2'>
+            <div className="flex items-center gap-2">
+              <Form.Control asChild>
                 <Input type="number" min={0} required />
-                <Button
-                  className="flex-1"
-                  style={{width: 'auto'}}
-                  onClick={sendValidateCode}
-                  disabled={countDown > 0}
-                >
-                  {countDown > 0 ? `${t('resend.button')}(${countDown} s)` : t('send.button')}
-                </Button>
-              </div>
-            </Form.Control>
+              </Form.Control>
+              <Button
+                className="flex-1"
+                style={{ width: 'auto' }}
+                onClick={sendValidateCode}
+                disabled={countDown > 0}
+              >
+                {countDown > 0 ? `${t('resend.button')}(${countDown} s)` : t('send.button')}
+              </Button>
+            </div>
           </Form.Field>
           <Form.Submit asChild>
             <div>
-              <Button
-                style={{ marginTop: 16, width: '100%' }}
-                disabled={loading}
-              >
+              <Button style={{ marginTop: 16, width: '100%' }} disabled={loading}>
                 {loading ? t('register.label') + '...' : t('register.label')}
               </Button>
             </div>
@@ -164,7 +173,6 @@ const Register: React.FC<{}> = () => {
           </div>
         </Form.Root>
       </div>
-      <Toaster />
     </>
   )
 }

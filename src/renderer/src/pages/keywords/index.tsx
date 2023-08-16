@@ -4,16 +4,23 @@ import { Button, Textarea } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
 import Table from 'rc-table'
 import './table.less'
-import { CircleBackslashIcon, Cross1Icon, MagicWandIcon, PlusIcon, ReloadIcon } from '@radix-ui/react-icons'
-import { VSCodeIcon } from '@renderer/components/icon'
+import {
+  CircleBackslashIcon,
+  Cross1Icon,
+  MagicWandIcon,
+  PlusIcon,
+  ReloadIcon
+} from '@radix-ui/react-icons'
 import { ConfirmDialog, DialogWindow } from '@renderer/components/dialog'
 import { ResponseText } from '@renderer/components/responseText'
 import { PromptInput } from '@renderer/components/promptInput'
 import { Import } from '@renderer/components/import'
-import API, { CreateGeneratorDto } from '@renderer/api'
-import { useNavigate } from 'react-router-dom'
+import API, { CreateGeneratorDto, MySocket } from '@renderer/api'
 import { Checkbox } from '@renderer/components/checkbox'
 import { toast } from 'react-hot-toast'
+import cursorStyle from '@renderer/components/cursor/style.module.scss'
+import classNames from 'classnames'
+import { debounce } from 'lodash'
 
 export const Keywords: React.FC<{}> = (props) => {
   const { t } = useTranslation()
@@ -21,17 +28,9 @@ export const Keywords: React.FC<{}> = (props) => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [data, setData] = React.useState<CreateGeneratorDto[]>([])
   const batchEditorRef = React.useRef<HTMLTextAreaElement>(null)
-  const [checkedMap,] = React.useState<Map<number, boolean>>(new Map())
-  const navigate = useNavigate()
+  const [checkedMap] = React.useState<Map<number, boolean>>(new Map())
 
   const uid = localStorage.getItem('uid')
-  if (!uid) {
-    navigate('/login')
-  }
-
-  const onSubmit = () => {
-    setLoading(true)
-  }
 
   const onCreate = async () => {
     const res = await API.v1.createGenerator({
@@ -43,7 +42,7 @@ export const Keywords: React.FC<{}> = (props) => {
     })
     if (res.ok) {
       setData([...data, res.data])
-      loadKeywords();
+      loadKeywords()
     }
   }
 
@@ -51,7 +50,7 @@ export const Keywords: React.FC<{}> = (props) => {
     const res = await API.v1.removeGenerator({ id })
     if (res.ok) {
       setData(data.filter((item) => item.id !== +id))
-      loadKeywords();
+      loadKeywords()
     }
   }
 
@@ -62,78 +61,112 @@ export const Keywords: React.FC<{}> = (props) => {
     }
   }
 
-  const onChange = (index: number, field: string, value) => {
+  const onChange = debounce((index: number, field: string, value) => {
     const item = data[index]
     if (item) {
       item[field] = value
+      API.v1.updateGenerator(item.id + '', item)
       setData([...data])
     }
-  }
+  }, 600)
 
   const onSelectAll = () => {
-    const size = data.length;
+    const size = data.length
     if (checkedMap.size === size) {
-      checkedMap.clear();
+      checkedMap.clear()
     } else {
       for (let i = 0; i < size; i++) {
-        checkedMap.set(i, true);
+        checkedMap.set(i, true)
       }
     }
+    setData([...data])
+  }
+
+  const reGenerate = async (index: number) => {
+    const item = data[index];
+    generate(item, index);
   }
 
   const onGenerate = async () => {
-    const size = checkedMap.size;
+    const size = checkedMap.size
     if (size > 10) {
       toast.error(t('keywordsGenerateLimit.error'))
-      return;
+      return
     } else {
-      const targets: CreateGeneratorDto[] = [];
       for (let [key, value] of checkedMap) {
         if (data[key]) {
-          targets.push(data[key])
+          generate(data[key], key)
         }
       }
-      generate(targets);
     }
   }
 
-  const generate = async (record: CreateGeneratorDto[]) => {
+  const generate = async (record: CreateGeneratorDto, index: number) => {
+    if (!record.title && !record.keywords) {
+      toast.error(t('titleKeywordsEmpty.error'))
+      return
+    }
+    const socket = MySocket.getSocket();
+    if (socket) {
+      data[index].status = 'running';
+      setData([...data]);
+      record.prompt = document.querySelector<HTMLTextAreaElement>('#promptInput')?.value;
+      const language = localStorage.getItem('lang');
+      socket.emit('generate', { data: record, language: language, index: index })
+    }
+  }
 
+  const onGenerated = () => {
+    MySocket.getSocket()?.once('generate', (res) => {
+      if (res.ok) {
+        const next = [...data];
+        loadKeywords();
+        setData(next);
+      }
+    })
   }
 
   const onBatchCreate = async () => {
-    const keywords = batchEditorRef.current?.value
-    if (keywords) {
-      const keywordsArr = keywords.split(',');
-      const addData: CreateGeneratorDto[] = keywordsArr.map((item) => {
+    const content = batchEditorRef.current?.value;
+    const forKeywords = document.querySelector<HTMLButtonElement>('#forKeywords')?.dataset.state === 'checked';
+    if (content) {
+      const wordsArr = content.split('\n').filter((item) => item.trim() !== '')
+      const addData: CreateGeneratorDto[] = wordsArr.map((item) => {
         return {
-          userId: Number(uid), keywords: item, reference: '', style: '', result: ''
+          userId: Number(uid),
+          title: forKeywords ? '' : item,
+          keywords: forKeywords ? item : '',
+          reference: '',
+          style: '',
+          result: ''
         }
       })
       const res = await API.v1.batchCreateGenerator({
         data: addData
-      });
+      })
       if (res.ok) {
-        loadKeywords();
-        document.getElementById('ID_batchAddBtn')?.click();
+        loadKeywords()
+        document.getElementById('ID_batchAddBtn')?.click()
       }
     }
   }
 
   const loadKeywords = () => {
+    setLoading(true)
     API.v1.findAllGenerators({ userId: uid! }).then((res) => {
       if (res.data) {
         setData(res.data)
       }
+      setLoading(false)
     })
-  }
-
-  const onPrompt = (value) => {
-    console.log(value)
   }
 
   useEffect(() => {
     loadKeywords()
+  }, [])
+
+  useEffect(() => {
+    onGenerated()
   }, [])
 
   const columns = [
@@ -146,17 +179,33 @@ export const Keywords: React.FC<{}> = (props) => {
       render: function (_, item, index) {
         return (
           <Checkbox
-            checked={checkedMap.get(item.id)}
-            id={item.id} onChange={
-              () => {
-                const checked = checkedMap.get(item.id);
-                if (checked === undefined) {
-                  checkedMap.set(index, true);
-                } else {
-                  checkedMap.delete(index);
-                }
+            key={item.id}
+            checked={checkedMap.get(index)}
+            id={item.id}
+            onChange={() => {
+              const checked = checkedMap.get(index)
+              if (checked === undefined) {
+                checkedMap.set(index, true)
+              } else {
+                checkedMap.delete(index)
               }
-            }
+            }}
+          />
+        )
+      }
+    },
+    {
+      title: t('title.label'),
+      dataIndex: 'title',
+      key: 'title',
+      width: 200,
+      render: function (_, item, index) {
+        return (
+          <Textarea
+            className="w-full"
+            placeholder={t('title.label')}
+            defaultValue={item.title}
+            onChange={(e) => onChange(index, 'title', e.target.value)}
           />
         )
       }
@@ -165,10 +214,16 @@ export const Keywords: React.FC<{}> = (props) => {
       title: t('keywords.label'),
       dataIndex: 'keywords',
       key: 'keywords',
+      width: 150,
       render: function (_, item, index) {
-        return <Textarea className="w-full" defaultValue={item.keywords} onChange={
-          (e) => onChange(index, 'keywords', e.target.value)
-        } />
+        return (
+          <Textarea
+            className="w-full"
+            placeholder={t('keywords.label')}
+            defaultValue={item.keywords}
+            onChange={(e) => onChange(index, 'keywords', e.target.value)}
+          />
+        )
       }
     },
     {
@@ -178,10 +233,12 @@ export const Keywords: React.FC<{}> = (props) => {
       render: (_, item, index) => {
         return (
           <div className="flex items-baseline">
-            <Textarea defaultValue={item.reference} className="w-90%"
-              onChange={
-                (e) => onChange(index, 'keywords', e.target.value)
-              } />
+            <Textarea
+              defaultValue={item.reference}
+              className="w-90%"
+              placeholder={t('reference.label')}
+              onChange={(e) => onChange(index, 'keywords', e.target.value)}
+            />
             <Import />
           </div>
         )
@@ -191,21 +248,30 @@ export const Keywords: React.FC<{}> = (props) => {
       title: t('style.label'),
       dataIndex: 'style',
       key: 'style',
+      width: 150,
       render: function (_, item, index) {
-        return <Textarea className="w-full"
-          defaultValue={item.style}
-          onChange={
-            (e) => onChange(index, 'keywords', e.target.value)
-          }
-        />
+        return (
+          <Textarea
+            className="w-full"
+            placeholder={t('style.label')}
+            defaultValue={item.style}
+            onChange={(e) => onChange(index, 'style', e.target.value)}
+          />
+        )
       }
     },
     {
       title: t('progress.label'),
-      dataIndex: 'progress',
-      key: 'progress',
+      dataIndex: 'status',
+      key: 'status',
       width: 100,
-      className: 'text-center'
+      className: 'text-center',
+      render: function (_, item, index) {
+          return  <span className={ item.status === 'running' ? 
+            classNames(cursorStyle.inputCursorAnimation, 'color-blue') : ''}>
+            {item.status}
+          </span>;
+      }
     },
     {
       title: t('result.label'),
@@ -213,7 +279,7 @@ export const Keywords: React.FC<{}> = (props) => {
       key: 'result',
       width: 100,
       className: 'text-center',
-      render: function (value: string) {
+      render: function (_, item) {
         return (
           <div>
             <DialogWindow
@@ -221,8 +287,9 @@ export const Keywords: React.FC<{}> = (props) => {
               trigger={<a className="ml-2 cursor-pointer color-blue">{t('show.label')}</a>}
               description={
                 <ResponseText
-                  className="min-h300px"
-                  content={value}
+                  className="min-w400px min-h300px max-h600px overflow-y-auto"
+                  content={item.result}
+                  key={item.id}
                   toolbar={['copy', 'favorite'] as any}
                   quoteTargetId=""
                 />
@@ -238,11 +305,10 @@ export const Keywords: React.FC<{}> = (props) => {
       key: 'operation',
       width: 100,
       className: 'text-center',
-      render: function (_, item) {
-        console.log(item)
+      render: function (_, item, index) {
         return (
           <div className={style.operation}>
-            <button>
+            <button onClick={() => reGenerate(index)}>
               <ReloadIcon />
             </button>
             <button title={t('remove.title')} onClick={() => onRemove(item.id)}>
@@ -266,17 +332,24 @@ export const Keywords: React.FC<{}> = (props) => {
             <PlusIcon /> {t('add.label')}
           </Button>
           <DialogWindow
-            title={t('batchAddKeyWords.label')}
+            title={t('batchAddTitleOrKeyWords.label')}
             trigger={
-              <Button id="ID_batchAddBtn">
-                <PlusIcon /> {t('batchAddKeyWords.label')}
+              <Button id="ID_batchAddBtn" style={{ width: 200 }}>
+                <PlusIcon /> {t('batchAddTitleOrKeyWords.label')}
               </Button>
             }
             description={
               <div>
-                <Textarea className="w-full" ref={batchEditorRef} placeholder={t('batchAddKeyWords.placeholder')} />
-                <div className='mt-3'>
-                  <Button className='float-right' onClick={onBatchCreate}>{t('confirm.label')}</Button>
+                <Textarea
+                  className="w-full h300px"
+                  ref={batchEditorRef}
+                  placeholder={t('batchAddTitleOrKeyWords.placeholder')}
+                />
+                <div className="mt-3 flex justify-end gap-5">
+                  <Checkbox id="forKeywords" label="添加关键词" />
+                  <Button className="float-right" onClick={onBatchCreate}>
+                    {t('confirm.label')}
+                  </Button>
                 </div>
               </div>
             }
@@ -285,31 +358,29 @@ export const Keywords: React.FC<{}> = (props) => {
             title={t('removeAll.label')}
             description={t('removeAll.description')}
             trigger={
-              <Button onClick={onSubmit}>
+              <Button>
                 <CircleBackslashIcon />
                 清空数据
               </Button>
             }
             onConfirm={onRemoveAll}
-
           />
-          <Button>
+          {/* <Button onClick={onCsvExport}>
             <VSCodeIcon icon="export" /> 导出 CSV
-          </Button>
+          </Button> */}
         </div>
-        <Table rowKey={'id'} columns={columns} data={data} scroll={{ y: 450 }}
-/>
+        <Table rowKey={'id'} columns={columns} data={data} scroll={{ y: 450 }} />
       </div>
       <div className={style.footer}>
         <PromptInput
-          onSubmitData={onPrompt}
           style={{ height: 100, width: '100%' }}
           textAreaProps={{
-            defaultValue: '基本要求：生成内容不少于500个字'
+            id:"promptInput",
+            defaultValue: t('basicGeneratePrompt.placeholder'),
           }}
         />
         <div className="w-full">
-          <Button className="float-left" onClick={onGenerate}>
+          <Button className="float-left" onClick={onGenerate} disabled={loading}>
             <MagicWandIcon /> {t('generate.button')}
           </Button>
         </div>

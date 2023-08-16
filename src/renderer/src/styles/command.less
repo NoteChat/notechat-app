@@ -1,51 +1,53 @@
 .promptResultItem {
-    box-shadow: 1px 3px 9px var(--blackA6);
-    padding: 0.75rem 1rem;
+  box-shadow: 1px 3px 9px var(--blackA6);
+  padding: 0.75rem 1rem;
 }
 
 .promptInput {
-    line-height: 38px;
-    height: 38px;
-    border: none;
-    text-indent: 10px;
+  line-height: 38px;
+  height: 38px;
+  border: none;
+  text-indent: 10px;
 }
 
 .searchInput {
-    border: 1px solid var(--violet3);
-    border-radius: 2px;
+  border: 1px solid var(--violet3);
+  border-radius: 2px;
 }
 
 .commandWin {
+  .rc-select {
+    border-right: 1px solid var(--violet3);
+  }
 
-    .rc-select {
-        border-right: 1px solid var(--violet3);
-    }
+  .rc-select-dropdown {
+    border-color: var(--violet3);
+    z-index: 1;
+  }
 
-    .rc-select-dropdown {
-        border-color: var(--violet3);
-        z-index: 1;
-    }
+  .rc-select-selector {
+    padding: 0 !important;
+    border: none !important;
+  }
 
-    .rc-select-selector {
-        padding: 0 !important;
-        border: none !important;
-    }
+  .rc-select,
+  .rc-select-selector,
+  .rc-select-selection-search {
+    height: 100%;
+  }
 
-    .rc-select, .rc-select-selector, .rc-select-selection-search {
-        height: 100%;
-    }
-    
-    .rc-select-selection-item, .rc-select-arrow {
-        top: 12px !important;
-    }
+  .rc-select-selection-item,
+  .rc-select-arrow {
+    top: 12px !important;
+  }
 
-    .rc-select-selection-search input {
-        height: inherit;
-        background: none !important;
-    }
+  .rc-select-selection-search input {
+    height: inherit;
+    background: none !important;
+  }
 
-    .rc-select-selection-search input,
-    .rc-select-selection-item {
-        text-indent: 10px !important;
-    }
+  .rc-select-selection-search input,
+  .rc-select-selection-item {
+    text-indent: 10px !important;
+  }
 }

@@ -7,7 +7,7 @@ import PromptForm from './form'
 import style from './style.module.scss'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { VSCodeIcon } from '@renderer/components/icon'
 import { Tooltip } from '@renderer/components/tooltip'
 import { ConfirmDialog } from '@renderer/components/dialog'
@@ -99,9 +99,7 @@ const Prompt: React.FC<{}> = (props) => {
                             >
                               <ConfirmDialog
                                 title={t('remove.title')}
-                                trigger={
-                                  <CrossCircledIcon className="color-gray-4" />
-                                }
+                                trigger={<CrossCircledIcon className="color-gray-4" />}
                                 description={t('remove.alert')}
                                 onConfirm={deletePrompt.bind(null, item.id)}
                               />
@@ -157,7 +155,6 @@ const Prompt: React.FC<{}> = (props) => {
           </Routes>
         </div>
       </div>
-      <Toaster />
     </>
   )
 }

@@ -1,9 +1,4 @@
-import {
-  app,
-  shell,
-  BrowserWindow,
-  ipcMain,
-} from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/mac/512.png?asset'
@@ -11,7 +6,6 @@ import { fetchProxy } from './fetch'
 import { createTrayMenu } from './trayMenu'
 import { registerGlobalShortCuts } from './shortcuts'
 import { handleEvents } from './event'
-
 
 function createWindow(): BrowserWindow {
   // Create the browser window.
@@ -28,7 +22,7 @@ function createWindow(): BrowserWindow {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
-      devTools: is.dev,
+      devTools: is.dev
     }
   })
 
@@ -69,22 +63,22 @@ app.whenReady().then(() => {
   handleEvents(win)
 
   // Set a variable when the app is quitting.
-  let isAppQuitting = false;
+  let isAppQuitting = false
   app.on('before-quit', function (evt) {
-      console.log('evt: ', evt);
-      isAppQuitting = true;
-  });
+    console.log('evt: ', evt)
+    isAppQuitting = true
+  })
 
   const handleCloseWin = (obj) => {
     return (event) => {
       if (!isAppQuitting) {
-        event.preventDefault();
+        event.preventDefault()
       }
-      obj.hide();
+      obj.hide()
     }
   }
-  
-  win.on('close', handleCloseWin(win));
+
+  win.on('close', handleCloseWin(win))
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

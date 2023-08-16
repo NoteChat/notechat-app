@@ -1,122 +1,128 @@
 .textPane {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    gap: var(--gap);
-    flex-direction: column;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: var(--gap);
+  flex-direction: column;
 
-    :global {
-        .ql-snow {
-            border: none;
-        }
-
-        .ql-formats button {
-            font: normal normal normal 16px/1 codicon;
-            display: inline-block;
-            text-decoration: none;
-            text-rendering: auto;
-            text-align: center;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-        }
-
-        .ql-copy, .ql-star {
-            color:orange;
-        }
-
-        .ql-copy::after {
-            content: "\ebcc";
-        }
-
-        .ql-star::after {
-            content: "\eb59";
-        }
+  :global {
+    .ql-snow {
+      border: none;
     }
+
+    .ql-formats button {
+      font: normal normal normal 16px/1 codicon;
+      display: inline-block;
+      text-decoration: none;
+      text-rendering: auto;
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .ql-copy,
+    .ql-star {
+      color: orange;
+    }
+
+    .ql-copy::after {
+      content: '\ebcc';
+    }
+
+    .ql-star::after {
+      content: '\eb59';
+    }
+
+    .ql-snow .ql-editor pre.ql-syntax {
+      background-color: var(--bg-color);
+      color: inherit;
+    }
+  }
 }
 
 .textPane-input {
-    height: 100%;
-    position: relative;
-    width: 100%;
+  height: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .docsContainer {
-    height: 100%;
-    position: relative;
-    border-bottom: 1px solid var(--bd-color);
+  height: 100%;
+  position: relative;
+  border-bottom: 1px solid var(--bd-color);
 }
 
 .textPane-editor {
-    height: 100%;
-    width: inherit;
-    font-size: 14px;
-    overflow: hidden;
+  height: 100%;
+  width: inherit;
+  font-size: 14px;
+  color: var(--color4);
+  overflow: hidden;
 }
 
 .textPane-result {
-    height: 100%;
-    border-left: 5px solid var(--second-color);
-    display: flex;
-    flex-direction: column;
+  height: 100%;
+  border-left: 5px solid var(--second-color);
+  display: flex;
+  flex-direction: column;
 }
 
 .resultContent {
-    overflow: auto;
-    color: var(--color2);
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    letter-spacing: -0.35px;
+  overflow: auto;
+  color: var(--color2);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.35px;
 }
 
 .resultContentItem {
-    margin: 10px 20px;
-    padding: var(--gap);
-    background-color: var(--blackA2);
-    border-radius: 10px;
-    color: var(--blackA12);
-    display: flex;
-    position: relative;
+  margin: 10px 20px;
+  padding: var(--gap);
+  background-color: var(--blackA2);
+  border-radius: 10px;
+  color: var(--blackA12);
+  display: flex;
+  position: relative;
 
-    &:hover {
-        background: var(--blackA5);
-    }
+  &:hover {
+    background: var(--blackA5);
+  }
 
-    h1 {
-        font-size: 18px;
-    }
+  h1 {
+    font-size: 18px;
+  }
 }
 
 .paneBottom {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
 .extensionsBar {
-    padding: var(--gap);
-    padding-bottom: 0;
-    column-gap: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: start;
+  padding: var(--gap);
+  padding-bottom: 0;
+  column-gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
 
-    button {
-        cursor: pointer;
-    }
+  button {
+    cursor: pointer;
+  }
 }
 
 .importButton {
-   
-    span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        column-gap: 5px;
-        color: var(--primary-color);
-    }
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 5px;
+    color: var(--primary-color);
+  }
 }

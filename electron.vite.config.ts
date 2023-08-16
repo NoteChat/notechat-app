@@ -16,24 +16,23 @@ export default defineConfig({
       proxy: {
         '/v1': {
           target: 'http://127.0.0.1:3000',
-          changeOrigin: true,
-        },
+          changeOrigin: true
+        }
       }
     },
     publicDir: resolve(__dirname, 'src/renderer/assets'),
     build: {
       copyPublicDir: true,
-      rollupOptions:
-      {
+      rollupOptions: {
         input: {
-          index: resolve(__dirname, 'src/renderer/index.html'),
-        },
+          index: resolve(__dirname, 'src/renderer/index.html')
+        }
       }
     },
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src'),
-      },
+        '@renderer': resolve('src/renderer/src')
+      }
     },
     plugins: [
       react(),

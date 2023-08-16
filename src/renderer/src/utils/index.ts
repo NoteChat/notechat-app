@@ -1,3 +1,10 @@
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeSanitize from 'rehype-sanitize'
+import rehypeStringify from 'rehype-stringify'
+
+
 export function setCookie(name, value, days) {
   var expires = ''
   if (days) {
@@ -21,4 +28,27 @@ export function getCookie(name) {
 
 export function eraseCookie(name) {
   document.cookie = name + '=; Max-Age=-99999999;'
+}
+
+export function getUrlParam(name: string, url?: string): string | null {
+  if (!url) url = location.href;
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( url );
+    return results == null ? null : results[1];
+}
+
+export function getLocale() {
+  return localStorage.getItem('lang') || navigator.language
+}
+
+export async function transformMdToHTML(md: string) {
+  const file = await unified()
+    .use(remarkParse)
+    .use(remarkRehype)
+    .use(rehypeSanitize)
+    .use(rehypeStringify)
+    .process(md)
+  return String(file)
 }

@@ -5,8 +5,8 @@ import { Textarea } from '../form'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 
 export interface PromptInputProps extends React.ComponentPropsWithoutRef<'div'> {
-  onSubmitData?: (data: string) => void;
-  textAreaProps?: React.ComponentPropsWithoutRef<'textarea'>;
+  onSubmitData?: (data: string) => void
+  textAreaProps?: React.ComponentPropsWithoutRef<'textarea'>
 }
 
 const MyPromptInput: React.ForwardRefRenderFunction<HTMLDivElement, PromptInputProps> = (

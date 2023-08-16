@@ -9,27 +9,27 @@ import { EditorContext } from '@renderer/context/editor'
 import { debounce } from 'lodash'
 
 export const GlobalEditor: React.FC<{}> = (props) => {
-  const { editor, setEditor } = useContext(EditorContext);
-  const uid = localStorage.getItem('uid');
+  const { editor, setEditor } = useContext(EditorContext)
+  const uid = localStorage.getItem('uid')
 
   const onEditorChange = debounce(async (value: string) => {
-    let res;
+    let res
     if (editor === undefined) {
-      res = await API.v1.createEditor({ content: value, userId: Number(uid)} as CreateEditorDto)
+      res = await API.v1.createEditor({ content: value, userId: Number(uid) } as CreateEditorDto)
     } else {
-      const nextEditor = {...editor, content: value, userId: Number(uid) }
-      res = await API.v1.updateEditor(editor.id + '', nextEditor);
+      const nextEditor = { ...editor, content: value, userId: Number(uid) }
+      res = await API.v1.updateEditor(editor.id + '', nextEditor)
     }
     if (res.ok) {
-      setEditor({...res.data})
+      setEditor({ ...res.data })
     }
-  }, 1200)
+  }, 600)
 
   return (
     <>
       <div className={style.globalEditor}>
         <PromptsProvider>
-          <Editor key={editor?.id} value={editor} onChange={onEditorChange}/>
+          <Editor key={editor?.id} value={editor} onChange={onEditorChange} />
         </PromptsProvider>
       </div>
     </>

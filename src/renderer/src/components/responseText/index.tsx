@@ -1,18 +1,19 @@
 import React, { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight'
 import cursorStyle from '@renderer/components/cursor/style.module.scss'
-import 'highlight.js/styles/nnfx-dark.css'
 import toast from 'react-hot-toast'
 import style from './style.module.scss'
-import { QuoteIcon, StarFilledIcon, StopIcon } from '@radix-ui/react-icons'
+import { QuoteIcon, StarFilledIcon } from '@radix-ui/react-icons'
 import { ErrorBoundary } from '@renderer/errorBundary'
 import API from '@renderer/api'
 import * as Dialog from '@radix-ui/react-dialog'
 import { DialogWindow } from '../dialog'
 import { Button, Input } from '../form'
 import { VSCodeIcon } from '../icon'
+import hljs from 'highlight.js'
+import classNames from 'classnames'
+
 export interface ResponseTextProps extends React.ComponentProps<'div'> {
   content: string
   quoteTargetId: string
@@ -45,11 +46,11 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
 
   const onFavorite = async (event, content) => {
     const uid = localStorage.getItem('uid')
-    const title = inputRef.current?.value.trim();
-    const tags = tagsRef.current?.value.trim();
+    const title = inputRef.current?.value.trim()
+    const tags = tagsRef.current?.value.trim()
     if (!title) {
       toast.error('Title is required')
-      event.preventDefault();
+      event.preventDefault()
       return
     }
     const res = await API.v1.createFavorite({
@@ -72,18 +73,37 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
     return toolbar?.includes(icon as never) ? nodeItem : null
   }
 
+  const Pre = ({ children }) => <pre className="relative">
+    <VSCodeIcon icon="copy" onClick={() => onCopy(children[0].props.children[0])} className={style.copyCode} />
+    {children}
+  </pre>
+
   return (
     <div className={props.className}>
       <ErrorBoundary fallback={content}>
-        <ReactMarkdown children={content} rehypePlugins={[rehypeHighlight]} />
+        <ReactMarkdown children={content}
+          components={
+            {
+              pre: Pre,
+              code({ node, inline, className, children, ...props }) {
+                const content = hljs.highlightAuto(String(children).replace(/\n$/, '')).value
+                return (
+                  <code {...props} className={classNames('hljs', className)} dangerouslySetInnerHTML={
+                    {
+                      __html: content
+                    }
+                  }>
+                  </code>
+                )
+              }
+            }
+          }
+        />
       </ErrorBoundary>
       {loading ? (
-        <div className='flex items-center'>
+        <span className="">
           <span className={cursorStyle.inputCursorAnimation}>{t('typing.label')}</span>{' '}
-          <button className={style.stopButton} onClick={onStop}>
-            <StopIcon />
-          </button>
-        </div>
+        </span>
       ) : null}
       {content && !hideButton ? (
         <div className={style.contentButton}>
@@ -110,11 +130,21 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
               title={t('favorite.label')}
               description={
                 <div>
-                  <Input className='w-full' ref={inputRef} required placeholder='请输入收藏标题' />
-                  <Input className='w-full mt-4' ref={tagsRef} required placeholder='请输入内容标签，多个标签使用 , 分隔' />
+                  <Input className="w-full" ref={inputRef} required placeholder="请输入收藏标题" />
+                  <Input
+                    className="w-full mt-4"
+                    ref={tagsRef}
+                    required
+                    placeholder="请输入内容标签，多个标签使用 , 分隔"
+                  />
                   <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
                     <Dialog.Close asChild>
-                      <Button style={{width: 120 }} onClick={(event) => onFavorite(event, content)}>{t('confirm.label')}</Button>
+                      <Button
+                        style={{ width: 120 }}
+                        onClick={(event) => onFavorite(event, content)}
+                      >
+                        {t('confirm.label')}
+                      </Button>
                     </Dialog.Close>
                   </div>
                 </div>

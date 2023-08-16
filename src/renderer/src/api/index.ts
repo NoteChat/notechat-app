@@ -19,9 +19,9 @@ if (httpProtocol === 'http' || httpProtocol === 'https') {
       format: 'json'
     },
     customFetch: (...fetchParams: Parameters<typeof fetch>) => {
-        const params = fetchParams[1] as any
-        params.headers = getDefaultHeader()
-        return fetch(...fetchParams)
+      const params = fetchParams[1] as any
+      params.headers = getDefaultHeader()
+      return fetch(...fetchParams)
     }
   }
 } else {
@@ -49,19 +49,18 @@ export class MySocket {
         transports: ['websocket']
       })
     }
-    return this.socket;
+    return this.socket
   }
 
   public static getSocket() {
-    if (this.socket) return this.socket;
+    if (this.socket) return this.socket
 
-    const tk = localStorage.getItem('token');
+    const tk = localStorage.getItem('token')
     if (tk) {
       return this.initSocket(tk)
     }
-    return null;
+    return this.socket
   }
-
 }
 
 export default MyApi

@@ -1,11 +1,6 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@editorjs/code': ^2.8.0
-  '@editorjs/editorjs': ^2.27.2
-  '@editorjs/header': ^2.7.0
-  '@editorjs/list': ^1.8.0
-  '@editorjs/raw': ^2.4.0
   '@electron-toolkit/preload': ^2.0.0
   '@electron-toolkit/tsconfig': ^1.0.1
   '@electron-toolkit/utils': ^1.0.2
@@ -44,6 +39,9 @@ specifiers:
   lodash: ^4.17.21
   prettier: ^2.8.8
   quill: ^1.3.7
+  quill-markdown-shortcuts: ^0.0.10
+  quill-markdown-toolbar: ^0.1.3
+  quill-paste-smart: ^1.4.12
   rc-select: ^14.5.2
   rc-table: ^7.32.1
   react: ^18.2.0
@@ -66,11 +64,6 @@ specifiers:
   vite: ^4.4.0
 
 dependencies:
-  '@editorjs/code': 2.8.0
-  '@editorjs/editorjs': 2.27.2
-  '@editorjs/header': 2.7.0
-  '@editorjs/list': 1.8.0
-  '@editorjs/raw': 2.4.0
   '@electron-toolkit/preload': 2.0.0_electron@24.6.2
   '@electron-toolkit/utils': 1.0.2_electron@24.6.2
   '@radix-ui/colors': 0.1.9
@@ -92,6 +85,9 @@ dependencies:
   js-md5: 0.7.3
   lodash: 4.17.21
   quill: 1.3.7
+  quill-markdown-shortcuts: 0.0.10
+  quill-markdown-toolbar: 0.1.3
+  quill-paste-smart: 1.4.12_quill@1.3.7
   rc-select: 14.5.2_biqbaboplfbrettd7655fr4n2y
   rc-table: 7.32.1_biqbaboplfbrettd7655fr4n2y
   react-hot-toast: 2.4.1_biqbaboplfbrettd7655fr4n2y
@@ -419,14 +415,6 @@ packages:
       '@babel/helper-validator-identifier': 7.22.5
       to-fast-properties: 2.0.0
 
-  /@codexteam/icons/0.0.4:
-    resolution: {integrity: sha512-V8N/TY2TGyas4wLrPIFq7bcow68b3gu8DfDt1+rrHPtXxcexadKauRJL6eQgfG7Z0LCrN4boLRawR4S9gjIh/Q==}
-    dev: false
-
-  /@codexteam/icons/0.0.5:
-    resolution: {integrity: sha512-s6H2KXhLz2rgbMZSkRm8dsMJvyUNZsEjxobBEg9ztdrb1B2H3pEzY6iTwI4XUPJWJ3c3qRKwV4TrO3J5jUdoQA==}
-    dev: false
-
   /@develar/schema-utils/2.6.5:
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
     engines: {node: '>= 8.9.0'}
@@ -434,34 +422,6 @@ packages:
       ajv: 6.12.6
       ajv-keywords: 3.5.2_ajv@6.12.6
     dev: true
-
-  /@editorjs/code/2.8.0:
-    resolution: {integrity: sha512-qlv1OqSEPKnLv/ZQgNFmVgqsMbGDkh/qgTEnbVWsS+yujo1nlwgVkqCB8tOkQGVsrpmAYLiWRlA413nKxxCN5w==}
-    dependencies:
-      '@codexteam/icons': 0.0.5
-    dev: false
-
-  /@editorjs/editorjs/2.27.2:
-    resolution: {integrity: sha512-k4LavGJijAP0F1wATQ0fTo10xtBSny9z6yWaP3ANqqtyKr+pBMind5NQzckqYI0yPp31GObpcS/HsFGsFOGcug==}
-    dev: false
-
-  /@editorjs/header/2.7.0:
-    resolution: {integrity: sha512-4fGKGe2ZYblVqR/P/iw5ieG00uXInFgNMftBMqJRYcB2hUPD30kuu7Sn6eJDcLXoKUMOeqi8Z2AlUxYAmvw7zQ==}
-    dependencies:
-      '@codexteam/icons': 0.0.5
-    dev: false
-
-  /@editorjs/list/1.8.0:
-    resolution: {integrity: sha512-Vq6cjyTXBzgegYv/MtTfuDdiz59yGhDEc/yAVXr6lmvoWAFs9cJ4TLuh4/9SbrbhIptcQLDvUjMDKmRrV6v2NQ==}
-    dependencies:
-      '@codexteam/icons': 0.0.4
-    dev: false
-
-  /@editorjs/raw/2.4.0:
-    resolution: {integrity: sha512-6k7ngx1T8+ztTG4/i5QcGPKXkF2YvdqgKgtzpOTaG6Pzm17D7Hr30Krbqz2E2Y/uoV8SiR/X1UAyKTQxrk9B6Q==}
-    dependencies:
-      '@codexteam/icons': 0.0.4
-    dev: false
 
   /@electron-toolkit/preload/2.0.0_electron@24.6.2:
     resolution: {integrity: sha512-zpZDzbqJTZQC5d4LRs2EKruKWnqah+T75s+niBYFemYLtiW5TTZcWi3Q8UxHqnwTudDMuWJb233aaS2yjx3Xiw==}
@@ -3426,6 +3386,10 @@ packages:
     resolution: {integrity: sha512-R8LUSEay/68zE5c8/3BDxiTEvgb4xZTF0RKmAHfiEVN3klfIpXfi2/QCoiWPccVQ0J/ZGdz9OjzL4uJEP/MRAw==}
     dev: false
 
+  /dompurify/3.0.5:
+    resolution: {integrity: sha512-F9e6wPGtY+8KNMRAVfxeCOHU0/NPWMSENNq4pQctuXRqqdEPW7q3CrLbR5Nse044WwacyjHGOMlvNsBe1y6z9A==}
+    dev: false
+
   /dotenv-expand/5.1.0:
     resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
     dev: true
@@ -6121,6 +6085,27 @@ packages:
       deep-equal: 1.1.1
       extend: 3.0.2
       fast-diff: 1.1.2
+    dev: false
+
+  /quill-markdown-shortcuts/0.0.10:
+    resolution: {integrity: sha512-2FFFqqo65JgDgAGSer7cFQTCeiSjJF4N8lRGXGv/xjppCxSwj42OnNdGPZ/zeeCxdUY/j1LW4AiSvPQaTIkY2A==}
+    dependencies:
+      quill: 1.3.7
+    dev: false
+
+  /quill-markdown-toolbar/0.1.3:
+    resolution: {integrity: sha512-RBKTBAHzuQXDNOmGp2IJ7BIkR0Vmdy3lU/UwlV2mG6VUXUrD33usy1wwPcLmRZh6ZEn2mE/octrufEzIgSx4gw==}
+    dependencies:
+      quill: 1.3.7
+    dev: false
+
+  /quill-paste-smart/1.4.12_quill@1.3.7:
+    resolution: {integrity: sha512-knKATPGbtVD2k5HUcRmUbSe5iHJG+d+C6sZojYE9oal4QqaB+as6H3cCKyLrZ1hEal48Mm9rQg+FYjQt0KBDsQ==}
+    peerDependencies:
+      quill: ^1.3.5
+    dependencies:
+      dompurify: 3.0.5
+      quill: 1.3.7
     dev: false
 
   /quill/1.3.7:

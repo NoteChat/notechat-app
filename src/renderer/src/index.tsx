@@ -4,17 +4,23 @@ import 'virtual:uno.css'
 import './styles/common.css'
 import './styles/radix.css'
 import '@vscode/codicons/dist/codicon.css'
+import 'highlight.js/styles/github.css'
 
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import Login from './pages/user/login'
 import Register from './pages/user/register'
 import { App } from './app'
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import en from './i18n/en.json';
-import zhCN from './i18n/zh-CN.json';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import en from './i18n/en.json'
+import zhCN from './i18n/zh-CN.json'
+import { Toaster } from 'react-hot-toast'
+import ResetPwd from './pages/user/reset-pwd'
+import FindPwd from './pages/user/find-pwd'
+import { getLocale } from './utils'
 
-const locale = localStorage.getItem('lang') || navigator.language;
+
+const locale = getLocale();
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -31,7 +37,7 @@ i18n
     interpolation: {
       escapeValue: false // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
     }
-  });
+  })
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -40,7 +46,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/*" Component={App} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/find-pwd" element={<FindPwd />} />
+        <Route path="/reset-pwd" element={<ResetPwd />} />
       </Routes>
     </HashRouter>
+    <Toaster />
   </React.StrictMode>
 )

@@ -1,19 +1,19 @@
-import { app, BrowserWindow, ipcMain, Menu, Tray } from "electron";
-import { join } from "path";
+import { app, BrowserWindow, ipcMain, Menu, Tray } from 'electron'
+import { join } from 'path'
 
 export function createTrayMenu(mainWin: BrowserWindow) {
   //  创建 Tray 对象，并指定托盘图标
-  const tray = new Tray(join(__dirname, '../../resources/mac/16@2x.png'));
+  const tray = new Tray(join(__dirname, '../../resources/mac/16@2x.png'))
   //  创建用于托盘图标的上下文菜单
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Chat',
       click: () => {
         if (!mainWin.isDestroyed()) {
-          mainWin.show();
+          mainWin.show()
           mainWin.webContents.executeJavaScript(`
               window.location.hash = "#/chat"
-          `);
+          `)
         }
       },
       registerAccelerator: false,
@@ -26,10 +26,10 @@ export function createTrayMenu(mainWin: BrowserWindow) {
       accelerator: 'CommandOrControl+Shift+B',
       click: () => {
         if (!mainWin.isDestroyed()) {
-          mainWin.show();
+          mainWin.show()
           mainWin.webContents.executeJavaScript(`
               window.location.hash = "#/prompt"
-          `);
+          `)
         }
       }
     },
@@ -40,14 +40,14 @@ export function createTrayMenu(mainWin: BrowserWindow) {
       label: 'Switch Account',
       type: 'normal',
       click: () => {
-          ipcMain.emit('open-login');
+        ipcMain.emit('open-login')
       }
     },
     {
       label: 'Exit',
       role: 'quit',
       click: () => {
-        app.quit();
+        app.quit()
       }
     }
   ])

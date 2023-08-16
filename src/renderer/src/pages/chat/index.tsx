@@ -5,7 +5,7 @@ import { Textarea } from '@renderer/components/form'
 import { EraserIcon, MagicWandIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
@@ -22,16 +22,15 @@ export type ChatMessageType = {
   loading?: boolean
 }
 
-export interface ChatProps {
-}
+export interface ChatProps { }
 
 export const Chat: React.FC<ChatProps> = (props) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { prompts } = useContext(PromptsContext)
-  const { messages, setMessages } = useContext(ChatContext);
+  const { messages, setMessages, updateLastMessage, appendLastContent } = useContext(ChatContext)
+  const socket = MySocket.getSocket()
 
-  const [loading, setLoading] = React.useState<boolean>(false)
   const keyMap = {}
   let timer
 
@@ -76,19 +75,16 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const sendMsg = (content, callback?: Function) => {
-    if (loading) {
+    if (messages.length > 0 && messages[messages.length - 1].loading) {
       toast.loading('正在努力加载中，请稍后再试！', { duration: 1000 })
       return
     }
 
-    setLoading(true)
-
     const uid = localStorage.getItem('uid')
     const nextMessages = [...messages]
     nextMessages.push({ role: 'user', content: content })
-    const socket = MySocket.getSocket()
     if (socket) {
-      socket.emit('chat', { userId: uid, messages: [...nextMessages] })
+      socket.emit('chat', { userId: uid, messages: nextMessages.slice(-5) })
     }
 
     // Handle UI logic
@@ -112,58 +108,66 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const onStop = () => {
-    setLoading(false)
-    const nextMessages = [...messages];
-    nextMessages.pop();
-    nextMessages.push({ role: 'system', content: 'Stopped the request', stopped: true })
-    setMessages(nextMessages);
+    updateLastMessage({
+      role: 'system',
+      content: 'Stopped the request',
+      loading: false,
+      stopped: true
+    })
   }
 
   useEffect(() => {
+    const handleChatRes = (res) => {
+  
+      if (res.code === 1000) {
+        const chatRes = JSON.parse(res.data);
+  
+        if (chatRes.code === 'chat-list-too-long') {
+          toast.error('聊天记录太长了，请清理一下聊天记录吧！')
+          onStop()
+        } else if (chatRes.success) {
+          appendLastContent({
+            content: chatRes.message,
+            role: 'assistant',
+            loading: chatRes.code === 'message'
+          })
+        }
+      } else {
+        updateLastMessage({
+          role: 'system',
+          content: res.data.message || 'Sorry, system error.'
+        })
+      }
+    }
+  
+    const handleException = (res) => {
+      if (res.message === 'Unauthorized access') {
+        navigate('/login')
+      }
+    }
+
+    if (socket) {
+      if (socket.listeners('chat').length === 0) {
+        console.log(1)
+        socket.on('chat', handleChatRes)
+        socket.on('exception', handleException)
+      }
+    }
+
+    return () => {
+      socket!.off('chat', handleChatRes);
+      socket!.off('exception', handleChatRes);
+    }
+  }, [])
+
+  useEffect(() => {
+    
     document.getElementById('chatContent')?.focus()
     scrollToBottom({ behavior: 'auto' })
     return () => {
       clearTimeout(timer)
     }
-  }, [])
-
-  useEffect(() => {
-    const socket = MySocket.getSocket()
-
-    if (socket) {
-      socket.once('chat', (res) => {
-        setLoading(false)
-        const nextMessages = [...messages]
-
-        const last = nextMessages[nextMessages.length - 1];
-        if (last?.stopped) return;
-
-        if (res.code === 1000) {
-          const chatRes = res.data;
-          if (chatRes.code === 'chat-list-too-long') {
-            toast.error('聊天记录太长了，请清理一下聊天记录吧！')
-            onStop();
-          } else {
-            nextMessages.pop();
-            nextMessages.push({ role: 'assistant', content: res.data.data || res.data.message })
-          }
-        } else {
-          nextMessages.pop();
-          nextMessages.push({ role: 'system', content: res.data.message || 'Sorry, system error.' })
-        }
-
-        setMessages(nextMessages)
-        scrollToBottom()
-      })
-
-      socket.on('exception', (res) => {
-        setLoading(false)
-        if (res.message === 'Unauthorized access') {
-          navigate('/login')
-        }
-      })
-    }
-  }, [])
+    }, [])
 
   const renderChatRecord = () => {
     return messages.map((msg, index) => {
@@ -254,7 +258,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
                 onKeyDown={onEnterKeyDown}
                 placeholder={t('enterContent.placeholder')}
                 tabIndex={1}
-                maxLength={3000}
+                maxLength={30000}
               ></Textarea>
               <button className={style.submitBtn} onClick={sendMsg}>
                 <PaperPlaneIcon tabIndex={2} />
@@ -263,7 +267,6 @@ export const Chat: React.FC<ChatProps> = (props) => {
           </div>
         </SplitPane>
       </div>
-      <Toaster />
     </>
   )
 }

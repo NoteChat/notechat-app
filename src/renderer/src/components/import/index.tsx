@@ -13,12 +13,7 @@ import { Button, Input } from '../form'
 import { MySocket } from '@renderer/api'
 import { toast } from 'react-hot-toast'
 import classNames from 'classnames'
-import {unified} from 'unified'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import rehypeSanitize from 'rehype-sanitize'
-import rehypeStringify from 'rehype-stringify'
-
+import { transformMdToHTML } from '@renderer/utils'
 export interface ImportProps extends React.ComponentProps<'span'> {
   onExtracted?: (content: string) => void
 }
@@ -30,7 +25,7 @@ export const MyImport: React.ForwardRefRenderFunction<HTMLSpanElement, ImportPro
   const { t } = useTranslation()
   const { onExtracted, children, className, ...restProps } = props
   const refUrl = React.useRef<HTMLButtonElement>(null)
-  const refFile = React.useRef<HTMLInputElement>(null);
+  const refFile = React.useRef<HTMLInputElement>(null)
   const [loading, setLoading] = React.useState(false)
 
   const onClickUrl = () => {
@@ -64,27 +59,17 @@ export const MyImport: React.ForwardRefRenderFunction<HTMLSpanElement, ImportPro
     }
   }
 
-  const transformMdToHTML = async (md: string) => {
-    const file = await unified()
-    .use(remarkParse)
-    .use(remarkRehype)
-    .use(rehypeSanitize)
-    .use(rehypeStringify)
-    .process(md)
-    return String(file)
-  }
-
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    toast.loading(t('holdOn.button'));
+    const file = e.target.files?.[0]
+    toast.loading(t('holdOn.button'))
     setLoading(true)
     if (file) {
-      const reader = new FileReader();
-      const fileName = file.name;
-      
+      const reader = new FileReader()
+      const fileName = file.name
+
       reader.onload = ((data: any) => {
         return async (e) => {
-          let str = e.target?.result as string;
+          let str = e.target?.result as string
 
           if (fileName.endsWith('.md')) {
             str = await transformMdToHTML(str)
@@ -93,9 +78,9 @@ export const MyImport: React.ForwardRefRenderFunction<HTMLSpanElement, ImportPro
           toast.remove()
           setLoading(false)
           console.log('e.target.result:', file)
-        };
-      })(file);
-      reader.readAsText(file);
+        }
+      })(file)
+      reader.readAsText(file)
     }
   }
 
@@ -109,10 +94,18 @@ export const MyImport: React.ForwardRefRenderFunction<HTMLSpanElement, ImportPro
           </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem className={dropDownStyle.DropdownMenuItem} onClick={onClickUrl} disabled={loading}>
+          <DropdownMenuItem
+            className={dropDownStyle.DropdownMenuItem}
+            onClick={onClickUrl}
+            disabled={loading}
+          >
             {t('extract.button')}
           </DropdownMenuItem>
-          <DropdownMenuItem className={dropDownStyle.DropdownMenuItem} onClick={onClickFile} disabled={loading}>
+          <DropdownMenuItem
+            className={dropDownStyle.DropdownMenuItem}
+            onClick={onClickFile}
+            disabled={loading}
+          >
             {t('importFromFile.label')}
           </DropdownMenuItem>
           {/* <DropdownMenuItem className={dropDownStyle.DropdownMenuItem}>
@@ -144,7 +137,7 @@ export const MyImport: React.ForwardRefRenderFunction<HTMLSpanElement, ImportPro
           accept=".doc,.docx,.md,.txt"
           onChange={onFileChange}
           style={{ visibility: 'hidden' }}
-          className='display-none'
+          className="display-none"
         />
       </div>
     </>

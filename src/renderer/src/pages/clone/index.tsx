@@ -7,7 +7,7 @@ import { Button, Input } from '@renderer/components/form'
 import SplitPane from 'react-split-pane'
 import '@renderer/styles/SplitPane.scss'
 import { useTranslation } from 'react-i18next'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 export const Clone: React.FC<{}> = () => {
   const [loading, setLoading] = React.useState<boolean>(false)
@@ -23,7 +23,7 @@ export const Clone: React.FC<{}> = () => {
     const promptContent = editorRef.current.getText()
     const inputPrompt = document.querySelector<HTMLInputElement>('#inputPrompt')?.value
     const uid = localStorage.getItem('uid')
-  
+
     if (!promptContent) {
       toast.error(t('originalContent.check.required'))
       return
@@ -31,12 +31,14 @@ export const Clone: React.FC<{}> = () => {
 
     setLoading(true)
     API.v1
-      .autocomplete(// TODO, use Clone API
+      .autocomplete(
+        // TODO, use Clone API
         {
           prompt: `## 指令 ## \n 根据指令要求，按用户给出的文本进行优化：\n 指令：${inputPrompt} \n 文本：\${content}`,
           content: promptContent,
           userId: Number(uid)
-        })
+        }
+      )
       .then((res: any) => {
         if (res.data) {
           // setResult(res.data.data)
@@ -51,24 +53,24 @@ export const Clone: React.FC<{}> = () => {
   }
 
   const onExtractContent = () => {
-    const url = document.querySelector<HTMLInputElement>('#inputUrl')?.value;
+    const url = document.querySelector<HTMLInputElement>('#inputUrl')?.value
     if (url) {
-      const Socket = MySocket.getSocket();
+      const Socket = MySocket.getSocket()
       if (!Socket) return
-      Socket.emit('extract-text', { url: url });
-      Socket.on('extract-text', function(res) {
-        console.log('event', res);
+      Socket.emit('extract-text', { url: url })
+      Socket.on('extract-text', function (res) {
+        console.log('event', res)
         if (res.code === 1000) {
-          editorRef.current.setText(res.data);
+          editorRef.current.setText(res.data)
         }
-      });
+      })
     }
   }
 
   const onCopy = () => {
-    const result = resultRef.current.getText();
+    const result = resultRef.current.getText()
     if (result) {
-      navigator.clipboard.writeText(result);
+      navigator.clipboard.writeText(result)
     }
   }
 
@@ -90,7 +92,7 @@ export const Clone: React.FC<{}> = () => {
       placeholder: t('originalContent.placeholder'),
       theme: 'snow'
     })
-    editor.focus();
+    editor.focus()
     editorRef.current = editor
   }, [])
 
@@ -108,51 +110,49 @@ export const Clone: React.FC<{}> = () => {
 
   return (
     <>
-    
-    <div className={style['textPane']}>
-      <div className={style.docsContainer}>
-        <SplitPane split="horizontal" defaultSize={'50%'}>
-          <div className={style['textPane-input']}>
-            <div className={style['textPane-editor']}>
-              <div id="PromptContent" tabIndex={1} className='w-full h-full pb-10'></div>
+      <div className={style['textPane']}>
+        <div className={style.docsContainer}>
+          <SplitPane split="horizontal" defaultSize={'50%'}>
+            <div className={style['textPane-input']}>
+              <div className={style['textPane-editor']}>
+                <div id="PromptContent" tabIndex={1} className="w-full h-full pb-10"></div>
+              </div>
             </div>
-          </div>
-          <div className={style['textPane-result']}>
-            <div className={style.resultContent}>
-              <div id="PromptResult" className='w-full h-full' tabIndex={2}></div>
+            <div className={style['textPane-result']}>
+              <div className={style.resultContent}>
+                <div id="PromptResult" className="w-full h-full" tabIndex={2}></div>
+              </div>
             </div>
+          </SplitPane>
+        </div>
+        <div className={style.paneBottom}>
+          <div className={style.bottomRow}>
+            <Input
+              className={style.inputUrl}
+              placeholder={t('extractFromURL.placeholder')}
+              id="inputUrl"
+              tabIndex={4}
+            />
+            <Button tabIndex={4} onClick={onExtractContent} disabled={loading}>
+              {loading ? t('extract.button') + '...' : t('extract.button')}
+            </Button>
           </div>
-        </SplitPane>
-      </div>
-      <div className={style.paneBottom}>
-        <div className={style.bottomRow}>
-          <Input
-            className={style.inputUrl}
-            placeholder={t('extractFromURL.placeholder')}
-            id="inputUrl"
-            tabIndex={4}
-          />
-          <Button tabIndex={4} onClick={onExtractContent} disabled={loading}>
-            {loading ? t('extract.button') + '...' : t('extract.button')}
-          </Button>
-        </div>
-        <div className={style.bottomRow}>
-          <Input
-            className={style.inputUrl}
-            id="inputPrompt"
-            placeholder={t('promptText.placeholder')}
-            tabIndex={4}
-          />
-          <Button tabIndex={4} onClick={onSubmit} disabled={loading}>
-            {loading ? t('holdOn.button') : t('generate.button')}
-          </Button>
-          <Button tabIndex={4} onClick={onCopy} disabled={loading}>
-            {t('copy.button')}
-          </Button>
+          <div className={style.bottomRow}>
+            <Input
+              className={style.inputUrl}
+              id="inputPrompt"
+              placeholder={t('promptText.placeholder')}
+              tabIndex={4}
+            />
+            <Button tabIndex={4} onClick={onSubmit} disabled={loading}>
+              {loading ? t('holdOn.button') : t('generate.button')}
+            </Button>
+            <Button tabIndex={4} onClick={onCopy} disabled={loading}>
+              {t('copy.button')}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-    <Toaster />
     </>
   )
 }

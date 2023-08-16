@@ -73,6 +73,38 @@ export interface UpdateEditorDto {
   content?: string
 }
 
+export interface CreateGeneratorDto {
+  id?: number
+  result?: string
+  userId: number
+  title?: string
+  keywords?: string
+  reference?: string
+  style?: string
+  prompt?: string
+  status?: string
+  /** @format date-time */
+  createdAt?: string
+  /** @format date-time */
+  updatedAt?: string
+}
+
+export interface UpdateGeneratorDto {
+  id?: number
+  result?: string
+  userId?: number
+  title?: string
+  keywords?: string
+  reference?: string
+  style?: string
+  prompt?: string
+  status?: string
+  /** @format date-time */
+  createdAt?: string
+  /** @format date-time */
+  updatedAt?: string
+}
+
 export interface FavoriteDto {
   id?: number
   userId?: number
@@ -86,34 +118,6 @@ export interface FavoriteDto {
   updatedAt?: string
 }
 
-export interface CreateGeneratorDto {
-  id?: number
-  result?: string
-  userId: number
-  keywords?: string
-  reference?: string
-  style?: string
-  prompt?: string
-  /** @format date-time */
-  createdAt?: string
-  /** @format date-time */
-  updatedAt?: string
-}
-
-export interface UpdateGeneratorDto {
-  id?: number
-  result?: string
-  userId?: number
-  keywords?: string
-  reference?: string
-  style?: string
-  prompt?: string
-  /** @format date-time */
-  createdAt?: string
-  /** @format date-time */
-  updatedAt?: string
-}
-
 export type GetHelloData = any
 
 export type LoginData = any
@@ -121,6 +125,10 @@ export type LoginData = any
 export type RegisterData = any
 
 export type GetValidCodeData = any
+
+export type FindPasswordData = any
+
+export type ResetPasswordData = any
 
 export type GetProfileData = any
 
@@ -158,16 +166,6 @@ export type UpdateEditorData = any
 
 export type RemoveEditorData = any
 
-export type CreateFavoriteData = any
-
-export type GetUserFavoriteByTitleData = any
-
-export type GetFavoriteData = any
-
-export type UpdateFavoriteData = any
-
-export type DeleteFavoriteData = any
-
 export type CreateGeneratorData = any
 
 export type FindAllGeneratorsData = any
@@ -181,6 +179,16 @@ export type RemoveGeneratorData = any
 export type RemoveAllGeneratorData = any
 
 export type BatchCreateGeneratorData = any
+
+export type CreateFavoriteData = any
+
+export type GetUserFavoriteByTitleData = any
+
+export type GetFavoriteData = any
+
+export type UpdateFavoriteData = any
+
+export type DeleteFavoriteData = any
 
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
@@ -478,6 +486,36 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name FindPassword
+     * @request POST:/v1/auth/find-password
+     */
+    findPassword: (data: any, params: RequestParams = {}) =>
+      this.request<FindPasswordData, any>({
+        path: `/v1/auth/find-password`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name ResetPassword
+     * @request POST:/v1/auth/reset-password
+     */
+    resetPassword: (data: any, params: RequestParams = {}) =>
+      this.request<ResetPasswordData, any>({
+        path: `/v1/auth/reset-password`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
      * @name GetProfile
      * @request GET:/v1/user/profile
      * @secure
@@ -520,11 +558,19 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/v1/user/feedback
      * @secure
      */
-    feedback: (email: string, feedback: string, params: RequestParams = {}) =>
+    feedback: (
+      data: {
+        email?: string
+        feedback?: string
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<FeedbackData, any>({
         path: `/v1/user/feedback`,
         method: 'POST',
+        body: data,
         secure: true,
+        type: ContentType.Json,
         ...params
       }),
 
@@ -792,94 +838,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name CreateFavorite
-     * @request POST:/v1/favorite/create
-     * @secure
-     */
-    createFavorite: (data: FavoriteDto, params: RequestParams = {}) =>
-      this.request<CreateFavoriteData, any>({
-        path: `/v1/favorite/create`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params
-      }),
-
-    /**
-     * No description
-     *
-     * @name GetUserFavoriteByTitle
-     * @request GET:/v1/favorite/query
-     * @secure
-     */
-    getUserFavoriteByTitle: (
-      query: {
-        userId: number
-        title: string
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<GetUserFavoriteByTitleData, any>({
-        path: `/v1/favorite/query`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        ...params
-      }),
-
-    /**
-     * No description
-     *
-     * @name GetFavorite
-     * @request GET:/v1/favorite/{id}
-     * @secure
-     */
-    getFavorite: (id: string, params: RequestParams = {}) =>
-      this.request<GetFavoriteData, any>({
-        path: `/v1/favorite/${id}`,
-        method: 'GET',
-        secure: true,
-        ...params
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateFavorite
-     * @request POST:/v1/favorite/update
-     * @secure
-     */
-    updateFavorite: (data: FavoriteDto, params: RequestParams = {}) =>
-      this.request<UpdateFavoriteData, any>({
-        path: `/v1/favorite/update`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params
-      }),
-
-    /**
-     * No description
-     *
-     * @name DeleteFavorite
-     * @request POST:/v1/favorite/delete
-     * @secure
-     */
-    deleteFavorite: (data: any, params: RequestParams = {}) =>
-      this.request<DeleteFavoriteData, any>({
-        path: `/v1/favorite/delete`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params
-      }),
-
-    /**
-     * No description
-     *
      * @name CreateGenerator
      * @request POST:/v1/generator
      * @secure
@@ -991,6 +949,94 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     batchCreateGenerator: (data: any, params: RequestParams = {}) =>
       this.request<BatchCreateGeneratorData, any>({
         path: `/v1/generator/batch-create`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreateFavorite
+     * @request POST:/v1/favorite/create
+     * @secure
+     */
+    createFavorite: (data: FavoriteDto, params: RequestParams = {}) =>
+      this.request<CreateFavoriteData, any>({
+        path: `/v1/favorite/create`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name GetUserFavoriteByTitle
+     * @request GET:/v1/favorite/query
+     * @secure
+     */
+    getUserFavoriteByTitle: (
+      query: {
+        userId: number
+        title: string
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<GetUserFavoriteByTitleData, any>({
+        path: `/v1/favorite/query`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name GetFavorite
+     * @request GET:/v1/favorite/{id}
+     * @secure
+     */
+    getFavorite: (id: string, params: RequestParams = {}) =>
+      this.request<GetFavoriteData, any>({
+        path: `/v1/favorite/${id}`,
+        method: 'GET',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateFavorite
+     * @request POST:/v1/favorite/update
+     * @secure
+     */
+    updateFavorite: (data: FavoriteDto, params: RequestParams = {}) =>
+      this.request<UpdateFavoriteData, any>({
+        path: `/v1/favorite/update`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteFavorite
+     * @request POST:/v1/favorite/delete
+     * @secure
+     */
+    deleteFavorite: (data: any, params: RequestParams = {}) =>
+      this.request<DeleteFavoriteData, any>({
+        path: `/v1/favorite/delete`,
         method: 'POST',
         body: data,
         secure: true,
