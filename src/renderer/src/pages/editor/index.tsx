@@ -3,12 +3,11 @@ import 'quill/dist/quill.snow.css'
 import style from './style.module.scss'
 import '@renderer/styles/SplitPane.scss'
 import { Editor } from '@renderer/components/editor'
-import { PromptsProvider } from '@renderer/context/prompts'
 import API, { CreateEditorDto } from '@renderer/api'
 import { EditorContext } from '@renderer/context/editor'
 import { debounce } from 'lodash'
 
-export const GlobalEditor: React.FC<{}> = (props) => {
+export const GlobalEditor: React.FC<{}> = () => {
   const { editor, setEditor } = useContext(EditorContext)
   const uid = localStorage.getItem('uid')
 
@@ -28,9 +27,7 @@ export const GlobalEditor: React.FC<{}> = (props) => {
   return (
     <>
       <div className={style.globalEditor}>
-        <PromptsProvider>
-          <Editor key={editor?.id} value={editor} onChange={onEditorChange} />
-        </PromptsProvider>
+        <Editor key={editor?.id} value={editor} onChange={onEditorChange} />
       </div>
     </>
   )

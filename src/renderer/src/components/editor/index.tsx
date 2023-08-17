@@ -55,7 +55,7 @@ const toolbarOptions = {
   }
 }
 
-const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref) => {
+const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props) => {
   const { prompts } = useContext(PromptsContext)
   const [loading, setLoading] = React.useState<boolean>(false)
   const editorRef = useRef<Quill>()
@@ -64,7 +64,7 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
 
   const { t } = useTranslation()
 
-  const onSubmit = async (e) => {
+  const onSubmit = async () => {
     if (loading) return
 
     const promptContent = editorRef.current?.getText();
@@ -118,7 +118,7 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
     autocomplete(editorText, data.prompt)
   }
 
-  const onEditorChange = (delta, oldDelta, source) => {
+  const onEditorChange = () => {
     onChange?.(JSON.stringify(editorRef.current.getContents()))
   }
 
@@ -147,9 +147,9 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props, ref
           substituteBlockElements: true,
           magicPasteLinks: true,
           hooks: {
-              uponSanitizeElement(node, data, config) {
-                  // console.log(node);
-              },
+              // uponSanitizeElement(node, data, config) {
+              //     // console.log(node);
+              // },
           },
         },
         markdownShortcuts: {},

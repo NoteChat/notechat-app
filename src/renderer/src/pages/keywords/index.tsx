@@ -22,7 +22,7 @@ import cursorStyle from '@renderer/components/cursor/style.module.scss'
 import classNames from 'classnames'
 import { debounce } from 'lodash'
 
-export const Keywords: React.FC<{}> = (props) => {
+export const Keywords: React.FC<{}> = () => {
   const { t } = useTranslation()
 
   const [loading, setLoading] = React.useState<boolean>(false)
@@ -93,7 +93,7 @@ export const Keywords: React.FC<{}> = (props) => {
       toast.error(t('keywordsGenerateLimit.error'))
       return
     } else {
-      for (let [key, value] of checkedMap) {
+      for (let [key,] of checkedMap) {
         if (data[key]) {
           generate(data[key], key)
         }
@@ -235,11 +235,11 @@ export const Keywords: React.FC<{}> = (props) => {
           <div className="flex items-baseline">
             <Textarea
               defaultValue={item.reference}
-              className="w-90%"
+              className="w-90% resize"
               placeholder={t('reference.label')}
-              onChange={(e) => onChange(index, 'keywords', e.target.value)}
+              onChange={(e) => onChange(index, 'reference', e.target.value)}
             />
-            <Import />
+            <Import onExtracted={(value) => {onChange(index, 'reference', value)}}/>
           </div>
         )
       }
@@ -266,7 +266,7 @@ export const Keywords: React.FC<{}> = (props) => {
       key: 'status',
       width: 100,
       className: 'text-center',
-      render: function (_, item, index) {
+      render: function (_, item) {
           return  <span className={ item.status === 'running' ? 
             classNames(cursorStyle.inputCursorAnimation, 'color-blue') : ''}>
             {item.status}
@@ -365,6 +365,9 @@ export const Keywords: React.FC<{}> = (props) => {
             }
             onConfirm={onRemoveAll}
           />
+          <Button onClick={loadKeywords}>
+            <ReloadIcon />
+          </Button>
           {/* <Button onClick={onCsvExport}>
             <VSCodeIcon icon="export" /> 导出 CSV
           </Button> */}

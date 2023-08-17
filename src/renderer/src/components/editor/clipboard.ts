@@ -1,8 +1,4 @@
 import Clipboard from 'quill/modules/clipboard'
-import Delta from 'quill-delta'
-import Quill from 'quill'
-import { transformMdToHTML } from '@renderer/utils'
-
 export class MyClipboard extends Clipboard {
     [x: string]: any;
 

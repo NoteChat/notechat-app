@@ -12,7 +12,7 @@ import {
   QuestionMarkCircledIcon,
   StarFilledIcon
 } from '@radix-ui/react-icons'
-import { ConfirmDialog, DialogWindow } from '../dialog'
+import { ConfirmDialog } from '../dialog'
 import { Textarea } from '../form'
 import Api from '@renderer/api'
 import { getCookie } from '@renderer/utils'

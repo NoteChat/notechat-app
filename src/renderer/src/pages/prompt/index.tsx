@@ -13,7 +13,7 @@ import { Tooltip } from '@renderer/components/tooltip'
 import { ConfirmDialog } from '@renderer/components/dialog'
 import { PromptsContext } from '@renderer/context/prompts'
 
-const Prompt: React.FC<{}> = (props) => {
+const Prompt: React.FC<{}> = () => {
   const { t } = useTranslation()
   const { prompts, loadPrompts } = useContext(PromptsContext)
 

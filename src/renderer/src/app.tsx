@@ -24,9 +24,7 @@ export interface IAppProps {
 export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
   const ChatPage = (
     <ChatProvider>
-      <PromptsProvider>
-        <Chat />
-      </PromptsProvider>
+      <Chat />
     </ChatProvider>
   )
 
@@ -35,31 +33,31 @@ export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
       <Sidebar />
       <div className={style['main']}>
         <UserProvider>
-          <Routes>
-            <Route index path="/" element={ChatPage} />
-            <Route path="/chat" element={ChatPage} />
-            <Route
-              path="/editor"
-              index
-              element={
-                <EditorProvider>
-                  <GlobalEditor />
-                </EditorProvider>
-              }
-            />
-            <Route path="/keywords" Component={Keywords} />
-            <Route path="/favorite" element={<Favorite />}></Route>
-            <Route path="/favorite/edit/:id" element={<FavoriteEdit />} />
-            <Route
-              path="/prompt/*"
-              element={
-                <PromptsProvider>
+          <PromptsProvider>
+            <Routes>
+              <Route index path="/" element={ChatPage} />
+              <Route path="/chat" element={ChatPage} />
+              <Route
+                path="/editor"
+                index
+                element={
+                  <EditorProvider>
+                    <GlobalEditor />
+                  </EditorProvider>
+                }
+              />
+              <Route path="/keywords" Component={Keywords} />
+              <Route path="/favorite" element={<Favorite />}></Route>
+              <Route path="/favorite/edit/:id" element={<FavoriteEdit />} />
+              <Route
+                path="/prompt/*"
+                element={
                   <Prompt />
-                </PromptsProvider>
-              }
-            />
-            <Route path="/setting" Component={Setting} />
-          </Routes>
+                }
+              />
+              <Route path="/setting" Component={Setting} />
+            </Routes>
+          </PromptsProvider>
         </UserProvider>
       </div>
     </div>

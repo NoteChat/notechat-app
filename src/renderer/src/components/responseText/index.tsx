@@ -30,7 +30,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
     quoteTargetId,
     hideButton,
     toolbar = ['quote', 'copy', 'favorite'],
-    onStop
+    // onStop
   } = props
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)

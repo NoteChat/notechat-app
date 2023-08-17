@@ -77,7 +77,6 @@ export const MyImport: React.ForwardRefRenderFunction<HTMLSpanElement, ImportPro
           onExtracted?.(str)
           toast.remove()
           setLoading(false)
-          console.log('e.target.result:', file)
         }
       })(file)
       reader.readAsText(file)
