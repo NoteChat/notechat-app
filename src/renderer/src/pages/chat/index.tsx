@@ -97,6 +97,13 @@ export const Chat: React.FC<ChatProps> = (props) => {
     scrollToBottom()
   }
 
+  const onClickNormalPrompt = () => {
+    const content = document.querySelector<HTMLTextAreaElement>('#chatContent')
+    if (content) {
+      sendMsg(content)
+    }
+  }
+
   const onClickPrompt = (prompt: PromptDto) => {
     const content = document.querySelector<HTMLTextAreaElement>('#chatContent')
     if (content) {
@@ -263,7 +270,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
                 tabIndex={1}
                 maxLength={30000}
               ></Textarea>
-              <button className={style.submitBtn} onClick={sendMsg}>
+              <button className={style.submitBtn} onClick={onClickNormalPrompt}>
                 <PaperPlaneIcon tabIndex={2} />
               </button>
             </div>
