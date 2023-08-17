@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import cursorStyle from '@renderer/components/cursor/style.module.scss'
 import toast from 'react-hot-toast'
 import style from './style.module.scss'
-import { QuoteIcon, StarFilledIcon } from '@radix-ui/react-icons'
+import { QuoteIcon, StarFilledIcon, StopIcon } from '@radix-ui/react-icons'
 import { ErrorBoundary } from '@renderer/errorBundary'
 import API from '@renderer/api'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -30,7 +30,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
     quoteTargetId,
     hideButton,
     toolbar = ['quote', 'copy', 'favorite'],
-    // onStop
+    onStop
   } = props
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -101,8 +101,11 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
         />
       </ErrorBoundary>
       {loading ? (
-        <span className="">
+        <span className="flex">
           <span className={cursorStyle.inputCursorAnimation}>{t('typing.label')}</span>{' '}
+          <button className={style.stopButton} title={t('stop.label')} onClick={onStop}>
+            <StopIcon /> {t('stop.label')}
+          </button>
         </span>
       ) : null}
       {content && !hideButton ? (

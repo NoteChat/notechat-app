@@ -59,6 +59,7 @@ export const ChatProvider: React.FC<React.PropsWithChildren> = (props) => {
       const newMessages = [...prevMessages]
       const lastIndex = newMessages.length - 1
       const prevMsg = newMessages[lastIndex]
+      if (prevMsg.stopped) return prevMessages; // stop render when 
       newMessages[lastIndex] = { ...prevMsg, ...message, content: prevMsg.content + message.content }
       storeMessages(newMessages)
       return newMessages

@@ -84,6 +84,9 @@ export const Chat: React.FC<ChatProps> = (props) => {
     const nextMessages = [...messages]
     nextMessages.push({ role: 'user', content: content })
     if (socket) {
+      if (!socket.active) {
+        socket.connect()
+      }
       socket.emit('chat', { userId: uid, messages: nextMessages.slice(-5) })
     }
 
@@ -108,52 +111,52 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const onStop = () => {
-    updateLastMessage({
+    appendLastContent({
       role: 'system',
-      content: 'Stopped the request',
+      content: '\n\n Stopped chat.',
       loading: false,
       stopped: true
     })
+    socket?.disconnect()
+  }
+
+  const handleChatRes = (res) => {
+  
+    if (res.code === 1000) {
+      const chatRes = JSON.parse(res.data);
+
+      if (chatRes.code === 'chat-list-too-long') {
+        toast.error('聊天记录太长了，请清理一下聊天记录吧！')
+        onStop()
+      } else if (chatRes.success) {
+        appendLastContent({
+          content: chatRes.message,
+          role: 'assistant',
+          loading: chatRes.code !== 'finish'
+        })
+      }
+    } else {
+      updateLastMessage({
+        role: 'system',
+        content: res.data.message || 'Sorry, system error.'
+      })
+    }
+  }
+
+  const handleException = (res) => {
+    if (res.message === 'Unauthorized access') {
+      navigate('/login')
+    }
   }
 
   useEffect(() => {
-    const handleChatRes = (res) => {
-  
-      if (res.code === 1000) {
-        const chatRes = JSON.parse(res.data);
-  
-        if (chatRes.code === 'chat-list-too-long') {
-          toast.error('聊天记录太长了，请清理一下聊天记录吧！')
-          onStop()
-        } else if (chatRes.success) {
-          appendLastContent({
-            content: chatRes.message,
-            role: 'assistant',
-            loading: chatRes.code === 'message'
-          })
-        }
-      } else {
-        updateLastMessage({
-          role: 'system',
-          content: res.data.message || 'Sorry, system error.'
-        })
-      }
-    }
-  
-    const handleException = (res) => {
-      if (res.message === 'Unauthorized access') {
-        navigate('/login')
-      }
-    }
-
     if (socket) {
+      console.log(1)
       if (socket.listeners('chat').length === 0) {
-        console.log(1)
         socket.on('chat', handleChatRes)
         socket.on('exception', handleException)
       }
     }
-
     return () => {
       socket!.off('chat', handleChatRes);
       socket!.off('exception', handleChatRes);
