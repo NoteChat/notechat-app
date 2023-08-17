@@ -2,7 +2,6 @@ import classNames from 'classnames'
 
 export const CloneIcon = () => {
   return (
-    <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -17,13 +16,11 @@ export const CloneIcon = () => {
           strokeLinecap="round"
         />
       </svg>
-    </div>
   )
 }
 
 export const TextIcon = () => {
   return (
-    <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -34,21 +31,16 @@ export const TextIcon = () => {
         <path
           d="M10.3136 16.8L13.0869 7.19999M10.3136 16.8H7.42787M10.3136 16.8H13.1993M13.0869 7.19999H10.2012M13.0869 7.19999H15.9726M4.79999 21.6H19.2C20.5255 21.6 21.6 20.5255 21.6 19.2V4.79999C21.6 3.47451 20.5255 2.39999 19.2 2.39999H4.79999C3.47451 2.39999 2.39999 3.47451 2.39999 4.79999V19.2C2.39999 20.5255 3.47451 21.6 4.79999 21.6Z"
           stroke="#EEEEEE"
-          // fillRule="evenodd"
-          // fill="currentColor"
-          // clipRule="evenodd"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </svg>
-    </div>
   )
 }
 
 export const ChatIcon = () => {
   return (
-    <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -65,13 +57,11 @@ export const ChatIcon = () => {
           strokeLinejoin="round"
         />
       </svg>
-    </div>
   )
 }
 
 export const ComponentIcon = () => {
   return (
-    <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -100,13 +90,11 @@ export const ComponentIcon = () => {
           strokeWidth="1.5"
         />
       </svg>
-    </div>
   )
 }
 
 export const GearIcon = () => {
   return (
-    <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -120,7 +108,6 @@ export const GearIcon = () => {
           strokeWidth="1.5"
         />
       </svg>
-    </div>
   )
 }
 

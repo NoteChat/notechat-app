@@ -5,6 +5,7 @@ import { ChatIcon, ComponentIcon, GearIcon, TextIcon, VSCodeIcon } from '../icon
 import { useTranslation } from 'react-i18next'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import style from './style.module.scss'
+
 import {
   ExitIcon,
   Pencil2Icon,
@@ -81,7 +82,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
   }
 
   return (
-    <div className={classnames(`absolute left-0 top-0 bottom-0 m-auto`, style['sidebar'])}>
+    <div className={classnames(style['sidebar'])}>
       <div className={style['sidebar-menu']}>
         <Link to="/chat">
           <MenuItem className={activeClass('/chat')} icon={<ChatIcon />}>
@@ -118,7 +119,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
       <div className={style['settings']}>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className="cursor-pointer" title={t('setting.label')}>
+            <button className="cursor-pointer flex items-center" title={t('setting.label')}>
               <GearIcon />
             </button>
           </DropdownMenu.Trigger>

@@ -41,15 +41,15 @@ i18n
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <HashRouter>
-      <Routes>
-        <Route path="/*" Component={App} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/find-pwd" element={<FindPwd />} />
-        <Route path="/reset-pwd" element={<ResetPwd />} />
-      </Routes>
-    </HashRouter>
+      <HashRouter>
+        <Routes>
+          <Route path="/*" Component={App} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/find-pwd" element={<FindPwd />} />
+          <Route path="/reset-pwd" element={<ResetPwd />} />
+        </Routes>
+      </HashRouter>
     <Toaster />
   </React.StrictMode>
 )
