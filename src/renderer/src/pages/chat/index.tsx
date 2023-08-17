@@ -98,9 +98,10 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const onClickNormalPrompt = () => {
-    const content = document.querySelector<HTMLTextAreaElement>('#chatContent')
-    if (content) {
-      sendMsg(content)
+    const contentEle = document.querySelector<HTMLTextAreaElement>('#chatContent');
+    if (contentEle) {
+      sendMsg(contentEle.value)
+      contentEle.value = ''
     }
   }
 
