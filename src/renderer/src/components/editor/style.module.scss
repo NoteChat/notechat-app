@@ -63,76 +63,42 @@
   overflow: hidden;
 }
 
-.textPane-result {
-  height: 100%;
-  border-left: 5px solid var(--second-color);
-  display: flex;
-  flex-direction: column;
-}
-
-.resultContent {
-  overflow: auto;
-  color: var(--color2);
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: -0.35px;
-}
-
-.resultContentItem {
-  margin: 10px 20px;
-  padding: var(--gap);
-  background-color: var(--blackA2);
-  border-radius: 10px;
-  color: var(--blackA12);
-  display: flex;
-  position: relative;
-
-  &:hover {
-    background: var(--blackA5);
-  }
-
-  h1 {
-    font-size: 18px;
-  }
-}
-
-.paneBottom {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
-
 .extensionsBar {
   padding: var(--gap);
-  padding-bottom: 0;
-  column-gap: 10px;
+  row-gap: 20px;
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: start;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 
   button {
     cursor: pointer;
-  }
-}
-
-.importButton {
-  span {
     display: flex;
     align-items: center;
     justify-content: center;
     column-gap: 5px;
-    color: var(--primary-color);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color);
+    color: #fff;
+    
+    &:hover {
+      background-color: #fff;
+      color: var(--primary-color);
+    }
   }
 }
-
 
 @media screen and (max-width: 768px) {
 
   /* 当屏幕宽度小于等于 768px 时的样式 */
-    .textPane {
-      :global {
+  .textPane {
+    :global {
 
       .Pane1 {
         width: 100% !important;
@@ -141,7 +107,7 @@
       .Pane2 {
         display: none;
       }
-      
+
     }
   }
 }

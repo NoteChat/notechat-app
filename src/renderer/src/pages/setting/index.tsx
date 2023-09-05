@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import classNames from 'classnames'
 import * as Form from '@radix-ui/react-form'
-import { Button, Input, Select } from '@renderer/components/form'
+import { Button, Input } from '@renderer/components/form'
 import style from './style.module.scss'
 import { UserDto } from '@renderer/api'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +10,7 @@ import dayjs from 'dayjs'
 import { PackageAlert } from '@renderer/components/package'
 
 export const Setting: React.FC = () => {
-  const { user, updateProfile } = useContext(UserContext)
+  const { user, updateProfile, loadProfile } = useContext(UserContext)
   const { t } = useTranslation()
 
   const onHandleEvent = (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,6 +23,10 @@ export const Setting: React.FC = () => {
       updateProfile(userData)
     }
   }
+
+  useEffect(() => {
+    loadProfile()
+  }, [])
 
   return (
     <>

@@ -8,13 +8,15 @@ export interface UserContextProps {
   setUser: (user: UserDto) => void
   updateProfile: (user: UserDto) => void
   onChangeLang: (lang: string) => void
+  loadProfile: () => void
 }
 
 const initialContext: UserContextProps = {
   user: undefined,
   setUser: () => {},
   updateProfile: () => {},
-  onChangeLang: () => {}
+  onChangeLang: () => {},
+  loadProfile: () => {}
 }
 
 export function getLocale() {
@@ -35,7 +37,7 @@ export const UserProvider: React.FC<React.PropsWithChildren> = (props) => {
   const navigate = useNavigate()
   const uid = localStorage.getItem('uid')
 
-  useEffect(() => {
+  const loadProfile = () => {
     if (!uid) {
       navigate('/login')
       return
@@ -51,7 +53,7 @@ export const UserProvider: React.FC<React.PropsWithChildren> = (props) => {
       }
       console.log('get profile failed', err)
     })
-  }, [])
+  }
 
   const updateProfile = (userData: UserDto) => {
       Api.v1.updateProfile(userData).then((res) => {
@@ -72,13 +74,18 @@ export const UserProvider: React.FC<React.PropsWithChildren> = (props) => {
     }
   }
 
+  useEffect(() => {
+    loadProfile()
+  }, [])
+
   return (
     <UserContext.Provider
       value={{
         user,
         setUser,
         updateProfile,
-        onChangeLang
+        onChangeLang,
+        loadProfile
       }}
     >
       {props.children}

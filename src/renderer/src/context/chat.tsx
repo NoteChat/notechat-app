@@ -1,6 +1,4 @@
 import React from 'react'
-import API from '@renderer/api'
-import { debounce } from 'lodash'
 
 export type ChatMessageType = {
   role: 'user' | 'assistant' | 'system'
@@ -64,26 +62,10 @@ export const ChatProvider: React.FC<React.PropsWithChildren> = (props) => {
       const prevMsg = newMessages[lastIndex]
       if (prevMsg.stopped) return prevMessages; // stop render when 
       newMessages[lastIndex] = { ...prevMsg, ...message, content: prevMsg.content + message.content }
-      if (message.loading === false && message.code === 'finish') {
-        countTokens(newMessages);
-      }
       storeMessages(newMessages)
       return newMessages
     })
   }
-
-  const countTokens = debounce((msgs) => {
-    const last = msgs[msgs.length - 1];
-    const before = msgs[msgs.length - 2];
-    const uid = Number(localStorage.getItem('uid'));
-    const completion = last.content;
-    const prompt = before.content;
-    API.v1.updateUserTokens({
-      userId: uid,
-      prompt: prompt, 
-      completion: completion,
-    });
-  }, 500)
 
   return (
     <ChatContext.Provider

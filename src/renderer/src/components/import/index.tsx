@@ -107,13 +107,10 @@ export const MyImport: React.ForwardRefRenderFunction<HTMLSpanElement, ImportPro
           >
             {t('importFromFile.label')}
           </DropdownMenuItem>
-          {/* <DropdownMenuItem className={dropDownStyle.DropdownMenuItem}>
-            {t('importFromImages.label')}
-          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogWindow
-        trigger={<button style={{ visibility: 'hidden' }} ref={refUrl} className="" />}
+        trigger={<button style={{ visibility: 'hidden', width: 0, height: 0 }} ref={refUrl} className="" />}
         title={t('extract.button')}
         description={
           <>

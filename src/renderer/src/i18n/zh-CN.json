@@ -36,7 +36,7 @@
     "name.label": "名称",
     "nullResult.placeholder": "当前还未生成任何内容",
     "originalContent.check.required": "内容不能为空",
-    "originalContent.placeholder": "请输入内容...",
+    "originalContent.placeholder": "请输入内容, 或者输入 '++' 使用 AI 自动完成...",
     "password.check.required": "密码不能为空",
     "password.check.validLen": "密码长度必须大于等于 6",
     "password.label": "密码",
@@ -107,6 +107,7 @@
     "packageExpired.error": "套餐已过期，请续费！",
     "countTokens.label": "Token 消耗",
     "promptTokens.label": "提示",
-    "completionTokens.label": "补全"
+    "completionTokens.label": "补全",
+    "download.label": "下载"
   }
 }
