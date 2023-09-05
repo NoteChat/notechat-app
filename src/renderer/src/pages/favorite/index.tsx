@@ -7,12 +7,15 @@ import { Cross2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
 import { toast } from 'react-hot-toast'
+import { debounce } from 'lodash'
 
 export const Favorite: React.FC<{}> = (props) => {
   const { t } = useTranslation()
 
   const [loading, setLoading] = React.useState<boolean>(false)
   const [data, setData] = useState<FavoriteDto[] | undefined>([])
+
+  const userId = Number(localStorage.getItem('uid'));
 
   const onSearch = () => {
     const inputDom = document.querySelector<HTMLTextAreaElement>('#queryInput')
@@ -31,14 +34,41 @@ export const Favorite: React.FC<{}> = (props) => {
 
   const loadData = async (title: string) => {
     const res = await API.v1.getUserFavoriteByTitle({
-      userId: Number(localStorage.getItem('uid')),
-      title: title
-    })
+      userId: userId,
+      title: title,
+      skip: undefined,
+      limit: title ? 100 : 10,
+    } as any)
     if (res.data) {
       setData(res.data)
     }
     setLoading(false)
   }
+
+  const lazyLoadData = async () => {
+    setLoading(true)
+    const params: any = {
+      userId: userId,
+      title: undefined,
+      skip: data?.length,
+      limit: 10,
+    }
+    const res = await API.v1.getUserFavoriteByTitle(params)
+    if (res.data && res.data.length > 0) {
+      setData((prev = []) => {
+        return [...prev, ...res.data]
+      })
+    }
+    setLoading(false)
+  }
+
+  const onScrollToBottom = debounce((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const target = e.target as HTMLDivElement
+    const top = Math.round(target.scrollTop + target.clientHeight);
+    if (top >= target.scrollHeight) {
+      lazyLoadData()
+    }
+  }, 500)
 
   const onDeleteItem = async (id: number) => {
     const res = await API.v1.deleteFavorite({ id })
@@ -68,7 +98,7 @@ export const Favorite: React.FC<{}> = (props) => {
           </button>
         </div>
       </div>
-      <div className={style.favoriteContent}>
+      <div className={style.favoriteContent} onScroll={onScrollToBottom}>
         {data?.map((item) => {
           return (
             <div className={style.favoriteContentItem} key={item.id}>

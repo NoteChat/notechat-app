@@ -6,6 +6,7 @@ import { Editor } from '@renderer/components/editor'
 import API, { CreateEditorDto } from '@renderer/api'
 import { EditorContext } from '@renderer/context/editor'
 import { debounce } from 'lodash'
+import { PackageAlert } from '@renderer/components/package'
 
 export const GlobalEditor: React.FC<{}> = () => {
   const { editor, setEditor } = useContext(EditorContext)
@@ -28,6 +29,7 @@ export const GlobalEditor: React.FC<{}> = () => {
     <>
       <div className={style.globalEditor}>
         <Editor key={editor?.id} value={editor} onChange={onEditorChange} />
+        <PackageAlert />
       </div>
     </>
   )

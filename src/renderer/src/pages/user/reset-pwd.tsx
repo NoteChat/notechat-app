@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
 import logo from '@renderer/assets/128@2x.png'
 import { getUrlParam } from '@renderer/utils'
+import { LanguageLayout } from '@renderer/components/language'
 
 const ResetPwd: React.FC<{}> = () => {
   const { t } = useTranslation()
@@ -56,7 +57,7 @@ const ResetPwd: React.FC<{}> = () => {
   }, [])
 
   return (
-    <>
+    <LanguageLayout>
       <div className="centerBlock" style={{ top: '40%' }}>
         <div className="text-center mb-10">
           <img src={logo} width={128} height={128} style={{ borderRadius: '10px' }} />
@@ -124,7 +125,7 @@ const ResetPwd: React.FC<{}> = () => {
           </div>
         </Form.Root>
       </div>
-    </>
+    </LanguageLayout>
   )
 }
 

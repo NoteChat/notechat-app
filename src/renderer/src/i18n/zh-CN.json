@@ -98,6 +98,15 @@
     "findPwd.success": "重置密码的邮件已经发送，请尽快完成修改！",
     "resetPwd.success": "密码重置成功！",
     "linkExpired.error": "链接已过期，请重新获取！",
-    "password.check.notMatch": "两次输入的密码不一致！"
+    "password.check.notMatch": "两次输入的密码不一致！",
+    "refresh.label": "刷新",
+    "billing.label": "账单",
+    "expireDate.label": "截止日期",
+    "loading.label": "加载中...",
+    "topUp.label": "立即续费",
+    "packageExpired.error": "套餐已过期，请续费！",
+    "countTokens.label": "Token 消耗",
+    "promptTokens.label": "提示",
+    "completionTokens.label": "补全"
   }
 }

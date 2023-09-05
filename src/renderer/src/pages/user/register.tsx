@@ -7,7 +7,8 @@ import { Button, Input } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
 import logo from '@renderer/assets/128@2x.png'
-import { getLocale } from '@renderer/utils'
+import { LanguageLayout } from '@renderer/components/language'
+import { getLocale } from '@renderer/context/user'
 
 const Register: React.FC<{}> = () => {
   const { t } = useTranslation()
@@ -83,7 +84,7 @@ const Register: React.FC<{}> = () => {
   }, [])
 
   return (
-    <>
+    <LanguageLayout>
       <div className="centerBlock" style={{ top: '40%' }}>
         <div className="text-center mb-10">
           <img src={logo} width={128} height={128} style={{ borderRadius: '10px' }} />
@@ -173,7 +174,7 @@ const Register: React.FC<{}> = () => {
           </div>
         </Form.Root>
       </div>
-    </>
+    </LanguageLayout>
   )
 }
 

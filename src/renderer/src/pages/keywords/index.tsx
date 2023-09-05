@@ -366,7 +366,7 @@ export const Keywords: React.FC<{}> = () => {
             onConfirm={onRemoveAll}
           />
           <Button onClick={loadKeywords}>
-            <ReloadIcon />
+            <ReloadIcon /> {t('refresh.label')}
           </Button>
           {/* <Button onClick={onCsvExport}>
             <VSCodeIcon icon="export" /> 导出 CSV

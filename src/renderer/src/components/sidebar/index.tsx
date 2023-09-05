@@ -11,6 +11,7 @@ import {
   Pencil2Icon,
   PersonIcon,
   QuestionMarkCircledIcon,
+  ReaderIcon,
   StarFilledIcon
 } from '@radix-ui/react-icons'
 import { ConfirmDialog } from '../dialog'
@@ -18,6 +19,7 @@ import { Textarea } from '../form'
 import Api from '@renderer/api'
 import { getCookie } from '@renderer/utils'
 import toast from 'react-hot-toast'
+import { ChangeLanguage } from '../language'
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   icon?: React.ReactElement
@@ -42,6 +44,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
   const location = useLocation()
   const pathname = location.pathname
   const { t } = useTranslation()
+  const email = getCookie('username');
 
   const activeClass = (path: string) => {
     let isEq = false
@@ -64,7 +67,6 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
   }
 
   const onFeedback = async () => {
-    const email = getCookie('username');
     const content = document.querySelector<HTMLTextAreaElement>('#feedback')?.value.trim();
     if (email) {
       if (!content) {
@@ -97,11 +99,6 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
             {t('editor.label')}
           </MenuItem>
         </Link>
-        <Link to="/keywords">
-          <MenuItem className={activeClass('/keywords')} icon={<TextIcon />}>
-            {t('keywords.label')}
-          </MenuItem>
-        </Link>
         <Link to="/favorite">
           <MenuItem
             className={activeClass('/favorite')}
@@ -126,15 +123,20 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
           <DropdownMenu.Portal>
             <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
               <DropdownMenu.Item className="DropdownMenuItem">
-                <Link to="/setting">
+                <Link to="/setting" className="flex items-center gap-1 h-full w-full">
                   <PersonIcon /> {t('userSettings.label')}
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item className="DropdownMenuItem">
+                <Link className="flex items-center gap-1 h-full w-full" to={`https://billing.stripe.com/p/login/3cs7tQ1Hn3vy77O144?prefilled_email=${email}`} target="_blank">
+                  <ReaderIcon />{t('billing.label')}
                 </Link>
               </DropdownMenu.Item>
 
               <DropdownMenu.Separator className="DropdownMenuSeparator" />
 
               <DropdownMenu.Item className="DropdownMenuItem">
-                <Link onClick={onLogout} to="/login">
+                <Link onClick={onLogout} to="/login" className="flex items-center gap-1 h-full w-full" >
                   <ExitIcon /> {t('logout.label')}
                 </Link>
               </DropdownMenu.Item>
@@ -142,7 +144,8 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <Link to="#" className="cursor-pointer" title={t('helpDocs.label')}>
+        <ChangeLanguage />
+        <Link to="#" className="cursor-pointer flex items-center" title={t('helpDocs.label')}>
           <QuestionMarkCircledIcon width={24} height={24} />
         </Link>
         <ConfirmDialog
@@ -153,7 +156,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = () => {
           trigger={
               <Link
                 to={`#`}
-                className="cursor-pointer"
+                className="cursor-pointer flex items-center"
                 title={t('feedback.label')}
               >
                 <VSCodeIcon icon="bug" style={{ fontSize: '24px' }} />

@@ -39,10 +39,6 @@ export function getUrlParam(name: string, url?: string): string | null {
     return results == null ? null : results[1];
 }
 
-export function getLocale() {
-  return localStorage.getItem('lang') || navigator.language
-}
-
 export async function transformMdToHTML(md: string) {
   const file = await unified()
     .use(remarkParse)

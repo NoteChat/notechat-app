@@ -24,6 +24,7 @@ specifiers:
   any-text: ^1.2.0
   axios: ^1.4.0
   classnames: ^2.3.2
+  dayjs: ^1.11.9
   electron: ^24.6.2
   electron-builder: ^24.4.0
   electron-updater: ^5.3.0
@@ -79,6 +80,7 @@ dependencies:
   any-text: 1.2.0
   axios: 1.4.0
   classnames: 2.3.2
+  dayjs: 1.11.9
   electron-updater: 5.3.0
   highlight.js: 11.8.0
   i18next: 23.2.11
@@ -3194,6 +3196,10 @@ packages:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
     dev: true
+
+  /dayjs/1.11.9:
+    resolution: {integrity: sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==}
+    dev: false
 
   /debug/3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}

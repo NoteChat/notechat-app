@@ -17,8 +17,7 @@ import zhCN from './i18n/zh-CN.json'
 import { Toaster } from 'react-hot-toast'
 import ResetPwd from './pages/user/reset-pwd'
 import FindPwd from './pages/user/find-pwd'
-import { getLocale } from './utils'
-
+import { getLocale } from './context/user'
 
 const locale = getLocale();
 

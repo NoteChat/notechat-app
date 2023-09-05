@@ -30,9 +30,9 @@ export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
 
   return (
     <div className="w-full h-full">
-      <Sidebar />
-      <div className={style['main']}>
-        <UserProvider>
+      <UserProvider>
+        <Sidebar />
+        <div className={style['main']}>
           <PromptsProvider>
             <Routes>
               <Route index path="/" element={ChatPage} />
@@ -49,17 +49,12 @@ export const App: React.FC<React.PropsWithChildren> = React.memo(() => {
               <Route path="/keywords" Component={Keywords} />
               <Route path="/favorite" element={<Favorite />}></Route>
               <Route path="/favorite/edit/:id" element={<FavoriteEdit />} />
-              <Route
-                path="/prompt/*"
-                element={
-                  <Prompt />
-                }
-              />
+              <Route path="/prompt/*" element={<Prompt />} />
               <Route path="/setting" Component={Setting} />
             </Routes>
           </PromptsProvider>
-        </UserProvider>
-      </div>
+        </div>
+      </UserProvider>
     </div>
   )
 })

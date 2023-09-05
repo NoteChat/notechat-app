@@ -29,6 +29,25 @@ export interface UserDto {
   email?: string
   aiEngine?: string
   language?: string
+  promptTokens?: number
+  completionTokens?: number
+  package?: string
+  customerId?: string
+  /** @format date-time */
+  expiresAt?: string
+  paymentIntentId?: string
+  amount?: number
+  paymentMode?: string
+  subscribeInterval?: string
+}
+
+export interface PromptRecordDto {
+  /** @example 1 */
+  userId: number
+  promptId?: number
+  prompt: string
+  content: string
+  countTokens?: number
 }
 
 export interface PromptDto {
@@ -49,14 +68,6 @@ export interface PromptDto {
   keybindings: string
   /** @example "0 // 0: false, 1: true" */
   isBuiltIn: number
-}
-
-export interface PromptRecordDto {
-  /** @example 1 */
-  userId: number
-  promptId?: number
-  prompt: string
-  content: string
 }
 
 export interface CreateEditorDto {
@@ -118,6 +129,44 @@ export interface FavoriteDto {
   updatedAt?: string
 }
 
+export interface CreatePackageDto {
+  name: string
+  items: string[]
+  description: string
+  price: number
+  /** @example "monthly/yearly" */
+  subscribeType: string
+}
+
+export interface UpdatePackageDto {
+  name?: string
+  items?: string[]
+  description?: string
+  price?: number
+  /** @example "monthly/yearly" */
+  subscribeType?: string
+  id: number
+}
+
+export interface CreateOrderDto {
+  userId: number
+  packageId: number
+  price: number
+  status: string
+  /** @format date-time */
+  expiredAt: string
+}
+
+export interface UpdateOrderDto {
+  userId?: number
+  packageId?: number
+  price?: number
+  status?: string
+  /** @format date-time */
+  expiredAt?: string
+  id: number
+}
+
 export type GetHelloData = any
 
 export type LoginData = any
@@ -134,7 +183,11 @@ export type GetProfileData = any
 
 export type UpdateProfileData = any
 
+export type UpdateUserTokensData = any
+
 export type FeedbackData = any
+
+export type AutocompleteData = any
 
 export type GetPromptData = any
 
@@ -149,8 +202,6 @@ export type GetPrompt2Data = any
 export type GetPromptByUserIdData = any
 
 export type DeletePrompt2Data = any
-
-export type AutocompleteData = any
 
 export type ExtractTextFromImgData = any
 
@@ -189,6 +240,28 @@ export type GetFavoriteData = any
 export type UpdateFavoriteData = any
 
 export type DeleteFavoriteData = any
+
+export type CreatePackageData = any
+
+export type FindAllPackageData = any
+
+export type FindOnePackageData = any
+
+export type UpdatePackageData = any
+
+export type RemovePackageData = any
+
+export type CreateOrderData = any
+
+export type FindAllOrderData = any
+
+export type FindOneOrderData = any
+
+export type UpdateOrderData = any
+
+export type RemoveOrderData = any
+
+export type StripeHooksData = any
 
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
@@ -554,6 +627,30 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name UpdateUserTokens
+     * @request POST:/v1/user/count-tokens
+     * @secure
+     */
+    updateUserTokens: (
+      data: {
+        prompt?: string
+        completion?: string
+        userId?: number
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<UpdateUserTokensData, any>({
+        path: `/v1/user/count-tokens`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
      * @name Feedback
      * @request POST:/v1/user/feedback
      * @secure
@@ -567,6 +664,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<FeedbackData, any>({
         path: `/v1/user/feedback`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name Autocomplete
+     * @request POST:/v1/ai/complete
+     * @secure
+     */
+    autocomplete: (data: PromptRecordDto, params: RequestParams = {}) =>
+      this.request<AutocompleteData, any>({
+        path: `/v1/ai/complete`,
         method: 'POST',
         body: data,
         secure: true,
@@ -706,23 +820,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     deletePrompt2: (data: any, params: RequestParams = {}) =>
       this.request<DeletePrompt2Data, any>({
         path: `/v1/prompt-records/delete`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params
-      }),
-
-    /**
-     * No description
-     *
-     * @name Autocomplete
-     * @request POST:/v1/ai/complete
-     * @secure
-     */
-    autocomplete: (data: PromptRecordDto, params: RequestParams = {}) =>
-      this.request<AutocompleteData, any>({
-        path: `/v1/ai/complete`,
         method: 'POST',
         body: data,
         secure: true,
@@ -982,8 +1079,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     getUserFavoriteByTitle: (
       query: {
-        userId: number
+        userId: string
         title: string
+        limit: string
+        skip: string
       },
       params: RequestParams = {}
     ) =>
@@ -1041,6 +1140,167 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreatePackage
+     * @request POST:/v1/package
+     */
+    createPackage: (data: CreatePackageDto, params: RequestParams = {}) =>
+      this.request<CreatePackageData, any>({
+        path: `/v1/package`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAllPackage
+     * @request GET:/v1/package
+     */
+    findAllPackage: (params: RequestParams = {}) =>
+      this.request<FindAllPackageData, any>({
+        path: `/v1/package`,
+        method: 'GET',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOnePackage
+     * @request GET:/v1/package/{id}
+     */
+    findOnePackage: (id: string, params: RequestParams = {}) =>
+      this.request<FindOnePackageData, any>({
+        path: `/v1/package/${id}`,
+        method: 'GET',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdatePackage
+     * @request PATCH:/v1/package/{id}
+     */
+    updatePackage: (id: string, data: UpdatePackageDto, params: RequestParams = {}) =>
+      this.request<UpdatePackageData, any>({
+        path: `/v1/package/${id}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name RemovePackage
+     * @request DELETE:/v1/package/{id}
+     */
+    removePackage: (id: string, params: RequestParams = {}) =>
+      this.request<RemovePackageData, any>({
+        path: `/v1/package/${id}`,
+        method: 'DELETE',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreateOrder
+     * @request POST:/v1/order
+     * @secure
+     */
+    createOrder: (data: CreateOrderDto, params: RequestParams = {}) =>
+      this.request<CreateOrderData, any>({
+        path: `/v1/order`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAllOrder
+     * @request GET:/v1/order
+     * @secure
+     */
+    findAllOrder: (userId: string, params: RequestParams = {}) =>
+      this.request<FindAllOrderData, any>({
+        path: `/v1/order`,
+        method: 'GET',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOneOrder
+     * @request GET:/v1/order/{id}
+     * @secure
+     */
+    findOneOrder: (id: string, params: RequestParams = {}) =>
+      this.request<FindOneOrderData, any>({
+        path: `/v1/order/${id}`,
+        method: 'GET',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateOrder
+     * @request PATCH:/v1/order/{id}
+     * @secure
+     */
+    updateOrder: (id: string, data: UpdateOrderDto, params: RequestParams = {}) =>
+      this.request<UpdateOrderData, any>({
+        path: `/v1/order/${id}`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name RemoveOrder
+     * @request DELETE:/v1/order/{id}
+     * @secure
+     */
+    removeOrder: (id: string, params: RequestParams = {}) =>
+      this.request<RemoveOrderData, any>({
+        path: `/v1/order/${id}`,
+        method: 'DELETE',
+        secure: true,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name StripeHooks
+     * @request POST:/v1/stripe/hooks
+     */
+    stripeHooks: (params: RequestParams = {}) =>
+      this.request<StripeHooksData, any>({
+        path: `/v1/stripe/hooks`,
+        method: 'POST',
         ...params
       })
   }

@@ -9,11 +9,13 @@ import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
-import { MySocket, PromptDto } from '@renderer/api'
+import API, { MySocket, PromptDto } from '@renderer/api'
 import { VSCodeIcon } from '@renderer/components/icon'
 import { Import } from '@renderer/components/import'
 import { ChatContext } from '@renderer/context/chat'
 import { PromptsContext } from '@renderer/context/prompts'
+import { PackageAlert } from '@renderer/components/package'
+import { UserContext } from '@renderer/context/user'
 
 export type ChatMessageType = {
   role: 'user' | 'assistant' | 'system'
@@ -22,12 +24,13 @@ export type ChatMessageType = {
   loading?: boolean
 }
 
-export interface ChatProps { }
+export interface ChatProps {}
 
 export const Chat: React.FC<ChatProps> = (props) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { prompts } = useContext(PromptsContext)
+  const { user } = useContext(UserContext)
   const { messages, setMessages, updateLastMessage, appendLastContent } = useContext(ChatContext)
   const socket = MySocket.getSocket()
 
@@ -80,6 +83,11 @@ export const Chat: React.FC<ChatProps> = (props) => {
       return
     }
 
+    if (user?.amount === 0) {
+      toast.error('套餐已过期，请先续费！')
+      return
+    }
+
     const uid = localStorage.getItem('uid')
     const nextMessages = [...messages]
     nextMessages.push({ role: 'user', content: content })
@@ -98,7 +106,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const onClickNormalPrompt = () => {
-    const contentEle = document.querySelector<HTMLTextAreaElement>('#chatContent');
+    const contentEle = document.querySelector<HTMLTextAreaElement>('#chatContent')
     if (contentEle) {
       sendMsg(contentEle.value)
       contentEle.value = ''
@@ -129,29 +137,40 @@ export const Chat: React.FC<ChatProps> = (props) => {
   }
 
   const handleChatRes = (res) => {
-  
     if (res.code === 1000) {
-      const chatRes = JSON.parse(res.data);
-
-      if (chatRes.code === 'chat-list-too-long') {
-        toast.error('聊天记录太长了，请清理一下聊天记录吧！')
-        onStop()
-      } else if (chatRes.success) {
+      const chatRes = JSON.parse(res.data)
+      if (chatRes.success) {
         appendLastContent({
           content: chatRes.message,
           role: 'assistant',
+          code: chatRes.code,
           loading: chatRes.code !== 'finish'
+        })
+      } else {
+        if (chatRes.code === 'chat-list-too-long') {
+          toast.error('聊天记录太长了，请清理一下聊天记录吧！')
+          onStop()
+          return
+        }
+        updateLastMessage({
+          role: 'assistant',
+          loading: false,
+          stopped: true,
+          content: chatRes.message
         })
       }
     } else {
       updateLastMessage({
         role: 'system',
-        content: res.data.message || 'Sorry, system error.'
+        loading: false,
+        stopped: true,
+        content: res.message || res.data.message || 'Sorry, system error.'
       })
     }
   }
 
   const handleException = (res) => {
+    console.log('Exception', res)
     if (res.message === 'Unauthorized access') {
       navigate('/login')
     }
@@ -166,19 +185,20 @@ export const Chat: React.FC<ChatProps> = (props) => {
       }
     }
     return () => {
-      socket!.off('chat', handleChatRes);
-      socket!.off('exception', handleChatRes);
+      if (socket) {
+        socket.off('chat', handleChatRes)
+        socket.off('exception', handleChatRes)
+      }
     }
   }, [])
 
   useEffect(() => {
-    
     document.getElementById('chatContent')?.focus()
     scrollToBottom({ behavior: 'auto' })
     return () => {
       clearTimeout(timer)
     }
-    }, [])
+  }, [])
 
   const renderChatRecord = () => {
     return messages.map((msg, index) => {
@@ -240,6 +260,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
             )}
           </div>
           <div className={style.chatInput}>
+            <PackageAlert />
             <div className={style.chatToolbar}>
               <ConfirmDialog
                 title="确认"
@@ -261,6 +282,7 @@ export const Chat: React.FC<ChatProps> = (props) => {
                 }}
                 className={style.chatImportBtn}
               />
+              <div></div>
             </div>
             <div className={style.chatInputWrapper}>
               <Textarea

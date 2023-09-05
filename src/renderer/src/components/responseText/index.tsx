@@ -101,7 +101,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
         />
       </ErrorBoundary>
       {loading ? (
-        <span className="flex">
+        <span className="flex items-center">
           <span className={cursorStyle.inputCursorAnimation}>{t('typing.label')}</span>{' '}
           <button className={style.stopButton} title={t('stop.label')} onClick={onStop}>
             <StopIcon /> {t('stop.label')}
