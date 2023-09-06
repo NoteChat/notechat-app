@@ -1,4 +1,4 @@
-import Api, { MySocket } from '@renderer/api'
+import { MySocket } from '@renderer/api'
 import { debounce } from 'lodash'
 
 export default class AIComplete {
@@ -14,7 +14,7 @@ export default class AIComplete {
     this.container = document.querySelector(options.container)
     quill.on('text-change', debounce(this.update.bind(this)), 500)
     this.socket = MySocket.getSocket()
-    this.socket.on('chat', this.listenRes.bind(this))
+    this.socket.on('autocomplete', this.listenRes.bind(this))
   }
 
   listenRes(res) {
@@ -43,7 +43,7 @@ export default class AIComplete {
       const rangeStart = range.index - 2
       const contextText = this.quill.getText(0, rangeStart)
       const uid = Number(localStorage.getItem('uid'))
-      this.socket.emit('chat', {
+      this.socket.emit('autocomplete', {
         user: uid,
         messages: [
           {

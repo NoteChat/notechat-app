@@ -15,7 +15,9 @@ import MarkdownShortcuts from 'quill-markdown-shortcuts'
 import 'quill-paste-smart'
 import MarkdownToolbar from 'quill-markdown-toolbar'
 import AIComplete from './ai-complete'
-import { DownloadIcon } from '@radix-ui/react-icons'
+import { DownloadIcon, StarFilledIcon } from '@radix-ui/react-icons'
+import { downloadMarkdown } from '@renderer/utils'
+import { StarText } from '../starText'
 
 export interface EditorProps {
   value: UpdateEditorDto | undefined
@@ -81,21 +83,8 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props) => 
 
   const onExportMD = () => {
     const content = editorRef.current?.getText()
-    // Create element with <a> tag
-    const link = document.createElement('a')
-
-    // Create a blog object with the file content which you want to add to the file
-    const file = new Blob([content], { type: 'text/plain' })
-
-    // Add file content in the object URL
-    link.href = URL.createObjectURL(file)
-
-    // Add file name
-    link.download = 'download.md'
-
-    // Add click event to <a> tag to save file.
-    link.click()
-    URL.revokeObjectURL(link.href)
+    const title = content.split('\n')[0];
+    downloadMarkdown(title, content);
   }
 
   useEffect(() => {
@@ -159,6 +148,7 @@ const MyEditor: React.ForwardRefRenderFunction<Quill, EditorProps> = (props) => 
             </div>
           </div>
           <div className={style.extensionsBar}>
+            <StarText getContent={() => { return editorRef.current?.getText() }} />
             <button title={t('download.label')}>
               <DownloadIcon onClick={onExportMD} />
             </button>

@@ -3,11 +3,12 @@ import API, { FavoriteDto } from '@renderer/api'
 import style from './style.module.scss'
 import { Input } from '@renderer/components/form'
 import { useTranslation } from 'react-i18next'
-import { Cross2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
+import { Cross2Icon, DownloadIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { ResponseText } from '@renderer/components/responseText'
 import { ConfirmDialog } from '@renderer/components/dialog'
 import { toast } from 'react-hot-toast'
 import { debounce } from 'lodash'
+import { downloadMarkdown } from '@renderer/utils'
 
 export const Favorite: React.FC<{}> = (props) => {
   const { t } = useTranslation()
@@ -78,6 +79,12 @@ export const Favorite: React.FC<{}> = (props) => {
     }
   }
 
+  const onDownload = (item) => {
+    if (item) {
+      downloadMarkdown(item.title, item.content)
+    }
+  }
+
   useEffect(() => {
     document.getElementById('queryInput')?.focus()
     loadData('')
@@ -113,8 +120,16 @@ export const Favorite: React.FC<{}> = (props) => {
               <ResponseText
                 className={style.favoriteContentItemDetail}
                 content={item.content || ''}
-                toolbar={['copy'] as any}
+                toolbar={['copy', 'notion'] as any}
                 quoteTargetId=""
+                title={item.title}
+                extraToolbar={
+                  <div className={style.favoriteContentItemDetailExtra}>
+                    <button title={t('download.label')}>
+                      <DownloadIcon onClick={() => onDownload(item)}/>
+                    </button>
+                  </div>
+                }
               />
               <ConfirmDialog
                 title={t('remove.title')}

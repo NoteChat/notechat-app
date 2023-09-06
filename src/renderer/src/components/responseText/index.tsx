@@ -4,37 +4,39 @@ import ReactMarkdown from 'react-markdown'
 import cursorStyle from '@renderer/components/cursor/style.module.scss'
 import toast from 'react-hot-toast'
 import style from './style.module.scss'
-import { QuoteIcon, StarFilledIcon, StopIcon } from '@radix-ui/react-icons'
+import { NotionLogoIcon, QuoteIcon, StopIcon } from '@radix-ui/react-icons'
 import { ErrorBoundary } from '@renderer/errorBundary'
 import API from '@renderer/api'
-import * as Dialog from '@radix-ui/react-dialog'
-import { DialogWindow } from '../dialog'
-import { Button, Input } from '../form'
 import { VSCodeIcon } from '../icon'
 import hljs from 'highlight.js'
 import classNames from 'classnames'
+import { StarText } from '../starText'
+import { markdownToBlocks } from '@tryfabric/martian'
 
 export interface ResponseTextProps extends React.ComponentProps<'div'> {
+  title?: string
   content: string
   quoteTargetId: string
   loading?: boolean
   hideButton?: boolean
-  toolbar?: ['quote', 'copy', 'favorite']
+  toolbar?: ['quote', 'copy', 'favorite', 'notion']
+  extraToolbar?: ReactNode
   onStop?: () => void
 }
 
 export const ResponseText: React.FC<ResponseTextProps> = (props) => {
   const {
+    title,
     content,
     loading,
     quoteTargetId,
     hideButton,
-    toolbar = ['quote', 'copy', 'favorite'],
+    toolbar = ['quote', 'copy', 'favorite', 'notion'],
+    extraToolbar,
     onStop
   } = props
   const { t } = useTranslation()
-  const inputRef = useRef<HTMLInputElement>(null)
-  const tagsRef = useRef<HTMLInputElement>(null)
+  const [saving, setSaving] = React.useState(false)
 
   const onQuote = (content) => {
     const chatInputDom = document.querySelector<HTMLTextAreaElement>(quoteTargetId)
@@ -44,23 +46,28 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
     }
   }
 
-  const onFavorite = async (event, content) => {
-    const uid = localStorage.getItem('uid')
-    const title = inputRef.current?.value.trim()
-    const tags = tagsRef.current?.value.trim()
-    if (!title) {
-      toast.error('Title is required')
-      event.preventDefault()
-      return
-    }
-    const res = await API.v1.createFavorite({
-      userId: Number(uid),
-      title: title,
-      tags: tags?.split(','),
-      content: content
-    })
-    if (res.ok) {
-      toast.success('Marked Success')
+  const onSaveToNotion = async (content) => {
+    if (content) {
+      setSaving(true)
+      const tt = title ? title : content.split('\n')[0];
+      const c: any = markdownToBlocks(content, {
+        notionLimits: {
+          truncate: false,
+        },
+      });
+      const res = await API.v1.createPage({
+        title: tt,
+        content: c
+      })
+      if (res.data.code === 1000) {
+        toast.success('Save to Notion success!')
+      } else if (res.data.code === 1011) {
+        toast.error(t('notion.unset.error'))
+      }
+      else {
+        toast.error('Save to Notion failed!' + res.data.message)
+      }
+      setSaving(false)
     }
   }
 
@@ -123,37 +130,18 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
             'copy'
           )}
           {
-            <DialogWindow
-              trigger={renderToolbarItem(
-                <button title={t('favorite.label')} id="id_trigger_fav">
-                  <StarFilledIcon />
-                </button>,
-                'favorite'
-              )}
-              title={t('favorite.label')}
-              description={
-                <div>
-                  <Input className="w-full" ref={inputRef} required placeholder="请输入收藏标题" />
-                  <Input
-                    className="w-full mt-4"
-                    ref={tagsRef}
-                    required
-                    placeholder="请输入内容标签，多个标签使用 , 分隔"
-                  />
-                  <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
-                    <Dialog.Close asChild>
-                      <Button
-                        style={{ width: 120 }}
-                        onClick={(event) => onFavorite(event, content)}
-                      >
-                        {t('confirm.label')}
-                      </Button>
-                    </Dialog.Close>
-                  </div>
-                </div>
-              }
-            />
+            renderToolbarItem(<StarText content={content} />, 'favorite')
           }
+          {
+            renderToolbarItem(
+              <button title={t('saveToNotion.label')} onClick={() => onSaveToNotion(content)} disabled={saving}>
+                <NotionLogoIcon />
+              </button>
+              ,
+              'notion'
+            )
+          }
+          { extraToolbar }
         </div>
       ) : null}
     </div>

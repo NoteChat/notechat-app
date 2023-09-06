@@ -108,6 +108,8 @@
     "countTokens.label": "Token 消耗",
     "promptTokens.label": "提示",
     "completionTokens.label": "补全",
-    "download.label": "下载"
+    "download.label": "下载",
+    "saveToNotion.label": "保存到 Notion",
+    "notion.unset.error": "请先在用户中心配置您的 Notion API 和 Page ID"
   }
 }

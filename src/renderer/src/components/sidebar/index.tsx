@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { Link, useLocation } from 'react-router-dom'
-import { ChatIcon, ComponentIcon, GearIcon, TextIcon, VSCodeIcon } from '../icon'
+import { ChatIcon, ComponentIcon, GearIcon, VSCodeIcon } from '../icon'
 import { useTranslation } from 'react-i18next'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import style from './style.module.scss'

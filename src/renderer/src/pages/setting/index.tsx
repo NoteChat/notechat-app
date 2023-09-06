@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { UserContext } from '@renderer/context/user'
 import dayjs from 'dayjs'
 import { PackageAlert } from '@renderer/components/package'
+import { Link } from 'react-router-dom'
 
 export const Setting: React.FC = () => {
   const { user, updateProfile, loadProfile } = useContext(UserContext)
@@ -16,7 +17,9 @@ export const Setting: React.FC = () => {
   const onHandleEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const userData = Object.fromEntries(new FormData(e.currentTarget)) as unknown as UserDto
-    console.log('userData', userData)
+    if (userData.notionApiKey?.includes('*')) {
+      delete userData.notionApiKey
+    }
     const uid = localStorage.getItem('uid')
     if (uid) {
       userData.id = Number(uid)
@@ -59,6 +62,36 @@ export const Setting: React.FC = () => {
               <Input defaultValue={user?.email} type="email" />
             </Form.Control>
           </Form.Field>
+          <Form.Field className="FormField" name="notionApiKey">
+            <div
+              style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}
+            >
+              <Form.Label className="FormLabel">
+                Notion API Key
+                <small>
+                  <Link className='color-blue' target='_blank' to="https://www.notion.so/my-integrations">（Get API Key?）</Link>
+                </small>
+              </Form.Label>
+            </div>
+            <Form.Control asChild>
+                <Input defaultValue={user?.notionApiKey} type="text" />
+            </Form.Control>
+          </Form.Field>
+          <Form.Field className="FormField" name="notionRootPageId">
+            <div
+              style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}
+            >
+              <Form.Label className="FormLabel">
+                Notion Page ID
+                <small>
+                  <Link className='color-blue' target='_blank' to="https://developers.notion.com/docs/working-with-page-content">（Get Page ID?）</Link>
+                </small>
+              </Form.Label>
+            </div>
+            <Form.Control asChild>
+                <Input defaultValue={user?.notionRootPageId} type="text" />
+            </Form.Control>
+          </Form.Field>
           <Form.Field className="FormField" name="package">
             <div
               style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}
@@ -90,12 +123,12 @@ export const Setting: React.FC = () => {
             </div>
             <Form.Control asChild>
               <div className="flex gap-2">
-                <span>
-                  {t('promptTokens.label')}: {user?.promptTokens}
-                </span>
-                <span>
-                  {t('completionTokens.label')}: {user?.completionTokens}
-                </span>
+                <p>
+                  {t('promptTokens.label')}: <span color='orange'>{user?.promptTokens}</span>
+                </p>
+                <p>
+                  {t('completionTokens.label')}:  <span color='orange'>{user?.completionTokens}</span>
+                </p>
               </div>
             </Form.Control>
           </Form.Field>

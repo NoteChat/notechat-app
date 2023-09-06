@@ -1,6 +1,7 @@
 import Api, { UserDto } from '@renderer/api'
 import { changeLanguage } from 'i18next'
 import React, { useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 export interface UserContextProps {
@@ -59,6 +60,7 @@ export const UserProvider: React.FC<React.PropsWithChildren> = (props) => {
       Api.v1.updateProfile(userData).then((res) => {
         if (res.ok) {
           setUser({ ... res.data })
+          toast.success('Update Success')
         } else {
           console.log('udpate profile failed', res)
         }

@@ -31,6 +31,8 @@ export interface UserDto {
   language?: string
   promptTokens?: number
   completionTokens?: number
+  notionApiKey?: string
+  notionRootPageId?: string
   package?: string
   customerId?: string
   /** @format date-time */
@@ -262,6 +264,8 @@ export type UpdateOrderData = any
 export type RemoveOrderData = any
 
 export type StripeHooksData = any
+
+export type CreatePageData = any
 
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
@@ -1301,6 +1305,29 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<StripeHooksData, any>({
         path: `/v1/stripe/hooks`,
         method: 'POST',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreatePage
+     * @request POST:/v1/notion/create-page
+     * @secure
+     */
+    createPage: (
+      data: {
+        title?: string
+        content?: string
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<CreatePageData, any>({
+        path: `/v1/notion/create-page`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params
       })
   }
