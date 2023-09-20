@@ -88,7 +88,7 @@ export const UserProvider: React.FC<React.PropsWithChildren> = (props) => {
 
   const shouldCharge = () => {
     if (!user) return false;
-    const balance = user?.balance ? currency(user.balance, { fromCents: false, precision: 3 }).value : 0;
+    const balance = user?.balance ? currency(user.balance as any, { fromCents: false, precision: 3 }).value : 0;
     return  balance <= 0 && user.aiEngine !== 'gpt-3.5-turbo';
   }
 

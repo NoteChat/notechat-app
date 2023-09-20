@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import style from './style.module.scss'
 import { Select, Textarea } from '@renderer/components/form'
-import { EraserIcon, MagicWandIcon, PaperPlaneIcon, StopIcon } from '@radix-ui/react-icons'
+import { EraserIcon, MagicWandIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
