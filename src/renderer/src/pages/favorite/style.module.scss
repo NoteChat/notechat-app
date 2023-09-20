@@ -1,0 +1,95 @@
+.favoriteWrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--bg-color);
+}
+
+.favoriteHeader {
+  display: flex;
+  margin: var(--gap);
+  position: relative;
+}
+
+.favoriteInput {
+  width: 100%;
+  background: #fff;
+}
+
+.favoriteHeaderRight {
+  position: absolute;
+  right: 20px;
+  top: 8.5px;
+  cursor: pointer;
+  color: var(--blackA11);
+}
+
+.favoriteContent {
+  overflow-y: auto;
+  padding: var(--gap);
+  padding-top: 10px;
+  gap: var(--gap);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+
+  &::selection {
+    background: var(--primary-color);
+  }
+}
+
+.favoriteContentItem {
+  padding: 10px 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 1px 1px var(--blackA7);
+
+  h1 {
+    font-size: 18px;
+  }
+}
+
+.favoriteContentItemDetail {
+  color: var(--blackA12);
+  width: 100%;
+}
+
+.favoriteContentEmpty {
+  text-align: center;
+  color: var(--blackA11);
+}
+
+.favoriteContentItemDelete {
+  position: absolute;
+  right: 20px;
+  top: 8.5px;
+  color: var(--blackA11);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  border-radius: 2px;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--blackA5);
+  }
+}
+
+.favoriteContentItemTags {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+  cursor: pointer;
+
+  & > span {
+    background: var(--forth-color);
+    color: var(--second-color);
+    padding: 4px;
+    font-size: 12px;
+    border-radius: 2px;
+  }
+}

@@ -1,0 +1,14 @@
+.languageBar {
+    position: absolute;
+    right: 7.1429rem;
+    top: 1.4286rem;
+}
+
+@media screen and (max-width: 768px) {
+    .languageBar {
+        right: 1.4286rem;
+        bottom: 1.4286rem;
+        top: auto;
+    }
+}
+    

@@ -1,0 +1,3 @@
+provider: NoteChat
+url: https://notechat.xyz/auto-updates
+updaterCacheDirName: my-app-updater

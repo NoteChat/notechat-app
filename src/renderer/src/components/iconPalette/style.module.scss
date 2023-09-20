@@ -1,0 +1,28 @@
+.iconPalette {
+  overflow: auto;
+  padding: var(--gap);
+  position: relative;
+  max-height: 600px;
+  min-height: 600px;
+  height: 600px;
+  display: grid;
+  flex-wrap: wrap;
+  justify-content: start;
+  row-gap: 10px;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 24px);
+  align-items: center;
+  justify-content: center;
+  justify-content: space-between;
+  justify-items: center;
+
+  button {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+
+    &:hover {
+      background: var(--blackA5);
+    }
+  }
+}

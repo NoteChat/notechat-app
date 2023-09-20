@@ -1,0 +1,171 @@
+.chatPane {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--blackA1);
+}
+
+.chatContent {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: auto;
+  background: #f7f7f7;
+}
+
+.chatContentWrapper {
+  display: flex;
+  gap: var(--gap);
+  padding: var(--gap);
+  margin-top: var(--gap);
+  flex-direction: column;
+}
+
+.chatContentItem {
+  display: flex;
+  gap: 12px;
+  flex-direction: row;
+}
+
+.chatContentItemRes {
+  margin-right: 8vw;
+  justify-content: start;
+}
+
+.chatContentItemAsk {
+  margin-left: 8vw;
+  justify-content: end;
+}
+
+.chatContentItemAvatar {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  color: #fff;
+  display: flex;
+  border-radius: 5px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+}
+
+.chatContentItemContent {
+  border-radius: 5px;
+  padding: 12px 20px;
+  line-height: 1.5;
+  background: #fff;
+  color: var(--color4);
+  max-width: 100%;
+  position: relative;
+}
+
+.chatContentItemAi {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: .1429rem;
+  border-radius: 0 .3571rem  0 .5714rem;
+  background-color: var(--blackA9);
+  color: #fff;
+  font-size: .7143rem;
+}
+
+
+.chatInput {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+
+.borderTop {
+  border-top: 1px solid var(--bd-color);
+}
+
+.chatInputWrapper {
+  flex: 1;
+
+  & > textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    height: 100%;
+    padding: 0 22px;
+    box-shadow: none;
+
+    &:active,
+    &:focus,
+    &:hover,
+    &::selection {
+      border: none;
+    }
+  }
+}
+
+.submitBtn {
+  position: absolute;
+  right: 38px;
+  bottom: 38px;
+  color: var(--blackA11);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  font-size: 18px;
+
+  &:hover {
+    background: var(--blackA5);
+  }
+}
+
+.engineSelector {
+  position: absolute;
+  width: 100px;
+  right: 30px;
+  top: 20px;
+  color: var(--blackA11);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.chatToolbar {
+  display: flex;
+  flex-direction: row;
+  padding: 18px 22px;
+  gap: 8px;
+
+  button {
+    color: var(--blackA11);
+    cursor: pointer;
+    font-size: 18px;
+    height: 24px;
+    font-weight: 300;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: var(--blackA5);
+    }
+
+    & > span {
+      font-size: 18px !important;
+    }
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  /* 当屏幕宽度小于等于 768px 时的样式 */
+  .engineSelector {
+    left: 20px;
+    bottom: 30px;
+    font-size: 12px;
+    height: 28px;
+    top: auto;
+  }
+}

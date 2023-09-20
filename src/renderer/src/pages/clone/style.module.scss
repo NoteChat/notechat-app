@@ -1,0 +1,67 @@
+.textPane {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: var(--gap);
+  flex-direction: column;
+
+  :global {
+    .ql-snow {
+      border: none;
+    }
+  }
+}
+
+.textPane-input {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.docsContainer {
+  height: calc(100% - 112px);
+  position: relative;
+  border-bottom: 1px solid var(--bd-color);
+}
+
+.textPane-editor {
+  height: 100%;
+  width: inherit;
+  overflow: hidden;
+}
+
+.textPane-result {
+  height: 100%;
+  display: flex;
+  border-top: 5px solid var(--second-color);
+}
+
+.resultContent {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: var(--color2);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.35px;
+}
+
+.paneBottom {
+  display: flex;
+  flex-direction: column;
+}
+
+.bottomRow {
+  height: 32px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin: auto var(--gap) var(--gap) var(--gap);
+}
+
+.inputUrl {
+  flex: 1;
+}

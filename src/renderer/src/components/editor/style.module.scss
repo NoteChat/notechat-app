@@ -1,0 +1,113 @@
+.textPane {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: var(--gap);
+  flex-direction: column;
+
+  :global {
+    .ql-snow {
+      border: none;
+    }
+
+    .ql-formats button {
+      font: normal normal normal 16px/1 codicon;
+      display: inline-block;
+      text-decoration: none;
+      text-rendering: auto;
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .ql-copy,
+    .ql-star {
+      color: orange;
+    }
+
+    .ql-copy::after {
+      content: '\ebcc';
+    }
+
+    .ql-star::after {
+      content: '\eb59';
+    }
+
+    .ql-snow .ql-editor pre.ql-syntax {
+      background-color: var(--bg-color);
+      color: inherit;
+    }
+  }
+}
+
+.textPane-input {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.docsContainer {
+  height: 100%;
+  position: relative;
+  border-bottom: 1px solid var(--bd-color);
+}
+
+.textPane-editor {
+  height: 100%;
+  width: inherit;
+  font-size: 14px;
+  color: var(--color4);
+  overflow: hidden;
+}
+
+.extensionsBar {
+  padding: var(--gap);
+  row-gap: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: start;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+
+  button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 5px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color);
+    color: #fff;
+    
+    &:hover {
+      background-color: #fff;
+      color: var(--primary-color);
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+
+  /* 当屏幕宽度小于等于 768px 时的样式 */
+  .textPane {
+    :global {
+
+      .Pane1 {
+        width: 100% !important;
+      }
+
+      .Pane2 {
+        display: none;
+      }
+
+    }
+  }
+}
