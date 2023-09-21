@@ -1,6 +1,6 @@
 {
   "name": "NoteChat",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "A efficient Text tool base on ChatGPT-4, Cluade",
   "main": "./out/main/index.js",
   "author": "NoteChat",
