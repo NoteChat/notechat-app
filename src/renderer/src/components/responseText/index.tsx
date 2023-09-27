@@ -91,7 +91,7 @@ export const ResponseText: React.FC<ResponseTextProps> = (props) => {
   )
 
   return (
-    <div className={props.className}>
+    <div className={classNames(props.className, 'pt-2')}>
       <ErrorBoundary fallback={content}>
           <ReactMarkdown
             children={content}
